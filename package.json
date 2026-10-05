@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/ice-chula-projects/super-netcentric-battleship.git"
   },
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "workspaces": ["backend", "frontend"],
   "scripts": {
