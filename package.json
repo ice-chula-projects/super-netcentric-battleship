@@ -1,0 +1,19 @@
+{
+  "name": "super-netcentric-battleship",
+  "version": "0.0.1",
+  "description": "Descriptions are for nerds",
+  "homepage": "https://github.com/ice-chula-projects/super-netcentric-battleship#readme",
+  "bugs": {
+    "url": "https://github.com/ice-chula-projects/super-netcentric-battleship/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ice-chula-projects/super-netcentric-battleship.git"
+  },
+  "type": "commonjs",
+  "main": "index.js",
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "name": "@super-netcentric-battleship/backend",
+    "version": "0.0.1",
+    "scripts": {
+        "dev": "echo hello from the backend"
+    }
+}
