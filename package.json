@@ -12,8 +12,9 @@
   },
   "type": "module",
   "main": "index.js",
-  "workspaces": ["backend", "frontend"],
+  "workspaces": ["backend", "frontend", "shared"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "cd ./backend && start npm run tsc && cd .././shared && start npm run tsc"
   }
 }

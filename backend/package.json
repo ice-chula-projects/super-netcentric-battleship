@@ -1,13 +1,15 @@
 {
     "name": "@super-netcentric-battleship/backend",
     "version": "0.0.1",
-    "main": "./src/index.ts",
+    "main": "./src/js/index.js",
     "scripts": {
-        "dev": "echo hello from the backend"
+        "dev": "echo hello from the backend",
+        "tsc": "tsc -w"
     },
     "type": "module",
     "dependencies": {
-        "ws": "^8.22.0"
+        "ws": "^8.22.0",
+        "@super-netcentric-battleship/shared": "^0.0.1"
     },
     "devDependencies": {
         "@types/node": "^26.6.4",

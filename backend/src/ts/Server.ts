@@ -1,6 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
-import User from "./User.ts";
+import User from "./User.js";
 import { IncomingMessage } from "http";
+import GameMessage, { GameMessageType } from "@super-netcentric-battleship/shared/GameMessage.js";
 
 export default class Server {
     users: Record<string, User> = {};
@@ -22,11 +23,17 @@ export default class Server {
         this.users[userId] = user;
         console.log(this.users);
 
-        websocket.on("message",this.onMessage.bind(this));
+        websocket.on("message",(data)=>{
+            this.onMessage(websocket, data);
+        });
         websocket.on("close", ()=>{delete this.users[userId];console.log(`deleted user ${userId}`)});
     }
 
-    onMessage(data: WebSocket.RawData){
+    onMessage(websocket: WebSocket, data: WebSocket.RawData){
+        try {
+            const message = JSON.parse(data.toString()) as GameMessage;
+            if (message?.type == GameMessageType.PingRequest) websocket.send(JSON.stringify({type: GameMessageType.PingResponse} as GameMessage));
+        } catch (error) {}
 
     }
 }

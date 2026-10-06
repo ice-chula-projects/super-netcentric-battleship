@@ -1,4 +1,4 @@
-import Server from "./Server.ts";
+import Server from "./Server.js";
 
 //todo: configuration
 const PORT = 8080;

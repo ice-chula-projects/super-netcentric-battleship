@@ -1,0 +1,15 @@
+{
+    "name": "@super-netcentric-battleship/shared",
+    "version": "0.0.1",
+    "scripts": {
+        "dev": "echo hello from the shared workspace",
+        "tsc": "tsc -w"
+    },
+    "type": "module",
+    "exports": {
+        "./*.js": {
+            "types": "./src/ts/*.ts",
+            "default": "./src/js/*.js"
+        }
+    }
+}
