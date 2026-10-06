@@ -1,7 +1,8 @@
 import WebSocket, { WebSocketServer } from "ws";
 import User from "./User.js";
 import { IncomingMessage } from "http";
-import GameMessage, { GameMessageType } from "@super-netcentric-battleship/shared/GameMessage.js";
+import ClientMessage, { ClientMessageType } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import ServerMessage, { ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
 
 export default class Server {
     users: Record<string, User> = {};
@@ -21,7 +22,6 @@ export default class Server {
         const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
         const user = new User(websocket, userId);
         this.users[userId] = user;
-        console.log(this.users);
 
         websocket.on("message",(data)=>{
             this.onMessage(websocket, data);
@@ -31,8 +31,8 @@ export default class Server {
 
     onMessage(websocket: WebSocket, data: WebSocket.RawData){
         try {
-            const message = JSON.parse(data.toString()) as GameMessage;
-            if (message?.type == GameMessageType.PingRequest) websocket.send(JSON.stringify({type: GameMessageType.PingResponse} as GameMessage));
+            const message = JSON.parse(data.toString()) as ClientMessage;
+            if (message?.type == ClientMessageType.Ping) websocket.send(JSON.stringify({type: ServerMessageType.Pong} as ServerMessage));
         } catch (error) {}
 
     }

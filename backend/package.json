@@ -8,8 +8,8 @@
     },
     "type": "module",
     "dependencies": {
-        "ws": "^8.22.0",
-        "@super-netcentric-battleship/shared": "^0.0.1"
+        "@super-netcentric-battleship/shared": "^0.0.1",
+        "ws": "^8.22.0"
     },
     "devDependencies": {
         "@types/node": "^26.6.4",
