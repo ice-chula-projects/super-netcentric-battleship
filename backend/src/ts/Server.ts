@@ -2,8 +2,7 @@ import WebSocket, { WebSocketServer } from "ws";
 import User from "./User.js";
 import { IncomingMessage } from "http";
 import { ClientMessage, ClientMessageType } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { PongMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
-import { UserInfoMessageBuilder } from "../../../shared/src/ts/ServerMessage/UserInfoMessage.js";
+import { PongMessageBuilder, ServerMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 
 export default class Server {
     users: Record<string, User> = {};
