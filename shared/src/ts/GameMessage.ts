@@ -1,4 +1,4 @@
 export default abstract class GameMessage{
-    abstract type: any;
+    abstract readonly type: string;
     abstract toJsonString: ()=>string;
 }

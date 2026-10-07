@@ -2,7 +2,7 @@ import GameMessage from "../GameMessage.js";
 import { ServerMessageType } from "./ServerMessageType.js";
 
 export interface UserInfoMessage extends GameMessage{
-    type: ServerMessageType.UserInfo;
+    readonly type: ServerMessageType.UserInfo;
     userInfo: {
         id: string | null;
         username: string | null;
@@ -10,7 +10,7 @@ export interface UserInfoMessage extends GameMessage{
 }
 
 export class UserInfoMessageBuilder implements UserInfoMessage{
-    type: ServerMessageType.UserInfo = ServerMessageType.UserInfo;
+    readonly type: ServerMessageType.UserInfo = ServerMessageType.UserInfo;
     userInfo: { id: string | null; username: string | null; } = {id: null, username: null};
 
     setId(id:string | null){

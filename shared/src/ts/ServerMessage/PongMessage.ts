@@ -2,12 +2,12 @@ import GameMessage from "../GameMessage.js";
 import { ServerMessageType } from "./ServerMessageType.js";
 
 export interface PongMessage extends GameMessage{
-    type: ServerMessageType.Pong;
+    readonly type: ServerMessageType.Pong;
     message: string;
 }
 
 export class PongMessageBuilder implements PongMessage{
-    type: ServerMessageType.Pong = ServerMessageType.Pong;
+    readonly type: ServerMessageType.Pong = ServerMessageType.Pong;
     message: string = "pong";
     
     setMessage(message: string){
