@@ -11,6 +11,8 @@ export interface UserInfoMessage extends GameMessage{
 
 export class UserInfoMessageBuilder implements UserInfoMessage{
     readonly type: ServerMessageType.UserInfo = ServerMessageType.UserInfo;
+    readonly timestamp: number = Date.now();
+
     userInfo: { id: string | null; username: string | null; } = {id: null, username: null};
 
     setId(id:string | null){

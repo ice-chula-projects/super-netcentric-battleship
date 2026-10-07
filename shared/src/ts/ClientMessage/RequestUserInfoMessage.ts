@@ -8,6 +8,8 @@ export interface RequestUserInfoMessage extends GameMessage {
 
 export class RequestUserInfoMessageBuilder implements RequestUserInfoMessage {
     readonly type: ClientMessageType.RequestUserInfoMessage = ClientMessageType.RequestUserInfoMessage;
+    readonly timestamp: number = Date.now();
+
     userId?: string;
 
     setUserId(userId: string){
