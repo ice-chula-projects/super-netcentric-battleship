@@ -7,9 +7,17 @@
     },
     "type": "module",
     "exports": {
-        "./*.js": {
-            "types": "./src/ts/*.ts",
-            "default": "./src/js/*.js"
+        "./GameMessage.js": {
+            "types": "./src/ts/GameMessage.ts",
+            "default": "./src/js/GameMessage.js"
+        },
+        "./ServerMessage.js": {
+            "types": "./src/ts/ServerMessage/index.ts",
+            "default": "./src/js/ServerMessage/index.js"
+        },
+        "./ClientMessage.js": {
+            "types": "./src/ts/ClientMessage/index.ts",
+            "default": "./src/js/ClientMessage/index.js"
         }
     }
 }
