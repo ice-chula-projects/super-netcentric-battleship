@@ -7,7 +7,7 @@ export interface PongMessage extends GameMessage{
 }
 
 export class PongMessageBuilder implements PongMessage{
-    readonly type: ServerMessageType.Pong = ServerMessageType.Pong;
+    readonly type = ServerMessageType.Pong;
     readonly timestamp: number = Date.now();
 
     message: string = "pong";

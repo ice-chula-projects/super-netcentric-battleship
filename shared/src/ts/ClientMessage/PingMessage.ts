@@ -7,7 +7,7 @@ export interface PingMessage extends GameMessage{
 }
 
 export class PingMessageBuilder implements PingMessage{
-    readonly type: ClientMessageType.Ping = ClientMessageType.Ping;
+    readonly type = ClientMessageType.Ping;
     readonly timestamp: number = Date.now();
     message: string = "ping";
     
