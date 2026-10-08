@@ -10,7 +10,7 @@ const webSocket = new WebSocket(url);
 
 webSocket.addEventListener("open", ()=>{console.log("connected")})
 webSocket.addEventListener("close", ()=>{console.log("disconnected")})
-webSocket.addEventListener("message", (message)=>{console.log(message.data)})
+webSocket.addEventListener("message", (message)=>{console.log(JSON.parse(message.data))})
 
 //expose to console for testing
 
