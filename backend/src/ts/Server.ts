@@ -96,9 +96,6 @@ export default class Server {
         const startingIndex = page * usersPerPage
         const paginatedActiveUsers = activeUsers.slice(startingIndex, Math.min(startingIndex + usersPerPage, activeUsers.length));
 
-        console.log(activeUsers)
-        console.log(startingIndex)
-
         return new ActiveUserInfoMessageBuilder()
         .setTotalActiveUsers(activeUserCount)
         .setPage(page)
