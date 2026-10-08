@@ -2,7 +2,7 @@ import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessag
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 //TODO: config
-const PORT = 8080;
+const PORT = 17040;
 
 //find the game server at the same host with different port
 const url = "ws://" + window.location.hostname + ":" + PORT;
