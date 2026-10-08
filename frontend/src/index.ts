@@ -60,7 +60,8 @@ window.ClientMessage = ClientMessage;
 window.webSocket = webSocket;
 
 document.querySelector("#send-to-global-chat-button").addEventListener("click", () => {
-  const messageText = (document.querySelector("#current-message") as HTMLInputElement).value
+  const messageText = (document.querySelector("#current-message") as HTMLInputElement).value;
+  (document.querySelector("#current-message") as HTMLInputElement).value = ""
   document.querySelector("#global-chat").appendChild(messageComponent(currentUser, new Date(), messageText))
   webSocket.send(new ClientMessage.SendToChatMessageBuilder().setChannelId("global").setMessage(messageText).toJsonString())
 })
