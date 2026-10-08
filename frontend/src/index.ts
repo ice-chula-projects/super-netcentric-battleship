@@ -22,6 +22,7 @@ let currentUser: { username: string };
 webSocket.addEventListener("open", () => {
   console.log("connected")
   webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString())
+  webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
 webSocket.addEventListener("close", ()=>{console.log("disconnected")})
 webSocket.addEventListener("message", (message: MessageEvent) => {
@@ -35,6 +36,16 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
       document.querySelector("#current-username").innerHTML = currentUser.username
       if (!/guest\#\d\d\d\d\d\d/.test(currentUser.username)) {
         alert(`Hello ${currentUser.username}`)
+        webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
+      }
+      break;
+    case ServerMessage.ServerMessageType.ActiveUsersInfo:
+      const activeUsers = document.querySelector("#active-users")
+      activeUsers.innerHTML = ""
+      for (const user of serverMessage.activeUsers) {
+        const userElement = document.createElement("li")
+        userElement.innerHTML = user.username
+        activeUsers.appendChild(userElement)
       }
   }
 })
@@ -57,4 +68,8 @@ document.querySelector("#send-to-global-chat-button").addEventListener("click", 
 document.querySelector("#change-username-button").addEventListener("click", () => {
   const username = (document.querySelector("#new-username") as HTMLInputElement).value
   webSocket.send(new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString())
+})
+
+document.querySelector("#refresh-active-users-button").addEventListener("click", () => {
+  webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
