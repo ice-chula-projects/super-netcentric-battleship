@@ -3,8 +3,8 @@ import WebSocket from "ws";
 import Random from "./lib/Random.js";
 
 export default class User{
-    socket: WebSocket;
-    id: string;
+    readonly socket: WebSocket;
+    readonly id: string;
     active: boolean = true;
     username: string;
 

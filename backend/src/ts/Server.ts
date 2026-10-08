@@ -6,8 +6,8 @@ import { ActiveUserInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerEr
 import UserManager from "./UserManager.js";
 
 export default class Server {
-    webSocketServer: WebSocketServer;
-    userManager: UserManager = new UserManager();
+    readonly webSocketServer: WebSocketServer;
+    readonly userManager: UserManager = new UserManager();
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
