@@ -18,12 +18,12 @@ export class GameShip {
     constructor(x: number, y:number, orietation:ShipOrientation){
         switch(orietation){
             case ShipOrientation.Down:
-                x = Math.min(0, Math.max(7, x));
-                y = Math.min(0, Math.max(4, x));
+                x = Math.max(0, Math.min(7, x));
+                y = Math.max(0, Math.min(4, y));
             break;
             case ShipOrientation.Right:
-                x = Math.min(0, Math.max(4, x));
-                y = Math.min(0, Math.max(7, x));
+                x = Math.max(0, Math.min(4, x));
+                y = Math.max(0, Math.min(7, y));
             break;
         }
         

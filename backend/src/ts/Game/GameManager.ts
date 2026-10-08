@@ -67,7 +67,13 @@ export default class GameManager{
             .setChatChannelId(game.chatChannelId)
             .setGameState(GameStates.Forming);
 
-        if(game.gameState == GameState.Setup) message.setGameState(GameStates.Deploying);
+        if(game.gameState == GameState.Setup){
+            message.setGameState(GameStates.Deploying)
+            game.players[Player.Player1]?.socket.send(message.toJsonString());
+            game.players[Player.Player2]?.socket.send(message.toJsonString());
+            return;
+        };
+
         user.socket.send(message.toJsonString());
     }
 
