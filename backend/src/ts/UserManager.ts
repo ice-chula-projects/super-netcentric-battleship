@@ -17,6 +17,10 @@ export default class UserManager{
         this.activeUserCount--;
     }
 
+    getActiveUsers(): User[]{
+        return Object.values(this.activeUsers);
+    }
+
     //TODO: link to database of all users, not just active ones
     getUser(userId: string): User | null {
         return this.activeUsers[userId];

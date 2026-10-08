@@ -1,8 +1,8 @@
 import WebSocket, { WebSocketServer } from "ws";
 import User from "./User.js";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, PingMessage, RequestUserInfoMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ActiveUserInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./UserManager.js";
 
 export default class Server {
@@ -51,6 +51,9 @@ export default class Server {
             case ClientMessageType.UpdateUserInfoMessage:
                 response = this.handleUpdateUserInfoMessage(message, user);
             break;
+            case ClientMessageType.RequestActiveUsersMessage:
+                response = this.handleRequestActiveUsersMessage(message)
+            break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
@@ -77,5 +80,29 @@ export default class Server {
     handleUpdateUserInfoMessage(updateUserInfoMessage: UpdateUserInfoMessage, user: User): ServerMessage{
         if(updateUserInfoMessage.username != null) user.setUsername(updateUserInfoMessage.username);
         return user.toUserInfoMessage();
+    }
+
+    handleRequestActiveUsersMessage(requestActiveUsersMessage: RequestActiveUsersMessage): ServerMessage{
+        const activeUsers = this.userManager.getActiveUsers();
+        const activeUserCount = this.userManager.activeUserCount;
+
+        //TODO: configuration
+        const maxUsersPerPage = 50;
+        const usersPerPage = requestActiveUsersMessage.usersPerPage == null ? maxUsersPerPage : Math.max(0, Math.min(maxUsersPerPage, requestActiveUsersMessage.usersPerPage));
+
+        //clamp page
+        const page = Math.max(0, Math.min(requestActiveUsersMessage.page, Math.ceil(activeUserCount/usersPerPage) - 1));
+        
+        const startingIndex = page * usersPerPage
+        const paginatedActiveUsers = activeUsers.slice(startingIndex, Math.min(startingIndex + usersPerPage, activeUsers.length));
+
+        console.log(activeUsers)
+        console.log(startingIndex)
+
+        return new ActiveUserInfoMessageBuilder()
+        .setTotalActiveUsers(activeUserCount)
+        .setPage(page)
+        .setActiveUsers(paginatedActiveUsers.map((user:User) => {return {username: user.username, id:user.id}}))
+        .setUsersPerPage(usersPerPage)
     }
 }

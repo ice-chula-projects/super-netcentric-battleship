@@ -1,5 +1,6 @@
 export enum ServerMessageType{
     Pong = "pong",
     UserInfo = "userInfo",   
-    Error = "error"
+    Error = "error",
+    ActiveUserInfo = "activeUserInfo"
 }

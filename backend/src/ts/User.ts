@@ -1,5 +1,6 @@
 import { UserInfoMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import WebSocket from "ws";
+import Random from "./lib/Random.js";
 
 export default class User{
     socket: WebSocket;
@@ -13,7 +14,7 @@ export default class User{
 
     //TODO: random username system
     static generateRandomUsername(): string{
-        return "guest";
+        return "guest#" + (Random.randomInteger(0,999999)).toString().padStart(6, "0");
     }
 
     static toUserInfoMessage(user: User): UserInfoMessage{
