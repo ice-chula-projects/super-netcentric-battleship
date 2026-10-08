@@ -51,7 +51,7 @@ export default class Server {
                 response = this.handleUpdateUserInfoMessage(message, user);
             break;
             default:
-                response = new ServerErrorMessageBuilder().setError("Unsupported Message Type");
+                response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
         
         if (response != null) websocket.send(response.toJsonString());
