@@ -3,8 +3,6 @@ import { ClientMessageType } from "./ClientMessageType.js";
 
 export interface SendBoardSetupMessage extends GameMessage{
     readonly type: ClientMessageType.SendBoardSetup;
-    x: number;
-    y: number;
     ships: Ship[];
 }
 
@@ -23,18 +21,7 @@ export class Ship {
 export class SendBoardSetupMessageBuilder implements SendBoardSetupMessage{
     readonly type = ClientMessageType.SendBoardSetup;
     readonly timestamp: number = Date.now();
-    x: number = 0;
-    y: number = 0;
     ships: Ship[] = []; 
-    setX(x: number){
-        this.x = x;
-        return this;
-    }
-
-    setY(y: number){
-        this.y = y;
-        return this;
-    }
 
     setShips(ships: Ship[]){
         this.ships = ships;
