@@ -49,19 +49,19 @@ export default class Server {
             case ClientMessageType.Ping:
                 response = this.handlePingMessage(message);
             break;
-            case ClientMessageType.RequestUserInfoMessage:
+            case ClientMessageType.RequestUserInfo:
                 response = this.handleRequestUserInfoMessage(message, user);
             break;
-            case ClientMessageType.UpdateUserInfoMessage:
+            case ClientMessageType.UpdateUserInfo:
                 response = this.handleUpdateUserInfoMessage(message, user);
             break;
-            case ClientMessageType.RequestActiveUsersMessage:
+            case ClientMessageType.RequestActiveUsers:
                 response = this.handleRequestActiveUsersMessage(message)
             break;
-            case ClientMessageType.UpdateChatChannelSubscriptionMessage:
+            case ClientMessageType.UpdateChatChannelSubscription:
                 response = this.handleUpdateChatChannelSubscriptionMessage(message, user);
             break
-            case ClientMessageType.SendToChatMessage:
+            case ClientMessageType.SendToChat:
                 response = this.handleSendToChatMessage(message, user);
             break;
             default:
