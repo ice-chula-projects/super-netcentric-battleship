@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
 import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { ActiveUserInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
@@ -106,7 +106,7 @@ export default class Server {
         const startingIndex = page * usersPerPage
         const paginatedActiveUsers = activeUsers.slice(startingIndex, Math.min(startingIndex + usersPerPage, activeUsers.length));
 
-        return new ActiveUserInfoMessageBuilder()
+        return new ActiveUsersInfoMessageBuilder()
         .setTotalActiveUsers(activeUserCount)
         .setPage(page)
         .setActiveUsers(paginatedActiveUsers.map((user:User) => {return {username: user.username, id:user.id}}))

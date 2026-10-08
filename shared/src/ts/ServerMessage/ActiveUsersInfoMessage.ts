@@ -1,16 +1,16 @@
 import GameMessage from "../GameMessage.js";
 import { ServerMessageType } from "./ServerMessageType.js";
 
-export interface ActiveUserInfoMessage extends GameMessage{
-    readonly type: ServerMessageType.ActiveUserInfo;
+export interface ActiveUsersInfoMessage extends GameMessage{
+    readonly type: ServerMessageType.ActiveUsersInfo;
     page: number;
     usersPerPage: number;
     activeUsers: {username:string, id:string}[];
     totalActiveUsers: number;
 }
 
-export class ActiveUserInfoMessageBuilder implements ActiveUserInfoMessage{
-    readonly type = ServerMessageType.ActiveUserInfo;
+export class ActiveUsersInfoMessageBuilder implements ActiveUsersInfoMessage{
+    readonly type = ServerMessageType.ActiveUsersInfo;
     readonly timestamp: number = Date.now();
     page: number = 0;
     usersPerPage: number = 0;
