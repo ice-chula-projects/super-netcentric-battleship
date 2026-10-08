@@ -3,10 +3,11 @@ import User from "./User.js";
 import { IncomingMessage } from "http";
 import { ClientMessage, ClientMessageType, PingMessage, RequestUserInfoMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import UserManager from "./UserManager.js";
 
 export default class Server {
-    users: Record<string, User> = {};
     webSocketServer: WebSocketServer;
+    userManager: UserManager = new UserManager();
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
@@ -23,12 +24,12 @@ export default class Server {
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
         const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
         const user = new User(websocket, userId);
-        this.users[userId] = user;
+        this.userManager.registerActiveUser(user);
 
         websocket.on("message",(data)=>{
             this.handleWebSocketMessage(websocket,user, data);
         });
-        websocket.on("close", ()=>{delete this.users[userId];console.log(`deleted user ${userId}`)});
+        websocket.on("close", ()=>{this.userManager.removeActiveUser(user)});
     }
 
     handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData){
@@ -64,7 +65,7 @@ export default class Server {
 
     handleRequestUserInfoMessage(requestUserInfoMessage: RequestUserInfoMessage, user: User): ServerMessage{
         const id = requestUserInfoMessage.userId == null? user.id : requestUserInfoMessage.userId;
-        const requestedUser = this.users[id];
+        const requestedUser = this.userManager.getUser(id);
         if(requestedUser == null) {
             return new ServerErrorMessageBuilder()
             .setError("requested userId does not exist");
