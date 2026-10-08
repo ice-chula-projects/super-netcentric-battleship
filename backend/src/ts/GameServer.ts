@@ -7,7 +7,7 @@ import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
 import GameManager from "./Game/GameManager.js";
 
-export default class Server {
+export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager = new UserManager();
     readonly chatManager: ChatManager = new ChatManager();
