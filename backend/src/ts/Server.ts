@@ -55,6 +55,10 @@ export default class Server {
 
                 response = requestedUser.toUserInfoMessage();
             break;
+
+            case ClientMessageType.UpdateUserInfoMessage:
+                if(message.username != null) user.setUsername(message.username);
+                response = user.toUserInfoMessage();
         }
 
 

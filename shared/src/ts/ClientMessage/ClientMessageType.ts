@@ -1,4 +1,5 @@
 export enum ClientMessageType{
     Ping = "ping",
-    RequestUserInfoMessage = "requestUserInfo"
+    RequestUserInfoMessage = "requestUserInfo",
+    UpdateUserInfoMessage = "updateUserInfo"
 }
