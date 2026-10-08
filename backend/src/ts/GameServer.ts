@@ -178,6 +178,7 @@ export default class GameServer {
         try{
             this.gameManager.setUpBoard(gameId, user, sendBoardSetupMessage.ships.map((ship:Ship) => {return new GameShip(ship.x, ship.y, ship.orientation == "down"? ShipOrientation.Down : ShipOrientation.Right)}));
         } catch (error){
+            console.log(error);
             return new ServerErrorMessageBuilder().setError("internal server error");
         }
         
@@ -192,6 +193,7 @@ export default class GameServer {
         try{
             this.gameManager.takeTurn(gameId, user, sendGameActionMessage.x, sendGameActionMessage.y);
         } catch (error){
+            console.log(error);
             return new ServerErrorMessageBuilder().setError("internal server error");
         }
         
