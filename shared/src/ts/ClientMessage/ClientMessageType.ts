@@ -1,8 +1,8 @@
 export enum ClientMessageType{
     Ping = "ping",
-    RequestUserInfoMessage = "requestUserInfo",
-    UpdateUserInfoMessage = "updateUserInfo",
-    RequestActiveUsersMessage = "requestActiveUsers",
-    UpdateChatChannelSubscriptionMessage = "updateChatChannelSubscription",
-    SendToChatMessage = "sendToChat"
+    RequestUserInfo = "requestUserInfo",
+    UpdateUserInfo = "updateUserInfo",
+    RequestActiveUsers = "requestActiveUsers",
+    UpdateChatChannelSubscriptione = "updateChatChannelSubscription",
+    SendToChat = "sendToChat"
 }
