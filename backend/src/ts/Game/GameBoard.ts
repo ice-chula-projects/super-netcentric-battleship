@@ -41,8 +41,10 @@ export default class GameBoard{
     get allShipsSunk(): boolean{
         return this.unSunkShipTiles == 0;
     }
-    
+
     constructor(ships: GameShip[]){
+        if(ships.length != 4) throw new Error("Board must contain exactly 4 ships");
+
         for(let i = 0; i < 8; i++){
             this.board[i] = [];
             for(let j = 0; j < 8; j++){
