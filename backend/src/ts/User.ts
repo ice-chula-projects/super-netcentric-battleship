@@ -5,6 +5,7 @@ import Random from "./lib/Random.js";
 export default class User{
     readonly socket: WebSocket;
     readonly id: string;
+    readonly subscribedChatChannelIds: string[] = [];
     active: boolean = true;
     username: string;
 
@@ -21,6 +22,7 @@ export default class User{
         const userInfoMessage = new UserInfoMessageBuilder()
         .setUsername(user.username)
         .setId(user.id)
+        .setSubscribedChatChannelIds(user.subscribedChatChannelIds)
 
         return userInfoMessage;
     }

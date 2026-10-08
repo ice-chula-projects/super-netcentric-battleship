@@ -1,13 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
 import User from "./User.js";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUserInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./UserManager.js";
+import ChatManager from "./ChatManager.js";
 
 export default class Server {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager = new UserManager();
+    readonly chatManager: ChatManager = new ChatManager();
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
@@ -18,6 +20,7 @@ export default class Server {
             console.log("server online");
         })
 
+        this.chatManager.addChannel("global");
     }
 
     //websocket event listeners
@@ -25,6 +28,7 @@ export default class Server {
         const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
+        this.chatManager.subscribe(user, "global");
 
         websocket.on("message",(data)=>{
             this.handleWebSocketMessage(websocket,user, data);
@@ -53,6 +57,12 @@ export default class Server {
             break;
             case ClientMessageType.RequestActiveUsersMessage:
                 response = this.handleRequestActiveUsersMessage(message)
+            break;
+            case ClientMessageType.UpdateChatChannelSubscriptionMessage:
+                response = this.handleUpdateChatChannelSubscriptionMessage(message, user);
+            break
+            case ClientMessageType.SendToChatMessage:
+                response = this.handleSendToChatMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -101,5 +111,34 @@ export default class Server {
         .setPage(page)
         .setActiveUsers(paginatedActiveUsers.map((user:User) => {return {username: user.username, id:user.id}}))
         .setUsersPerPage(usersPerPage)
+    }
+
+    //TODO: send chat history to user when the user subscribes to a channel
+    handleUpdateChatChannelSubscriptionMessage(updateChatChannelSubscriptionMessage: UpdateChatChannelSubscriptionMessage, user: User): ServerMessage | null{
+        const channelId = updateChatChannelSubscriptionMessage.channelId;
+        if(!this.chatManager.channelExists(channelId)) return new ServerErrorMessageBuilder().setError("requested channel does not exist");
+        
+        if(updateChatChannelSubscriptionMessage.subscribe){
+            if(user.subscribedChatChannelIds.includes(channelId)) return null
+            this.chatManager.subscribe(user, channelId);
+        } else {
+            if(!user.subscribedChatChannelIds.includes(channelId)) return null
+            this.chatManager.unsubscribe(user, channelId);
+        }
+
+        return null;
+    }
+
+    handleSendToChatMessage(sendToChatMessage: SendToChatMessage, user: User): ServerMessage | null{
+        //TODO: configuration
+        const MAX_MESSAGE_LENGTH = 300;
+        
+        const channelId = sendToChatMessage.channelId;
+        if(!this.chatManager.channelExists(channelId)) return new ServerErrorMessageBuilder().setError("requested channel does not exist");
+        if(sendToChatMessage.message.length > MAX_MESSAGE_LENGTH) return new ServerErrorMessageBuilder().setError("chat message is too long");
+        
+        this.chatManager.sendMessage(sendToChatMessage.message, user, channelId);
+
+        return null;
     }
 }

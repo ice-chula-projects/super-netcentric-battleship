@@ -6,6 +6,7 @@ export interface UserInfoMessage extends GameMessage{
     userInfo: {
         id: string | null;
         username: string | null;
+        subscribedChatChannelIds: string[] | null;
     }
 }
 
@@ -13,7 +14,7 @@ export class UserInfoMessageBuilder implements UserInfoMessage{
     readonly type = ServerMessageType.UserInfo;
     readonly timestamp: number = Date.now();
 
-    userInfo: { id: string | null; username: string | null; } = {id: null, username: null};
+    userInfo: { id: string | null; username: string | null; subscribedChatChannelIds: string[] | null; } = {id: null, username: null, subscribedChatChannelIds: null};
 
     setId(id:string | null){
         this.userInfo.id = id;
@@ -22,6 +23,11 @@ export class UserInfoMessageBuilder implements UserInfoMessage{
 
     setUsername(username: string | null){
         this.userInfo.username = username;
+        return this;
+    }
+
+    setSubscribedChatChannelIds(subscribedChatChannelIds: string[]){
+        this.userInfo.subscribedChatChannelIds = subscribedChatChannelIds;
         return this;
     }
 
