@@ -5,11 +5,13 @@ import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerE
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
+import GameManager from "./Game/GameManager.js";
 
 export default class Server {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager = new UserManager();
     readonly chatManager: ChatManager = new ChatManager();
+    readonly gameManager: GameManager = new GameManager();
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
