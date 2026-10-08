@@ -1,5 +1,7 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
+import Camera from "./Camera";
+import GameBoard from "./Board";
 
 //TODO: config
 const PORT = 17040;
@@ -8,6 +10,12 @@ const PORT = 17040;
 const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
 
+const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement);
+
+camera.drawBoard(new GameBoard(), 10,10, 235, "player's board")
+camera.drawBoard(new GameBoard(), 500-10-235,10, 235, "opponent's board")
+
+//TODO: move none setup logic outside of index.ts
 function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {
   const messageElement = document.createElement("li")
   messageElement.innerHTML = `
@@ -27,6 +35,7 @@ webSocket.addEventListener("open", () => {
 webSocket.addEventListener("close", ()=>{console.log("disconnected")})
 webSocket.addEventListener("message", (message: MessageEvent) => {
   const serverMessage = JSON.parse(message.data) as ServerMessage.ServerMessage
+  console.log(serverMessage);
   switch (serverMessage.type) {
     case ServerMessage.ServerMessageType.ChatMessageNotification:
       document.querySelector("#global-chat").appendChild(messageComponent(serverMessage.author, new Date(serverMessage.timestamp), serverMessage.message))
@@ -58,6 +67,8 @@ window.ServerMessage = ServerMessage;
 window.ClientMessage = ClientMessage;
 //@ts-ignore
 window.webSocket = webSocket;
+//@ts-ignore
+window.camera = camera;
 
 document.querySelector("#send-to-global-chat-button").addEventListener("click", () => {
   const messageText = (document.querySelector("#current-message") as HTMLInputElement).value;
