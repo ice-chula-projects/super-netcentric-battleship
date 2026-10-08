@@ -3,6 +3,7 @@ import User from "../User/User.js";
 import GameBoard, { BoardTileTypes, GameShip } from "./GameBoard.js";
 
 export enum GameState {
+    Forming,
     Setup,
     Battle,
     End
@@ -20,15 +21,16 @@ export enum ShotResult{
 
 export default class Game{
     readonly players: {
-        [Player.Player1]: User,
-        [Player.Player2]: User
-    }
+        [Player.Player1]: User | null,
+        [Player.Player2]: User | null
+    } = {[Player.Player1]: null, [Player.Player2]: null}
 
     readonly boards: {
         [Player.Player1]: GameBoard | null,
         [Player.Player2]: GameBoard | null
     } = {[Player.Player1]: null, [Player.Player2]: null}
     readonly chatChannelId: string;
+    readonly gameId: string;
 
     currentPlayerTurn: Player | null = null;
     winningPlayer: Player | null = null;
@@ -48,23 +50,26 @@ export default class Game{
     }
 
     get isInProgress(): boolean{
-        return this.gameState != GameState.End;
+        return this.gameState != GameState.Forming && this.gameState != GameState.End;
     }
 
-    gameState: GameState = GameState.Setup;
+    get isFull(): boolean{
+        return this.gameState != GameState.Forming;
+    }
+
+    gameState: GameState = GameState.Forming;
     
 
-    constructor(player1: User, player2: User, chatChannelId: string){
-        this.players = {
-            [Player.Player1]: player1,
-            [Player.Player2]: player2
-        }
-
+    constructor(gameId: string, chatChannelId: string){
+        this.gameId = gameId;
         this.chatChannelId = chatChannelId;
     }
 
     private transitionGameState(gameState: GameState){
         switch(gameState){
+            case GameState.Setup:
+                this.gameState = GameState.Setup;
+            break;
             case GameState.Battle:
                 this.currentPlayerTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
                 this.gameState = GameState.Battle;
@@ -78,6 +83,27 @@ export default class Game{
 
     private switchTurns(){
         this.currentPlayerTurn = this.currentPlayerTurn == Player.Player1 ? Player.Player2 : Player.Player1;
+    }
+
+    addPlayerUser(user: User): Player{
+        if(this.players[Player.Player1] == null){
+            this.players[Player.Player1] = user;
+            return Player.Player1;
+        }
+        this.players[Player.Player2] = user;
+        this.transitionGameState(GameState.Setup);
+        return Player.Player2;
+    }
+
+    getPlayerFromUser(user: User): Player{
+        if (this.players[Player.Player1] == user) return Player.Player1;
+        else if (this.players[Player.Player2] == user) return Player.Player2;
+
+        throw new Error("given user is not part of game");
+    }
+
+    isUserInGame(user: User){
+        return this.players[Player.Player1] == user || this.players[Player.Player2] == user;
     }
     
     setupBoard(player: Player, ships: GameShip[]){

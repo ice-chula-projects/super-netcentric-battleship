@@ -9,18 +9,22 @@ import GameManager from "./Game/GameManager.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
-    readonly userManager: UserManager = new UserManager();
-    readonly chatManager: ChatManager = new ChatManager();
-    readonly gameManager: GameManager = new GameManager();
+    readonly userManager: UserManager;
+    readonly chatManager: ChatManager;
+    readonly gameManager: GameManager;
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
-        
+
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
         
         this.webSocketServer.on("listening", ()=>{
             console.log("server online");
         })
+
+        this.userManager = new UserManager();
+        this.chatManager = new ChatManager();
+        this.gameManager = new GameManager(this);
 
         this.chatManager.addChannel("global");
     }
