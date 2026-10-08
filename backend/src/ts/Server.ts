@@ -45,9 +45,9 @@ export default class Server {
             break;
 
             case ClientMessageType.RequestUserInfoMessage:
-                let id = message.userId == null? user.id : message.userId;
+                const id = message.userId == null? user.id : message.userId;
                 const requestedUser = this.users[id];
-                if(this.users == null) {
+                if(requestedUser == null) {
                     response = new ServerErrorMessageBuilder()
                     .setError("requested userId does not exist")
                     break;
