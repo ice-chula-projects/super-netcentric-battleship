@@ -1,3 +1,4 @@
+import { UserInfoMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import WebSocket from "ws";
 
 export default class User{
@@ -15,11 +16,23 @@ export default class User{
         return "guest";
     }
 
+    static toUserInfoMessage(user: User): UserInfoMessage{
+        const userInfoMessage = new UserInfoMessageBuilder()
+        .setUsername(user.username)
+        .setId(user.id)
+
+        return userInfoMessage;
+    }
+    
     constructor(socket: WebSocket, id: string){
         this.socket = socket;
         this.id = id;
         this.username = User.generateRandomUsername();
 
         this.socket.on("close", () => {this.active = false});
-    }   
+    }
+    
+    toUserInfoMessage(): UserInfoMessage{
+        return User.toUserInfoMessage(this);
+    }
 }

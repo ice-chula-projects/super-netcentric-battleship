@@ -53,9 +53,7 @@ export default class Server {
                     break;
                 }
 
-                response = new UserInfoMessageBuilder()
-                .setUsername(requestedUser.username)
-                .setId(requestedUser.id)
+                response = requestedUser.toUserInfoMessage();
             break;
         }
 
