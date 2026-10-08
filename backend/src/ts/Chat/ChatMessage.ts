@@ -1,4 +1,4 @@
-import User from "./User.js";
+import User from "../User/User.js";
 
 export default class ChatMessage{
     readonly message: string;

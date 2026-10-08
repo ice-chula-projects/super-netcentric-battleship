@@ -1,10 +1,10 @@
 import WebSocket, { WebSocketServer } from "ws";
-import User from "./User.js";
 import { IncomingMessage } from "http";
 import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUserInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
-import UserManager from "./UserManager.js";
-import ChatManager from "./ChatManager.js";
+import UserManager from "./User/UserManager.js";
+import ChatManager from "./Chat/ChatManager.js";
+import User from "./User/User.js";
 
 export default class Server {
     readonly webSocketServer: WebSocketServer;

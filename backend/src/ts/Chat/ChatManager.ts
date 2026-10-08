@@ -1,7 +1,7 @@
 import { ChatMessageNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import ChatChannel from "./ChatChannel.js";
 import ChatMessage from "./ChatMessage.js";
-import User from "./User.js";
+import User from "../User/User.js";
 
 export default class ChatManager {
     readonly channels: Record<string, ChatChannel> = {};

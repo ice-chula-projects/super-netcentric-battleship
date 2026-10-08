@@ -1,5 +1,5 @@
 import ChatMessage from "./ChatMessage.js";
-import User from "./User.js";
+import User from "../User/User.js";
 
 export default class ChatChannel{
     //TODO: configuration

@@ -1,6 +1,6 @@
 import { UserInfoMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import WebSocket from "ws";
-import Random from "./lib/Random.js";
+import Random from "../lib/Random.js";
 
 export default class User{
     readonly socket: WebSocket;
