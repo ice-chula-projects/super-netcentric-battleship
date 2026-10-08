@@ -134,10 +134,11 @@ export default class Server {
         const MAX_MESSAGE_LENGTH = 300;
         
         const channelId = sendToChatMessage.channelId;
-        if(!this.chatManager.channelExists(channelId)) return new ServerErrorMessageBuilder().setError("requested channel does not exist");
-        if(sendToChatMessage.message.length > MAX_MESSAGE_LENGTH) return new ServerErrorMessageBuilder().setError("chat message is too long");
+        const message = sendToChatMessage.message == null ? "" : sendToChatMessage.message;
+        if(channelId == null || !this.chatManager.channelExists(channelId)) return new ServerErrorMessageBuilder().setError("requested channel does not exist");
+        if(message.length > MAX_MESSAGE_LENGTH) return new ServerErrorMessageBuilder().setError("chat message is too long");
         
-        this.chatManager.sendMessage(sendToChatMessage.message, user, channelId);
+        this.chatManager.sendMessage(message, user, channelId);
 
         return null;
     }

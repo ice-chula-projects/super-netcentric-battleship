@@ -2,14 +2,14 @@ import GameMessage from "../GameMessage.js";
 import { ClientMessageType } from "./ClientMessageType.js";
 
 export interface UpdateChatChannelSubscriptionMessage extends GameMessage{
-    readonly type: ClientMessageType.UpdateChatChannelSubscriptionMessage;
+    readonly type: ClientMessageType.UpdateChatChannelSubscription;
     channelId: string;
     //true for subscribe to channel, false for unsubscribe from channel
     subscribe: boolean;
 }
 
 export class UpdateChatChannelSubscriptionMessageBuilder implements UpdateChatChannelSubscriptionMessage{
-    readonly type = ClientMessageType.UpdateChatChannelSubscriptionMessage;
+    readonly type = ClientMessageType.UpdateChatChannelSubscription;
     readonly timestamp: number = Date.now();
     channelId: string = "";
     subscribe: boolean = false;

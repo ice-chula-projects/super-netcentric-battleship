@@ -2,12 +2,12 @@ import GameMessage from "../GameMessage.js";
 import { ClientMessageType } from "./ClientMessageType.js";
 
 export interface RequestUserInfoMessage extends GameMessage {
-    readonly type: ClientMessageType.RequestUserInfoMessage
+    readonly type: ClientMessageType.RequestUserInfo
     userId?: string;
 }
 
 export class RequestUserInfoMessageBuilder implements RequestUserInfoMessage {
-    readonly type = ClientMessageType.RequestUserInfoMessage;
+    readonly type = ClientMessageType.RequestUserInfo;
     readonly timestamp: number = Date.now();
 
     userId?: string;

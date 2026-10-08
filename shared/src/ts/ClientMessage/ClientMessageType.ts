@@ -3,6 +3,6 @@ export enum ClientMessageType{
     RequestUserInfo = "requestUserInfo",
     UpdateUserInfo = "updateUserInfo",
     RequestActiveUsers = "requestActiveUsers",
-    UpdateChatChannelSubscriptione = "updateChatChannelSubscription",
+    UpdateChatChannelSubscription = "updateChatChannelSubscription",
     SendToChat = "sendToChat"
 }
