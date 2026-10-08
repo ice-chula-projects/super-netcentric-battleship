@@ -2,7 +2,7 @@ import WebSocket, { WebSocketServer } from "ws";
 import User from "./User.js";
 import { IncomingMessage } from "http";
 import { ClientMessage, ClientMessageType } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { PongMessageBuilder, ServerMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage, UserInfoMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 
 export default class Server {
     users: Record<string, User> = {};
@@ -45,15 +45,20 @@ export default class Server {
             break;
 
             case ClientMessageType.RequestUserInfoMessage:
-                let id = message.userId;
-                if (id == null || this.users[id] == null) id = user.id;
+                let id = message.userId == null? user.id : message.userId;
                 const requestedUser = this.users[id];
+                if(this.users == null) {
+                    response = new ServerErrorMessageBuilder()
+                    .setError("requested userId does not exist")
+                    break;
+                }
 
                 response = new UserInfoMessageBuilder()
                 .setUsername(requestedUser.username)
                 .setId(requestedUser.id)
             break;
         }
+
 
         if (response != null) websocket.send(response.toJsonString());
     }
