@@ -89,7 +89,7 @@ export default class Camera{
         this.drawGameId();
     }
 
-    handleMouseClick(mouseEvent: MouseEvent){
+    handleMouseClick(){
         switch(this.game.state){
             case GameStates.Deploying:
                 if (this.selectedBoard == Player.enemy) return;

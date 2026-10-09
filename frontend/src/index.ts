@@ -1,7 +1,6 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
 import Camera from "./Camera";
-import GameBoard from "./Board";
 import { Game } from "./Game";
 
 //TODO: config
