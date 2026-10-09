@@ -1,16 +1,20 @@
 import { GameStates } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import GameBoard from "./Board";
 
+export enum Player{
+    player = "player",
+    enemy = "enemy"
+}
 export class Game{
     active: boolean = false;
     webSocket: WebSocket;
     state: GameStates
     boards:{
-        player: GameBoard,
-        enemy: GameBoard
+        [Player.player]: GameBoard,
+        [Player.enemy]: GameBoard
     } = {
-        player: null,
-        enemy: null
+        [Player.player]: null,
+        [Player.enemy]: null
     }
 
     constructor(webSocket){

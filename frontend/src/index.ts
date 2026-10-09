@@ -12,9 +12,6 @@ const webSocket = new WebSocket(url);
 
 const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement);
 
-camera.drawBoard(new GameBoard(), 10,10, 235, "player's board")
-camera.drawBoard(new GameBoard(), 500-10-235,10, 235, "opponent's board")
-
 //TODO: move none setup logic outside of index.ts
 function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {
   const messageElement = document.createElement("li")
