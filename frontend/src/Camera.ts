@@ -105,13 +105,14 @@ export default class Camera{
     handleMouseMove(mouseEvent: MouseEvent){
         const mouseX = mouseEvent.offsetX;
         const mouseY = mouseEvent.offsetY;
-
-        if(mouseY < this.boardMargin || mouseY > this.boardMargin + this.boardSize){
+        const boardStartY = (this.canvas.height-this.boardSize)/2;
+        if(mouseY < boardStartY || mouseY > boardStartY + this.boardSize){
             this.selectedBoard = null;
             this.selectedBoardCoordinates.x = null;
             this.selectedBoardCoordinates.y = null;
             return;
         }
+        
         const playerBoardStartX = this.boardMargin;
         const playerBoardEndX = this.boardMargin + this.boardSize;
         const enemyBoardStartX = this.canvas.width - this.boardMargin - this.boardSize;
@@ -119,13 +120,13 @@ export default class Camera{
         if(mouseX > playerBoardStartX && mouseX < playerBoardEndX){
             this.selectedBoard = Player.player;
             const relativeX = mouseX - playerBoardStartX;
-            const relativeY = mouseY - this.boardMargin;
+            const relativeY = mouseY - boardStartY;
             this.selectedBoardCoordinates.x = Math.floor(8*relativeX/(this.boardSize));
             this.selectedBoardCoordinates.y = Math.floor(8*relativeY/(this.boardSize));
         } else if(mouseX > enemyBoardStartX && mouseX < enemyBoardEndX){
             this.selectedBoard = Player.enemy;
             const relativeX = mouseX - enemyBoardStartX;
-            const relativeY = mouseY - this.boardMargin;
+            const relativeY = mouseY - boardStartY;
             this.selectedBoardCoordinates.x = Math.floor(8*relativeX/(this.boardSize));
             this.selectedBoardCoordinates.y = Math.floor(8*relativeY/(this.boardSize));
         }
@@ -179,13 +180,13 @@ export default class Camera{
     }
 
     drawBoards(){
-        this.drawBoard(this.game.boards[Player.player], this.boardMargin, this.boardMargin, this.boardSize, "Player's Board");
-        this.drawBoard(this.game.boards[Player.enemy], this.canvas.width - this.boardMargin - this.boardSize, this.boardMargin, this.boardSize, "Opponent's Board");
+        this.drawBoard(this.game.boards[Player.player], this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board");
+        this.drawBoard(this.game.boards[Player.enemy], this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board");
     }
 
     drawBoardHighlight(){
         if(this.selectedBoard == null) return;
-        const yStart = this.boardMargin;
+        const yStart = (this.canvas.height-this.boardSize)/2;
         const xStart = this.selectedBoard == Player.player?
         this.boardMargin :
         this.canvas.width - this.boardMargin - this.boardSize;
