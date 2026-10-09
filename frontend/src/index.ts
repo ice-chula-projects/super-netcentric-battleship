@@ -10,8 +10,8 @@ const PORT = 17040;
 //find the game server at the same host with different port
 const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
-
-const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, new Game(webSocket));
+const game = new Game(webSocket);
+const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, game);
 
 //TODO: move none setup logic outside of index.ts
 function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {
@@ -24,13 +24,13 @@ function messageComponent(author: { username: string }, timestamp: Date, message
   return messageElement
 }
 
-let currentUser: { username: string };
+let currentUser: { username: string, id: string };
 webSocket.addEventListener("open", () => {
   console.log("connected")
   webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString())
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
-webSocket.addEventListener("close", ()=>{console.log("disconnected")})
+webSocket.addEventListener("close", ()=>{console.log("disconnected"), alert("Server probably crashed, pls tell me about it")})
 webSocket.addEventListener("message", (message: MessageEvent) => {
   const serverMessage = JSON.parse(message.data) as ServerMessage.ServerMessage
   console.log(serverMessage);
@@ -40,6 +40,7 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
       break;
     case ServerMessage.ServerMessageType.UserInfo:
       currentUser = serverMessage.userInfo
+      game.playerId = serverMessage.userInfo.id;
       document.querySelector("#current-username").innerHTML = currentUser.username
       if (!/guest\#\d\d\d\d\d\d/.test(currentUser.username)) {
         alert(`Hello ${currentUser.username}`)
@@ -54,6 +55,19 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
         userElement.innerHTML = user.username
         activeUsers.appendChild(userElement)
       }
+      break;
+    case ServerMessage.ServerMessageType.Error:
+      alert(serverMessage.error);
+    break;
+    case ServerMessage.ServerMessageType.GameStateNotification:
+      game.informGameState(serverMessage);
+    break;
+    case ServerMessage.ServerMessageType.GameActionResultNotificaction:
+      game.informShotResult(serverMessage.hit);
+    break;
+    case ServerMessage.ServerMessageType.OpponentGameActionNotification:
+      game.informOpponentAction(serverMessage.x, serverMessage.y);
+    break;
   }
 })
 
@@ -82,4 +96,9 @@ document.querySelector("#change-username-button").addEventListener("click", () =
 
 document.querySelector("#refresh-active-users-button").addEventListener("click", () => {
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
+})
+
+document.querySelector("#join-game").addEventListener("click", () => {
+  const gameId = (document.querySelector("#current-game-id") as HTMLInputElement).value;
+  game.joinGame(gameId);
 })

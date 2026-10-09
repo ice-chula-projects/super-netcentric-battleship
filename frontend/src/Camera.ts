@@ -85,6 +85,7 @@ export default class Camera{
         if(this.game.state == GameStates.Forming) return;
         this.drawBoards();
         this.drawBoardHighlight();
+        this.drawTurnText();
     }
 
     handleMouseClick(mouseEvent: MouseEvent){
@@ -93,6 +94,10 @@ export default class Camera{
                 if (this.selectedBoard == Player.enemy) return;
                 this.game.addShip(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y, this.shipPlaceModeOrientation)
             break;
+            case GameStates.Fighting:
+                if (this.selectedBoard == Player.player || !this.game.playersTurn) return;
+                this.game.shoot(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                
         }
     }
 
@@ -202,6 +207,16 @@ export default class Camera{
                 }
             }
         }
+    }
+
+    drawTurnText(){
+        if(this.game.playersTurn == null || this.game.state != GameStates.Fighting) return;
+        const turnText = this.game.playersTurn? "Your Turn" : "Opponent's Turn"
+        
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.fillText(turnText, 0, this.canvas.height - this.textSize);
     }
 
     clear(){

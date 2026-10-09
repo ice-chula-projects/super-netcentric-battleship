@@ -1,6 +1,6 @@
-import { GameStates } from "@super-netcentric-battleship/shared/ServerMessage.js";
-import GameBoard from "./Board";
-import { SendBoardSetupMessageBuilder, Ship } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { GameStateNotificationMessage, GameStates } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import GameBoard, { BoardTileTypes } from "./Board";
+import { JoinGameMessageBuilder, SendBoardSetupMessageBuilder, SendGameActionMessageBuilder, Ship } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 export enum Player{
     player = "player",
@@ -12,6 +12,7 @@ export class Game{
     webSocket: WebSocket;
     state: GameStates = GameStates.Forming;
     playerId: string = null;
+    gameId: string = null;
     boards:{
         [Player.player]: GameBoard,
         [Player.enemy]: GameBoard
@@ -21,9 +22,20 @@ export class Game{
     }
     ships: Ship[] = [];
 
+    lastShot = {
+        x: null,
+        y: null
+    }
 
     constructor(webSocket){
         this.webSocket = webSocket;
+    }
+
+    joinGame(gameId:string){
+        const message = new JoinGameMessageBuilder()
+        .setGameId(gameId);
+
+        this.webSocket.send(message.toJsonString());
     }
 
     initializeGame(){
@@ -35,17 +47,32 @@ export class Game{
         
     }
 
-    informGameState(gameState: GameStates){
-        switch(gameState){
+    informGameState(gameMessage: GameStateNotificationMessage){
+        switch(gameMessage.gameState){                
             case GameStates.Deploying:
                 this.initializeGame();
                 this.state = GameStates.Deploying;
             break;
             case GameStates.Fighting:
-
+                this.playersTurn = gameMessage.currentTurn.id == this.playerId;
                 this.state = GameStates.Fighting;
             break;
+            case GameStates.Finished:
+                this.state = GameStates.Forming;
+                this.active = false;
+                this.gameId = null;
+                alert("Game Ended")
+            break;
         }
+    }
+
+    informShotResult(hit: boolean){
+        this.boards[Player.enemy].setTile(this.lastShot.x, this.lastShot.y, hit ? BoardTileTypes.Hit : BoardTileTypes.Miss);
+    }
+
+    informOpponentAction(x: number, y: number){
+        this.boards[Player.player].shootTile(x,y);
+        this.playersTurn = true;
     }
 
     addShip(x: number, y: number, orientation: "down" | "right"){
@@ -67,5 +94,18 @@ export class Game{
             .setShips(this.ships);
             this.webSocket.send(message.toJsonString());
         }
+    }
+
+    shoot(x: number, y:number){
+        if(this.playersTurn == false) throw new Error("Tried to shoot during opponent's turn");
+        this.playersTurn = false;
+        this.lastShot.x = x;
+        this.lastShot.y = y;
+        
+        const message = new SendGameActionMessageBuilder()
+        .setX(x)
+        .setY(y)
+        
+        this.webSocket.send(message.toJsonString());
     }
 }
