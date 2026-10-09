@@ -1,8 +1,10 @@
+import { GameStates } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import GameBoard, { BoardTileTypes } from "./Board";
-import { Player } from "./Game";
+import { Game, Player } from "./Game";
 
 export default class Camera{
     canvas: HTMLCanvasElement;
+    game: Game;
     colors: {
         [T in BoardTileTypes]: string
     } = {
@@ -30,7 +32,9 @@ export default class Camera{
         y: null
     }
 
-        intervalId: number;
+    shipPlaceModeOrientation: "down" | "right" = "down";
+
+    intervalId: number;
 
     #targetFps: number = 60;
 
@@ -46,11 +50,13 @@ export default class Camera{
         this.changeTargetFps(target);
     }
 
-    constructor(canvas: HTMLCanvasElement){
+    constructor(canvas: HTMLCanvasElement, game: Game){
         this.canvas = canvas;
+        this.game = game;
 
         this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
         this.canvas.addEventListener("mousedown", this.handleMouseClick.bind(this));
+        document.addEventListener("keydown", this.handleKeyPress.bind(this));
         this.start();
     }
 
@@ -75,13 +81,19 @@ export default class Camera{
     render(){
         this.clear();
         this.drawBackground();
+
+        if(this.game.state == GameStates.Forming) return;
         this.drawBoards();
         this.drawBoardHighlight();
     }
 
     handleMouseClick(mouseEvent: MouseEvent){
-        console.log(this.selectedBoard);
-        console.log(this.selectedBoardCoordinates);
+        switch(this.game.state){
+            case GameStates.Deploying:
+                if (this.selectedBoard == Player.enemy) return;
+                this.game.addShip(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y, this.shipPlaceModeOrientation)
+            break;
+        }
     }
 
     handleMouseMove(mouseEvent: MouseEvent){
@@ -118,6 +130,17 @@ export default class Camera{
         }
     }
 
+    handleKeyPress(keyboardEvent: KeyboardEvent){
+        switch(keyboardEvent.key){
+            case "Tab":
+                keyboardEvent.preventDefault();
+                if (this.shipPlaceModeOrientation == "right"){
+                    this.shipPlaceModeOrientation = "down";
+                } else this.shipPlaceModeOrientation = "right";
+                break;
+        }
+    }
+
     drawBackground(){
         const context = this.canvas.getContext("2d");
         context.fillStyle = this.backgroundColor;
@@ -150,9 +173,8 @@ export default class Camera{
     }
 
     drawBoards(){
-        const board = new GameBoard();
-        this.drawBoard(board, this.boardMargin, this.boardMargin, this.boardSize, "Player's Board");
-        this.drawBoard(board, this.canvas.width - this.boardMargin - this.boardSize, this.boardMargin, this.boardSize, "Opponent's Board");
+        this.drawBoard(this.game.boards[Player.player], this.boardMargin, this.boardMargin, this.boardSize, "Player's Board");
+        this.drawBoard(this.game.boards[Player.enemy], this.canvas.width - this.boardMargin - this.boardSize, this.boardMargin, this.boardSize, "Opponent's Board");
     }
 
     drawBoardHighlight(){
@@ -164,9 +186,22 @@ export default class Camera{
 
         const squareSize = this.boardSize/8;
 
+        const highlightedSquareX = xStart + squareSize * this.selectedBoardCoordinates.x;
+        const highlightedSquareY = yStart + squareSize * this.selectedBoardCoordinates.y;
         const context = this.canvas.getContext("2d");
         context.fillStyle = this.highlightColor;
-        context.fillRect(xStart + squareSize * this.selectedBoardCoordinates.x, yStart + squareSize * this.selectedBoardCoordinates.y,squareSize,squareSize)
+        context.fillRect(highlightedSquareX, highlightedSquareY ,squareSize,squareSize)
+        if(this.game.state == GameStates.Deploying && this.selectedBoard == Player.player){
+            if(this.shipPlaceModeOrientation == "down"){
+                for(let i = 1; i <= 3; i++){
+                    context.fillRect(highlightedSquareX, highlightedSquareY + i *squareSize ,squareSize,squareSize)
+                }
+            } else {
+                for(let i = 1; i <= 3; i++){
+                    context.fillRect(highlightedSquareX + i * squareSize, highlightedSquareY,squareSize,squareSize)
+                }
+            }
+        }
     }
 
     clear(){

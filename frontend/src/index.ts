@@ -2,6 +2,7 @@ import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessag
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
 import Camera from "./Camera";
 import GameBoard from "./Board";
+import { Game } from "./Game";
 
 //TODO: config
 const PORT = 17040;
@@ -10,7 +11,7 @@ const PORT = 17040;
 const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
 
-const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement);
+const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, new Game(webSocket));
 
 //TODO: move none setup logic outside of index.ts
 function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {

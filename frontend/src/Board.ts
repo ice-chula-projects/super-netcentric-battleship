@@ -26,4 +26,32 @@ export default class GameBoard{
 
         this.board[x][y] = tile == BoardTileTypes.Ship ? BoardTileTypes.Hit : BoardTileTypes.Miss;
     }
+
+    placeShip(x: number, y: number, orientation: "right" | "down"): boolean{
+        switch(orientation){
+            case "down":
+                if (y < 0 || y > 4) return false;
+                if (x < 0 || x > 7) return false;
+                for(let i = 0; i < 4; i++){
+                    if(this.board[x][y+i] == BoardTileTypes.Ship) return false;
+                }
+
+                for(let i = 0; i < 4; i++){
+                    this.board[x][y+i] = BoardTileTypes.Ship;
+                }
+                break;
+
+            case "right":
+                if (x < 0 || x > 4) return false;
+                if (y < 0 || y > 7) return false;
+                for(let i = 0; i < 4; i++){
+                    if(this.board[x+i][y] == BoardTileTypes.Ship) return false;
+                }
+                for(let i = 0; i < 4; i++){
+                    this.board[x+i][y] = BoardTileTypes.Ship;
+                }
+                break;
+        }
+        return true;
+    }
 }
