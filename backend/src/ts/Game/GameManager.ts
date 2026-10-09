@@ -26,6 +26,12 @@ export default class GameManager{
 
         const notificationMessage = new GameStateNotificationMessageBuilder()
             .setGameId(gameId)
+            .setPlayers(Object.values(game.players).map((user) => {
+                return {
+                    username: user?.username || "",
+                    id: user?.id || ""
+                }
+            }))
             .setGameState(GameStates.Finished);
     
         const messageJsonString = notificationMessage.toJsonString();
@@ -64,6 +70,12 @@ export default class GameManager{
 
         const message = new GameStateNotificationMessageBuilder()
             .setGameId(gameId)
+            .setPlayers(Object.values(game.players).map((user) => {
+                return {
+                    username: user?.username || "",
+                    id: user?.id || ""
+                }
+            }))
             .setChatChannelId(game.chatChannelId)
             .setGameState(GameStates.Forming);
 
@@ -90,6 +102,12 @@ export default class GameManager{
         const currentPlayerUser = game.currentPlayerUser;
         const message = new GameStateNotificationMessageBuilder()
             .setGameId(gameId)
+            .setPlayers(Object.values(game.players).map((user) => {
+                return {
+                    username: user?.username || "",
+                    id: user?.id || ""
+                }
+            }))
             .setChatChannelId(game.chatChannelId)
             .setGameState(GameStates.Fighting)
         if(currentPlayerUser != null) message.setCurrentTurn({username: currentPlayerUser.username, id: currentPlayerUser.id});

@@ -7,6 +7,7 @@ export interface GameStateNotificationMessage extends GameMessage{
     chatChannelId: string | null;
     gameState: GameStates
     currentTurn: {username: string, id: string} | null;
+    players:{username:string, id: string}[]
 }
 
 //TODO: somehow reuse this with the one defined in the backend so that we don't have a duplicate
@@ -24,6 +25,7 @@ export class GameStateNotificationMessageBuilder implements GameStateNotificatio
     gameId: string | null = null;
     chatChannelId: string | null = null;
     gameState: GameStates = GameStates.Forming;
+    players: { username: string; id: string; }[] = [];
 
     setCurrentTurn(currentTurn: typeof this.currentTurn){
         this.currentTurn = currentTurn;
@@ -42,6 +44,11 @@ export class GameStateNotificationMessageBuilder implements GameStateNotificatio
 
     setGameState(gameState: GameStates){
         this.gameState = gameState;
+        return this;
+    }
+
+    setPlayers(players: typeof this.players){
+        this.players = players;
         return this;
     }
 

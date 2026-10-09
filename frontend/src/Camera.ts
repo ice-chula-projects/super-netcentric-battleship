@@ -86,6 +86,7 @@ export default class Camera{
         this.drawBoards();
         this.drawBoardHighlight();
         this.drawTurnText();
+        this.drawGameId();
     }
 
     handleMouseClick(mouseEvent: MouseEvent){
@@ -218,6 +219,18 @@ export default class Camera{
         context.font = `${this.textSize}px Arial`
         context.fillText(turnText, 0, this.canvas.height - this.textSize);
     }
+
+    drawGameId(){
+        if(this.game.gameId == null) return;
+        
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.fillText("game id: " + this.game.gameId, 0, this.textSize);
+        if(this.game.opponentName != null) context.fillText("opponent name: " + this.game.opponentName, 0, 2 *this.textSize);
+    }
+
+    
 
     clear(){
         const context = this.canvas.getContext("2d");

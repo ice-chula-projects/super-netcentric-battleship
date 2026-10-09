@@ -12,6 +12,7 @@ export class Game{
     webSocket: WebSocket;
     state: GameStates = GameStates.Forming;
     playerId: string = null;
+    opponentName: string;
     gameId: string = null;
     boards:{
         [Player.player]: GameBoard,
@@ -32,6 +33,7 @@ export class Game{
     }
 
     joinGame(gameId:string){
+        this.gameId = gameId;
         const message = new JoinGameMessageBuilder()
         .setGameId(gameId);
 
@@ -64,6 +66,8 @@ export class Game{
                 alert("Game Ended")
             break;
         }
+
+        this.opponentName = gameMessage.players.filter(x=>x.id != this.playerId)[0].username;
     }
 
     informShotResult(hit: boolean){
