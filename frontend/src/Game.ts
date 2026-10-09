@@ -102,6 +102,10 @@ export class Game{
 
     shoot(x: number, y:number){
         if(this.playersTurn == false) throw new Error("Tried to shoot during opponent's turn");
+        if(this.boards[Player.enemy].board[x][y] != BoardTileTypes.Empty) {
+            alert("cannot shoot at duplicate location");
+            return;
+        }
         this.playersTurn = false;
         this.lastShot.x = x;
         this.lastShot.y = y;
