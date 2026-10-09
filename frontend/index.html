@@ -11,6 +11,10 @@
             <p style="font-weight: bold;" id="current-username"></p>
             <input type="text" id="new-username">
             <button id="change-username-button">Change Username</button>
+            <p style="font-weight: bold;">current ship orientation: </p>
+            <p id="ship-rotation">down</p>
+            <button id="change-rotation">change rotation</button>
+
         </header>
         <div style="display: flex; gap: 2rem">
             <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
@@ -19,6 +23,8 @@
                 <ul id="global-chat"></ul>
                 <input type="text" id="current-message">
                 <button id="send-to-global-chat-button">Send</button>
+            </div>
+            <div>
             </div>
         </div>
         <div>

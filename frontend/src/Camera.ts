@@ -141,11 +141,15 @@ export default class Camera{
         switch(keyboardEvent.key){
             case "Tab":
                 keyboardEvent.preventDefault();
-                if (this.shipPlaceModeOrientation == "right"){
-                    this.shipPlaceModeOrientation = "down";
-                } else this.shipPlaceModeOrientation = "right";
+                this.togglePlaceModeOrientation();
                 break;
         }
+    }
+
+    togglePlaceModeOrientation(){
+        if (this.shipPlaceModeOrientation == "right"){
+            this.shipPlaceModeOrientation = "down";
+        } else this.shipPlaceModeOrientation = "right";
     }
 
     drawBackground(){

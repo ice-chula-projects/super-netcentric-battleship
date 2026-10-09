@@ -101,3 +101,17 @@ document.querySelector("#join-game").addEventListener("click", () => {
   const gameId = (document.querySelector("#current-game-id") as HTMLInputElement).value;
   game.joinGame(gameId);
 })
+
+document.querySelector("#change-rotation").addEventListener("click", () => {
+  camera.togglePlaceModeOrientation();
+  (document.querySelector("#ship-rotation")).innerHTML = camera.shipPlaceModeOrientation;
+})
+
+document.addEventListener("keydown", (keyboardEvent: KeyboardEvent) =>{
+          switch(keyboardEvent.key){
+            case "Tab":
+                keyboardEvent.preventDefault();
+                  (document.querySelector("#ship-rotation")).innerHTML = camera.shipPlaceModeOrientation;
+                break;
+        }
+});
