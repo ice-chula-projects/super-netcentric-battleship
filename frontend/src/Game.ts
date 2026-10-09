@@ -33,6 +33,10 @@ export class Game{
     }
 
     joinGame(gameId:string){
+        if(this.gameId != null){
+            alert("You are already in game "+ gameId);
+            return;
+        }
         this.gameId = gameId;
         const message = new JoinGameMessageBuilder()
         .setGameId(gameId);
