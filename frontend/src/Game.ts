@@ -63,6 +63,7 @@ export class Game{
                 this.state = GameStates.Forming;
                 this.active = false;
                 this.gameId = null;
+                this.ships = [];
                 alert("Game Ended")
             break;
         }
