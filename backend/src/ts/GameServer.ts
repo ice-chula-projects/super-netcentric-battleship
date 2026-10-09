@@ -165,7 +165,13 @@ export default class GameServer {
         if(!this.gameManager.gameExists(joinGameMessage.gameId)) this.gameManager.createGame(gameId);
         if(this.gameManager.gameIsFull(gameId)) return new ServerErrorMessageBuilder().setError("requested gameId is full");
 
-        this.gameManager.addPlayerUser(gameId, user);
+        
+        try{
+            this.gameManager.addPlayerUser(gameId, user);
+        } catch (error){
+            console.log(error);
+            return new ServerErrorMessageBuilder().setError("internal server error");
+        }
 
         return null;
     }
