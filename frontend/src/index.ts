@@ -81,29 +81,32 @@ window.webSocket = webSocket;
 //@ts-ignore
 window.camera = camera;
 
-document.querySelector("#send-to-global-chat-button").addEventListener("click", () => {
+document.querySelector("#send-to-global-chat-button")?.addEventListener("click", () => {
   const messageText = (document.querySelector("#current-message") as HTMLInputElement).value;
   (document.querySelector("#current-message") as HTMLInputElement).value = ""
-  document.querySelector("#global-chat").appendChild(messageComponent(currentUser, new Date(), messageText))
+  document.querySelector("#global-chat")?.appendChild(messageComponent(currentUser, new Date(), messageText))
   if (messageText.trim().length === 0) {
     return;
   }
   webSocket.send(new ClientMessage.SendToChatMessageBuilder().setChannelId("global").setMessage(messageText).toJsonString())
 })
 
-document.querySelector("#change-username-button").addEventListener("click", (event) => {
+document.querySelector("#change-username-button")?.addEventListener("click", (event) => {
   event.preventDefault()
-  const popoverElement: HTMLElement = document.querySelector("#username-form")
-  popoverElement.hidePopover()
+  const popoverElement: HTMLElement | null = document.querySelector("#username-form")
+  popoverElement?.hidePopover()
   const username = (document.querySelector("#new-username") as HTMLInputElement).value
+  if (username === currentUser.username) {
+    return
+  }
   webSocket.send(new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString())
 })
 
-document.querySelector("#refresh-active-users-button").addEventListener("click", () => {
+document.querySelector("#refresh-active-users-button")?.addEventListener("click", () => {
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
 
-document.querySelector("#join-game").addEventListener("click", () => {
+document.querySelector("#join-game")?.addEventListener("click", () => {
   const gameId = (document.querySelector("#current-game-id") as HTMLInputElement).value;
   game.joinGame(gameId);
 })
