@@ -80,7 +80,7 @@ export default class Camera{
 
     render(){
         this.clear();
-        this.drawBackground();
+        // this.drawBackground();
 
         if(this.game.state == GameStates.Forming) return;
         this.drawBoards();
@@ -163,9 +163,12 @@ export default class Camera{
         context.strokeStyle = this.strokeColor
         for(let i = 0; i < 8; i++){
             for(let j = 0; j < 8; j++){
-                const color = this.colors[board.board[i][j]]
-                context.fillStyle = color;
-                context.fillRect(currentX, currentY, deltaX, deltaY);
+                const tiles = board.board[i][j]
+                    if (tiles != BoardTileTypes.Empty) {
+                    context.fillStyle = this.colors[tiles];
+                    context.fillRect(currentX, currentY, deltaX, deltaY);
+                }
+                
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
                 currentY += deltaY;
             }
