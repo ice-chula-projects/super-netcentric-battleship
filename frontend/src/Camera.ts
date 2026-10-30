@@ -14,7 +14,7 @@ export default class Camera{
         [BoardTileTypes.Ship]: "darkgrey",
     }
     highlightColor:string = "#ffffff55"
-
+    backgroundImage: HTMLImageElement;
     strokeColor: string = "black";
     backgroundColor: string = "#5093d4";
     textColor: string = "white";
@@ -54,6 +54,12 @@ export default class Camera{
         this.canvas = canvas;
         this.game = game;
 
+        this.backgroundImage = new Image();
+        this.backgroundImage.onload = () => console.log("background loaded");
+        this.backgroundImage.onerror = () => console.error("background failed to load:", this.backgroundImage.src);
+        this.backgroundImage.src = "/images/background.png";
+
+
         this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
         this.canvas.addEventListener("mousedown", this.handleMouseClick.bind(this));
         document.addEventListener("keydown", this.handleKeyPress.bind(this));
@@ -80,7 +86,7 @@ export default class Camera{
 
     render(){
         this.clear();
-        // this.drawBackground();
+        this.drawBackground();
 
         if(this.game.state == GameStates.Forming) return;
         this.drawBoards();
@@ -149,8 +155,13 @@ export default class Camera{
 
     drawBackground(){
         const context = this.canvas.getContext("2d");
-        context.fillStyle = this.backgroundColor;
-        context.fillRect(0,0,this.canvas.width, this.canvas.height);
+
+        if (this.backgroundImage.complete && this.backgroundImage.naturalWidth > 0) {
+            context.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+        } else {
+            context.fillStyle = this.backgroundColor;
+            context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 
     drawBoard(board: GameBoard, x: number, y: number, size: number, label: string){
@@ -168,7 +179,7 @@ export default class Camera{
                     context.fillStyle = this.colors[tiles];
                     context.fillRect(currentX, currentY, deltaX, deltaY);
                 }
-                
+
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
                 currentY += deltaY;
             }
