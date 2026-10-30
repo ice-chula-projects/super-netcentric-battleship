@@ -23,12 +23,13 @@ export default class Board{
         //check for collisions
         for(const shipTile of ship.shipTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(shipTile.relativeCoordinates, coordinates, ship.orientation);
+            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) throw new ShipTileOutOfBoundsError();
             if(this.board[absoluteCoordinate.x][absoluteCoordinate.y].hasShip) throw new DuplicateShipTileLocationError();
         }
 
         for(const shipTile of ship.shipTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(shipTile.relativeCoordinates, coordinates, ship.orientation);
-            shipTile.absoluteCoordinates = absoluteCoordinate;
+            shipTile.setAbsoluteCoordinates(absoluteCoordinate);
             this.board[absoluteCoordinate.x][absoluteCoordinate.y].shipTile = shipTile;
         }
     }
@@ -71,3 +72,4 @@ export default class Board{
 }
 
 export class DuplicateShipTileLocationError extends Error{}
+export class ShipTileOutOfBoundsError extends Error{}
