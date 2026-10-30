@@ -1,5 +1,51 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+*:not(dialog) {
+  margin: 0;
+}
+
+[popover] {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+
+  width: fit-content;
+  height: fit-content;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+:root {
+    --color-glow: #DBFFF4;
+}
+
+h1 {
+    font-size: 1.5rem;
+    letter-spacing: 3%;
+}
+
 body {
-    background-image: linear-gradient(#655561, #9A89A9);
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: linear-gradient(to bottom, #655561 0%, #9A89A9 100%);
+}
+
+header {
+    padding: 1rem 2rem;
+    position: sticky;
+    align-items: flex-end;
+    height: auto;
+    background-image: linear-gradient(120deg, var(--color-glow), #BACCD0);
+}
+
+.flex-space {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .space-grotesk-bold {
@@ -12,7 +58,7 @@ body {
 .space-grotesk-medium {
   font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 550;
+  font-weight: 600;
   font-style: normal;
 }
 

@@ -91,7 +91,10 @@ document.querySelector("#send-to-global-chat-button").addEventListener("click", 
   webSocket.send(new ClientMessage.SendToChatMessageBuilder().setChannelId("global").setMessage(messageText).toJsonString())
 })
 
-document.querySelector("#change-username-button").addEventListener("click", () => {
+document.querySelector("#change-username-button").addEventListener("click", (event) => {
+  event.preventDefault()
+  const popoverElement: HTMLElement = document.querySelector("#username-form")
+  popoverElement.hidePopover()
   const username = (document.querySelector("#new-username") as HTMLInputElement).value
   webSocket.send(new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString())
 })

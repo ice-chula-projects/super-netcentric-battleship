@@ -11,10 +11,20 @@
   </head>
   <body>
     <div id="app">
-        <header>
-            <p style="font-weight: bold;" id="current-username"></p>
-            <input type="text" id="new-username">
-            <button id="change-username-button">Change Username</button>
+        <header class="flex-space">
+            <h1 class="space-mono-bold">
+                Ship Ship Hooray!
+            </h1>
+            <div>
+                <div>
+                    <button popovertarget="username-form" id="current-username" class="space-grotesk-medium"></button>
+                    <form id="username-form" popover>
+                        <label for="new-username">Enter new username:</label><br>
+                        <input type="text" id="new-username" placeholder="Ex. Alice">
+                        <button type="submit" id="change-username-button">Change Username</button>
+                    </form>
+                </div>
+            </div>
         </header>
         <div style="display: flex; gap: 2rem">
             <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
