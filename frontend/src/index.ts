@@ -35,7 +35,7 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
   console.log(serverMessage);
   switch (serverMessage.type) {
     case ServerMessage.ServerMessageType.ChatMessageNotification:
-      document.querySelector("#global-chat").appendChild(messageComponent(serverMessage.author, new Date(serverMessage.timestamp), serverMessage.message))
+      document.querySelector("#global-chat")?.appendChild(messageComponent(serverMessage.author, new Date(serverMessage.timestamp), serverMessage.message))
       break;
     case ServerMessage.ServerMessageType.UserInfo:
       currentUser = serverMessage.userInfo
@@ -96,7 +96,7 @@ document.querySelector("#change-username-button")?.addEventListener("click", (ev
   const popoverElement: HTMLElement | null = document.querySelector("#username-form")
   popoverElement?.hidePopover()
   const username = (document.querySelector("#new-username") as HTMLInputElement).value
-  if (username === currentUser.username) {
+  if (username === currentUser.username || username.trim().length === 0) {
     return
   }
   webSocket.send(new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString())
@@ -106,7 +106,10 @@ document.querySelector("#refresh-active-users-button")?.addEventListener("click"
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
 
-document.querySelector("#join-game")?.addEventListener("click", () => {
+document.querySelector("#join-game")?.addEventListener("click", (event) => {
+  event.preventDefault()
+  const popoverElement: HTMLElement | null = document.querySelector("#lobby-form")
+  popoverElement?.hidePopover()
   const gameId = (document.querySelector("#current-game-id") as HTMLInputElement).value;
   game.joinGame(gameId);
 })

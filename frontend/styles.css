@@ -10,6 +10,9 @@
 :root {
     --color-satellite-glow: #DBFFF4;
     --color-satellite-base: #BACCD0;
+    --color-satellite-foreground: #F3FFFB;
+    --color-satellite-foreground-focus: #CCE7DE;
+    --color-satellite-foreground-border: #89A4A4;
 }
 
 [popover] {
@@ -37,9 +40,22 @@ button:hover {
     background-color: var(--color-satellite-base);
 }
 
+button.secondary {
+    background-color: var(--color-satellite-foreground);
+    border: 2px solid var(--color-satellite-foreground-border);
+    transition: 0.2s;
+}
+
+button.secondary:hover {
+    background-color: var(--color-satellite-foreground-focus);
+    border-color: var(--color-satellite-glow);
+    font-weight: bold;
+}
+
 h1 {
     font-size: 1.5rem;
     letter-spacing: 3%;
+    color: darkblue;
 }
 
 body {
@@ -55,12 +71,20 @@ header {
     align-items: flex-end;
     height: auto;
     background-image: linear-gradient(120deg, var(--color-satellite-glow), var(--color-satellite-base));
+    border-radius: 0 0 8px 8px;
+    border-bottom: 2px solid var(--color-satellite-glow);
+    box-shadow: 0 5px 4px 6px #00000025;
 }
 
 .flex-space {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+header .right {
+    display: flex;
+    gap: 1rem;
 }
 
 .space-grotesk-bold {
@@ -73,7 +97,7 @@ header {
 .space-grotesk-medium {
   font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 600;
+  font-weight: 500;
   font-style: normal;
 }
 
