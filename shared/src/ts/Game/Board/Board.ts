@@ -1,5 +1,6 @@
 import Coordinate from "../Coordinate.js";
-import Ship, { ShipOrientation } from "../Ship/Ship.js";
+import { Orientation } from "../Orientation.js";
+import Ship from "../Ship/Ship.js";
 import BoardTile from "./BoardTile.js";
 
 export default class Board{
@@ -40,25 +41,25 @@ export default class Board{
      * @param centerAbsoluteCoordinate the absolute coordinates of relative coordinate (0,0) 
      * @param orientation the orientation
      */
-    relativeCoordinateToAbsoluteCoordinate(relativeCoordinate: Coordinate, centerAbsoluteCoordinate: Coordinate, orientation: ShipOrientation = ShipOrientation.Right): Coordinate{
+    relativeCoordinateToAbsoluteCoordinate(relativeCoordinate: Coordinate, centerAbsoluteCoordinate: Coordinate, orientation: Orientation = Orientation.Right): Coordinate{
         // translate ship coordinates into absolute coordinates by translating the ship's right and down directions into absolute directions
         // absolute coordinates use y down and x right
         let rightDirection: Coordinate;
         let downDirection: Coordinate;
         switch(orientation){
-            case ShipOrientation.Right:
+            case Orientation.Right:
                 rightDirection = new Coordinate(1,0);
                 downDirection = new Coordinate(0,1);
             break
-            case ShipOrientation.Down:
+            case Orientation.Down:
                 rightDirection = new Coordinate(0,1);
                 downDirection = new Coordinate(-1,0);
             break
-            case ShipOrientation.Left:
+            case Orientation.Left:
                 rightDirection = new Coordinate(-1,0);
                 downDirection = new Coordinate(0,-1);
             break
-            case ShipOrientation.Up:
+            case Orientation.Up:
                 rightDirection = new Coordinate(0,-1);
                 downDirection = new Coordinate(1,0);
             break

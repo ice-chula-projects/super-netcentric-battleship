@@ -1,20 +1,14 @@
+import { Orientation } from "../Orientation.js";
 import ShipTile from "./ShipTile.js";
-
-export enum ShipOrientation{
-    Right = "Right",
-    Down = "Down",
-    Left = "Left",
-    Up = "Up"
-}
 
 export default class Ship{
     shipTiles: ShipTile[];
-    orientation: ShipOrientation = ShipOrientation.Right;
+    orientation: Orientation = Orientation.Right;
     constructor(shipTiles: ShipTile[]){
         this.shipTiles = shipTiles;
     }
 
-    setOrientation(orientation: ShipOrientation): void{
+    setOrientation(orientation: Orientation): void{
         this.orientation = orientation;
     }
 }
