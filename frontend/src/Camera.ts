@@ -8,20 +8,20 @@ export default class Camera{
     colors: {
         [T in BoardTileTypes]: string
     } = {
-        [BoardTileTypes.Empty]: "#5093d4",
+        [BoardTileTypes.Empty]: "#000000",
         [BoardTileTypes.Hit]: "red",
         [BoardTileTypes.Miss]: "lightgrey",
         [BoardTileTypes.Ship]: "darkgrey",
     }
     highlightColor:string = "#ffffff55"
     backgroundImage: HTMLImageElement;
-    strokeColor: string = "black";
-    backgroundColor: string = "#5093d4";
+    strokeColor: string = "white";
+    backgroundColor: string = "#000000";
     textColor: string = "white";
     textSize: number = 12;
 
-    boardSize: number = 235;
-    boardMargin: number = 10;
+    boardSize: number = 300;
+    boardMargin: number = 30;
 
     selectedBoard: Player | null = null;
     selectedBoardCoordinates: {

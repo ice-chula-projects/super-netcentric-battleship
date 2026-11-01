@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>super netcentric battleship</title>
   </head>
-  <body style="background-color: aliceblue;">
+  <body style="background-color: rgb(147, 130, 160); margin: 0;">
     <div id="app">
-        <header>
-            <p style="font-weight: bold;" id="current-username"></p>
-            <input type="text" id="new-username">
-            <button id="change-username-button">Change Username</button>
+        <header style="background-color: #BACCD0ff; padding: 0rem 2rem; display: flex; align-items: center;">
+            <h1 style="margin: 0; font-size: 1.5rem;">Ship Ship Hooray!</h1>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 0.75rem;">
+                <p style="font-weight: bold;" id="current-username"></p>
+                <input type="text" id="new-username">
+                <button id="change-username-button">Change Username</button>
+            </div>
         </header>
         <div style="display: flex; gap: 2rem">
-            <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
-            <div>
+            <canvas width="700" height="500" style="border: 1px rgb(0, 0, 0) solid; width: 1000px; height: 500px; margin:3px;" id="canvas"></canvas>
+            <div style="flex: 1; background-color: #BACCD0ff; color: white; padding: 1rem 2rem;">
                 <h1>Global Chat</h1>
                 <ul id="global-chat"></ul>
                 <input type="text" id="current-message">
