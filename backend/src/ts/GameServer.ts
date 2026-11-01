@@ -47,8 +47,9 @@ export default class GameServer {
             return;
         }
 
-        let response: ServerMessage | null;
-        switch(message.type){
+        let response: ServerMessage | null = null;
+        try{
+            switch(message.type){
             case ClientMessageType.Ping:
                 response = this.handlePingMessage(message);
             break;
@@ -69,6 +70,12 @@ export default class GameServer {
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
+        }
+
+        } catch(error){
+            if (error instanceof Error){
+                response = new ServerErrorMessageBuilder().setError(error.message);
+            }
         }
         
         if (response != null) websocket.send(response.toJsonString());
