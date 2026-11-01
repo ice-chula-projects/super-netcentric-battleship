@@ -15,7 +15,7 @@ export type AuthUser = {
   password: AuthPassword
 }
 
-export class AuthManager {
+export default class AuthManager {
   private iterations: number
   private keyLength: number
   private algorithm: string
