@@ -10,6 +10,10 @@ export default class ShipTile {
     
     ship: Ship | null = null
 
+    get alive(): boolean{
+        return this.health > 0;
+    }
+
     constructor(relativeCoordinates: Coordinate, maxHealth: number = 1){
         this.relativeCoordinates = relativeCoordinates;
         this.maxHealth = maxHealth;
@@ -22,5 +26,9 @@ export default class ShipTile {
 
     setShip(ship:Ship){
         this.ship = ship;
+    }
+
+    notifyHit(damage: number){
+        this.health -= damage;
     }
 }

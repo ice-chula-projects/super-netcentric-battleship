@@ -5,6 +5,7 @@ import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Camera from "./Camera";
 import GameBoard, { BoardTileTypes } from "./Board";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
+import AttackTile from "@super-netcentric-battleship/shared/Game/Ship/AttackTile.js";
 
 const shipTiles = [
     new ShipTile(new Coordinate(0,0)),
@@ -16,19 +17,23 @@ const shipTiles = [
     new ShipTile(new Coordinate(3,-1)),
 ]
 
-const ship = new Ship(shipTiles);
+const attackTiles = [
+    new AttackTile(new Coordinate(0,0), 5)
+]
+
+const ship = new Ship(shipTiles, attackTiles);
 ship.orientation = Orientation.Down
 const board = new Board(8);
 board.placeShip(ship, new Coordinate(0,3));
 ship.orientation = Orientation.Right
 board.placeShip(ship, new Coordinate(4,4));
-
+board.fire(attackTiles, new Coordinate(0, 3), Orientation.Right);
 
 //render visualization of board
 const gameBoard = new GameBoard()
 for(let x = 0; x < 8; x++){
     for(let y = 0; y < 8; y++){
-        const type = board.board[x][y].hasShip ? BoardTileTypes.Ship : BoardTileTypes.Empty;
+        const type = board.board[x][y].hasShip ? (board.board[x][y].shipTile.health < 1 ? BoardTileTypes.Hit : BoardTileTypes.Ship) : BoardTileTypes.Empty;
         gameBoard.setTile(x, y, type)
     }
 }
