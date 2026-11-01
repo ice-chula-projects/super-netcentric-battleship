@@ -6,6 +6,9 @@ export default class Ship{
     orientation: Orientation = Orientation.Right;
     constructor(shipTiles: ShipTile[]){
         this.shipTiles = shipTiles;
+        for(const shipTile of shipTiles){
+            shipTile.setShip(this);
+        }
     }
 
     setOrientation(orientation: Orientation): void{

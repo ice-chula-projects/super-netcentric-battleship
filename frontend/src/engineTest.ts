@@ -1,9 +1,10 @@
 import Board from "@super-netcentric-battleship/shared/Game/Board/Board.js";
-import Ship, { ShipOrientation } from "@super-netcentric-battleship/shared/Game/Ship/Ship.js";
+import Ship from "@super-netcentric-battleship/shared/Game/Ship/Ship.js";
 import ShipTile from "@super-netcentric-battleship/shared/Game/Ship/ShipTile.js";
 import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Camera from "./Camera";
 import GameBoard, { BoardTileTypes } from "./Board";
+import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 
 const shipTiles = [
     new ShipTile(new Coordinate(0,0)),
@@ -16,10 +17,10 @@ const shipTiles = [
 ]
 
 const ship = new Ship(shipTiles);
-ship.orientation = ShipOrientation.Down
+ship.orientation = Orientation.Down
 const board = new Board(8);
 board.placeShip(ship, new Coordinate(0,3));
-ship.orientation = ShipOrientation.Right
+ship.orientation = Orientation.Right
 board.placeShip(ship, new Coordinate(4,4));
 
 
