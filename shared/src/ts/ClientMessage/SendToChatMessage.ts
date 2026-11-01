@@ -2,16 +2,16 @@ import GameMessage from "../GameMessage.js";
 import { ClientMessageType } from "./ClientMessageType.js";
 
 export interface SendToChatMessage extends GameMessage{
-    readonly type: ClientMessageType.SendToChatMessage;
-    channelId: string;
-    message: string;
+    readonly type: ClientMessageType.SendToChat;
+    channelId: string | null;
+    message: string | null;
 }
 
 export class SendToChatMessageBuilder implements SendToChatMessage{
-    readonly type = ClientMessageType.SendToChatMessage;
+    readonly type = ClientMessageType.SendToChat;
     readonly timestamp: number = Date.now();
-    channelId: string = "";
-    message: string = "";
+    channelId: string | null = null;
+    message: string | null= null;
 
     setChannelId(channelId: string){
         this.channelId = channelId;

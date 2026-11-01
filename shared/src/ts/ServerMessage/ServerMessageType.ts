@@ -2,6 +2,9 @@ export enum ServerMessageType{
     Pong = "pong",
     UserInfo = "userInfo",   
     Error = "error",
-    ActiveUserInfo = "activeUserInfo",
-    ChatMessageNotification = "chatMessageNotification"
+    ActiveUsersInfo = "activeUsersInfo",
+    ChatMessageNotification = "chatMessageNotification",
+    GameStateNotification = "gameStateNotification",
+    GameActionResultNotificaction = "gameActionResultNotification",
+    OpponentGameActionNotification = "opponentGameActionNotification"
 }

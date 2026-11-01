@@ -6,11 +6,16 @@ export default class User{
     readonly socket: WebSocket;
     readonly id: string;
     readonly subscribedChatChannelIds: string[] = [];
+    currentGameId: string | null = null;
     active: boolean = true;
     username: string;
 
     setUsername(username:string){
         this.username = username;
+    }
+
+    setCurrentGameId(currentGameId: string | null){
+        this.currentGameId = currentGameId;
     }
 
     //TODO: random username system

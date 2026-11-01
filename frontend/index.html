@@ -10,8 +10,35 @@
     <link rel="stylesheet" href="styles.css">
     <title>Ship Ship Hooray!</title>
   </head>
-  <body>
-    <div id="app"></div>
+  <body style="background-color: aliceblue;">
+    <div id="app">
+        <header>
+            <p style="font-weight: bold;" id="current-username"></p>
+            <input type="text" id="new-username">
+            <button id="change-username-button">Change Username</button>
+        </header>
+        <div style="display: flex; gap: 2rem">
+            <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
+            <div>
+                <h1>Global Chat</h1>
+                <ul id="global-chat"></ul>
+                <input type="text" id="current-message">
+                <button id="send-to-global-chat-button">Send</button>
+            </div>
+        </div>
+        <div>
+            <h1>Active Users</h1>
+            <button id="refresh-active-users-button">Refresh</button>
+            <ul id="active-users"></ul>
+        </div>
+        <div>
+            <h3>Join Game</h3>
+                <p>Id:</p>
+                <input type="text" id="current-game-id">
+                <button id="join-game">Join</button>
+
+        </div>
+    </div>
     <script type="module" src="/src/index.ts"></script>
 
     <h1>Ship Ship Hooray!</h1>

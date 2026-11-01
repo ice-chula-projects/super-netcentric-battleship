@@ -2,13 +2,13 @@ import GameMessage from "../GameMessage.js";
 import { ClientMessageType } from "./ClientMessageType.js";
 
 export interface RequestActiveUsersMessage extends GameMessage{
-    readonly type: ClientMessageType.RequestActiveUsersMessage;
+    readonly type: ClientMessageType.RequestActiveUsers;
     page: number,
     usersPerPage: number | null
 }
 
 export class RequestActiveUsersMessageBuilder implements RequestActiveUsersMessage{
-    readonly type = ClientMessageType.RequestActiveUsersMessage;
+    readonly type = ClientMessageType.RequestActiveUsers;
     readonly timestamp: number = Date.now();
     page: number = 0;
     usersPerPage: number | null = null;

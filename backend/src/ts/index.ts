@@ -1,5 +1,5 @@
-import Server from "./Server.js";
+import GameServer from "./GameServer.js";
 
 //todo: configuration
-const PORT = 8080;
-const server = new Server(PORT);
+const PORT = 17040;
+const gameServer = new GameServer(PORT);
