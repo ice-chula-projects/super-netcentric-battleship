@@ -1,5 +1,7 @@
 import { JoinGameMessage } from "./JoinGameMessage.js";
+import { LoginMessage } from "./LoginMessage.js";
 import { PingMessage } from "./PingMessage.js";
+import { RegisterMessage } from "./RegisterMessage.js";
 import { RequestActiveUsersMessage } from "./RequestActiveUsersMessage.js";
 import { RequestUserInfoMessage } from "./RequestUserInfoMessage.js";
 import { SendBoardSetupMessage } from "./SendBoardSetupMessage.js";
@@ -27,4 +29,6 @@ UpdateChatChannelSubscriptionMessage |
 SendToChatMessage |
 SendBoardSetupMessage |
 SendGameActionMessage |
-JoinGameMessage;
+JoinGameMessage |
+LoginMessage |
+RegisterMessage;
