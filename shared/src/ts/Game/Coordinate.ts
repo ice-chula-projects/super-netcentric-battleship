@@ -1,9 +1,13 @@
-export default class Coordinate{
+export default interface Coordinate{
     x: number;
     y: number;
+}
 
-    constructor(x:number, y:number){
-        this.x = x;
-        this.y = y;
+export class CoordinateFactory{
+    static createCoordinate(x: number, y:number) : Coordinate{
+        return {
+            x: x,
+            y: y
+        };
     }
 }

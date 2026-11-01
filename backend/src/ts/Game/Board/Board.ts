@@ -1,8 +1,8 @@
-import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import AttackTile from "../Ship/AttackTile.js";
 import Ship from "../Ship/Ship.js";
 import BoardTile from "./BoardTile.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
+import Coordinate, { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 
 export default class Board{
     readonly size: number;
@@ -67,27 +67,27 @@ export default class Board{
         let downDirection: Coordinate;
         switch(orientation){
             case Orientation.Right:
-                rightDirection = new Coordinate(1,0);
-                downDirection = new Coordinate(0,1);
+                rightDirection = CoordinateFactory.createCoordinate(1,0);
+                downDirection = CoordinateFactory.createCoordinate(0,1);
             break
             case Orientation.Down:
-                rightDirection = new Coordinate(0,1);
-                downDirection = new Coordinate(-1,0);
+                rightDirection = CoordinateFactory.createCoordinate(0,1);
+                downDirection = CoordinateFactory.createCoordinate(-1,0);
             break
             case Orientation.Left:
-                rightDirection = new Coordinate(-1,0);
-                downDirection = new Coordinate(0,-1);
+                rightDirection = CoordinateFactory.createCoordinate(-1,0);
+                downDirection = CoordinateFactory.createCoordinate(0,-1);
             break
             case Orientation.Up:
-                rightDirection = new Coordinate(0,-1);
-                downDirection = new Coordinate(1,0);
+                rightDirection = CoordinateFactory.createCoordinate(0,-1);
+                downDirection = CoordinateFactory.createCoordinate(1,0);
             break
         }
 
         const absoluteX = centerAbsoluteCoordinate.x + (rightDirection.x * relativeCoordinate.x) + (downDirection.x * relativeCoordinate.y);
         const absoluteY = centerAbsoluteCoordinate.y + (rightDirection.y * relativeCoordinate.x) + (downDirection.y * relativeCoordinate.y);
 
-        return new Coordinate(absoluteX, absoluteY);
+        return CoordinateFactory.createCoordinate(absoluteX, absoluteY);
     }
 }
 
