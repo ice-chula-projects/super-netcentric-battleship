@@ -40,14 +40,9 @@ export default class Board{
     }
 
     fire(attackTiles: AttackTile[], coordinate: Coordinate, orientation: Orientation): void{
-        //check for bounds
         for(const attackTile of attackTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(attackTile.relativeCoordinates, coordinate, orientation);
-            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) throw new TileOutOfBoundsError("tried to fire on out of bounds location");
-        }
-
-        for(const attackTile of attackTiles){
-            const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(attackTile.relativeCoordinates, coordinate, orientation);
+            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) continue
             const tile = this.board[absoluteCoordinate.x][absoluteCoordinate.y];
             if(tile.shipTile != null) {
                 tile.shipTile.notifyHit(attackTile.damage);
