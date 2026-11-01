@@ -1,10 +1,10 @@
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import AttackTile from "./AttackTile.js";
 import ShipTile from "./ShipTile.js";
-import { ShipDefinition, ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
+import ShipDefinitions, { ShipDefinition, ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
 
 export default class Ship{
-
+    id: number | null = null;
     type: ShipType;
 
     //hull
@@ -23,6 +23,14 @@ export default class Ship{
 
     setOrientation(orientation: Orientation): void{
         this.orientation = orientation;
+    }
+
+    setId(id: number): void{
+        this.id = id;
+    }
+
+    static fromType(shipType: ShipType): Ship{
+        return new Ship(ShipDefinitions[shipType]);
     }
 
     constructor(shipDefinition: ShipDefinition){

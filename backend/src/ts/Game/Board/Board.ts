@@ -3,13 +3,20 @@ import Ship from "../Ship/Ship.js";
 import BoardTile from "./BoardTile.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import Coordinate, { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
+import Game from "../Game.js";
 
 export default class Board{
     readonly size: number;
     readonly board: BoardTile[][];
     readonly ships: Ship[] = [];
+    readonly game: Game;
 
-    constructor(size: number){
+    get alive(): boolean{
+        return this.ships.some((ship) => ship.alive);
+    }
+
+    constructor(game: Game, size: number){
+        this.game = game;
         this.size = size;
 
         this.board = [];
@@ -20,6 +27,11 @@ export default class Board{
             }
             this.board[i] = row;
         }
+    }
+
+    getShipById(id: number): Ship{
+        if (id < 0 || id >= this.ships.length) throw new Error("Ship Id does not exist");
+        return this.ships[id];
     }
 
     placeShip(ship: Ship, coordinates: Coordinate): void{
@@ -35,7 +47,7 @@ export default class Board{
             shipTile.setAbsoluteCoordinates(absoluteCoordinate);
             this.board[absoluteCoordinate.x][absoluteCoordinate.y].shipTile = shipTile;
         }
-
+        ship.setId(this.ships.length);
         this.ships.push(ship);
     }
 
