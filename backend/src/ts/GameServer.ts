@@ -44,13 +44,24 @@ export default class GameServer {
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
 
-        websocket.on("message",(data)=>{
-            this.handleWebSocketMessage(websocket,user, data);
+        websocket.on("message", (data) => {
+            void this.handleWebSocketMessage(websocket, user, data)
+                .catch(error => {
+                    console.error("WebSocket message error:", error);
+        
+                    if (websocket.readyState === WebSocket.OPEN) {
+                        websocket.send(
+                            new ServerErrorMessageBuilder()
+                                .setError("internal server error")
+                                .toJsonString()
+                        );
+                    }
+                });
         });
         websocket.on("close", ()=>{this.userManager.removeActiveUser(user)});
     }
 
-    handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData){
+    async handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData): Promise<void> {
         let message: ClientMessage;
         try {
             message = JSON.parse(data.toString()) as ClientMessage;
