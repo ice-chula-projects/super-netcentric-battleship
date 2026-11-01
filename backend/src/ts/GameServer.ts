@@ -1,18 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, JoinGameMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendBoardSetupMessage, SendGameActionMessage, SendToChatMessage, Ship, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
-import GameManager from "./Game/GameManager.js";
-import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
-    readonly gameManager: GameManager;
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
@@ -25,7 +22,6 @@ export default class GameServer {
 
         this.userManager = new UserManager();
         this.chatManager = new ChatManager();
-        this.gameManager = new GameManager(this);
 
         this.chatManager.addChannel("global");
     }
@@ -70,15 +66,6 @@ export default class GameServer {
             break
             case ClientMessageType.SendToChat:
                 response = this.handleSendToChatMessage(message, user);
-            break;
-            case ClientMessageType.JoinGame:
-                response = this.handleJoinGameMessage(message, user);
-            break;
-            case ClientMessageType.SendBoardSetup:
-                response = this.handleSendBoardSetupMessage(message, user);
-            break;
-            case ClientMessageType.SendGameAction:
-                response = this.handleSendGameActionMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -156,53 +143,6 @@ export default class GameServer {
         
         this.chatManager.sendMessage(message, user, channelId);
 
-        return null;
-    }
-
-    handleJoinGameMessage(joinGameMessage: JoinGameMessage, user: User): ServerMessage | null{
-        const gameId = joinGameMessage.gameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("gameId cannot be null");
-        if(!this.gameManager.gameExists(joinGameMessage.gameId)) this.gameManager.createGame(gameId);
-        if(this.gameManager.gameIsFull(gameId)) return new ServerErrorMessageBuilder().setError("requested gameId is full");
-
-        
-        try{
-            this.gameManager.addPlayerUser(gameId, user);
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
-
-        return null;
-    }
-
-    handleSendBoardSetupMessage(sendBoardSetupMessage: SendBoardSetupMessage, user: User): ServerMessage | null{
-        const gameId = user.currentGameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("user not currently in game");
-        
-        //TODO: validation
-        try{
-            this.gameManager.setUpBoard(gameId, user, sendBoardSetupMessage.ships.map((ship:Ship) => {return new GameShip(ship.x, ship.y, ship.orientation == "down"? ShipOrientation.Down : ShipOrientation.Right)}));
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
-        
-        return null;
-    }
-
-    handleSendGameActionMessage(sendGameActionMessage: SendGameActionMessage, user: User): ServerMessage | null{
-        const gameId = user.currentGameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("user not currently in game");
-        
-        //TODO: validation
-        try{
-            this.gameManager.takeTurn(gameId, user, sendGameActionMessage.x, sendGameActionMessage.y);
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
-        
         return null;
     }
 }
