@@ -7,14 +7,21 @@ import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
 import GameManager from "./Game/GameManager.js";
 import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
+import crypto from "crypto";
+import AuthManager from "./Auth/AuthManager.js";
+import { Database } from "./Database/Database.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
     readonly gameManager: GameManager;
+    readonly authManager: AuthManager;
+    readonly database: Database;
 
-    constructor(port: number){
+    constructor(port: number) {
+        this.authManager = new AuthManager();
+        this.database = new Database("./data/users.json");
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
@@ -23,7 +30,7 @@ export default class GameServer {
             console.log("server online");
         })
 
-        this.userManager = new UserManager();
+        this.userManager = new UserManager(this.database);
         this.chatManager = new ChatManager();
         this.gameManager = new GameManager(this);
 
@@ -32,7 +39,7 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
+        const userId = crypto.randomUUID();
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
