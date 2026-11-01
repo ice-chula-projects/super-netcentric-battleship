@@ -42,16 +42,11 @@ export class Database {
     return user
   }
 
-  async getUserFromName(username: string) {
+  async getUserFromName(username: string): Promise<AuthUser | null> {
     const state = await this.loadDatabase()
-    const user = state.users.find(
+    return state.users.find(
       user => user.username === username
-    )
-
-    if (!user) {
-      throw new Error("User not found")
-    }
-    return user
+    ) ?? null;
   }
 
   async setUsername(uuid: string, username: string) {
