@@ -1,4 +1,4 @@
-import { AuthManager, AuthPassword, AuthUser } from "../Auth/AuthManager.js"
+import type { AuthUser, AuthPassword } from "../Auth/types.js"
 import fs from "fs/promises"
 import path from "path"
 
@@ -8,11 +8,9 @@ type DatabaseState = {
 
 export class Database {
   private filename: string
-  private authManager: AuthManager
 
-  constructor(filename: string, authManager: AuthManager) {
+  constructor(filename: string) {
     this.filename = path.resolve(filename)
-    this.authManager = authManager
   }
 
   async loadDatabase(): Promise<DatabaseState> {

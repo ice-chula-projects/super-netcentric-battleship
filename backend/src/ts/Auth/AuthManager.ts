@@ -1,19 +1,6 @@
 import * as crypto from "crypto"
 import { promisify } from "util"
-
-export type AuthPassword = {
-  salt: string // salted
-  hash: string // hashed with salt
-  iterations: number
-  keyLength: number
-  algorithm: string
-}
-
-export type AuthUser = {
-  id: string // UUIDv4
-  username: string
-  password: AuthPassword
-}
+import { AuthPassword } from "./types.js"
 
 export default class AuthManager {
   private iterations: number
