@@ -6,7 +6,7 @@ export default class Ship{
     //hull
     shipTiles: ShipTile[];
     //firing pattern
-    attackTiles: AttackTile[];
+    firingPattern: AttackTile[];
 
     //total hp
     health: number = 0;
@@ -22,14 +22,14 @@ export default class Ship{
         this.orientation = orientation;
     }
 
-    constructor(shipTiles: ShipTile[], attackTiles: AttackTile[]){
+    constructor(shipTiles: ShipTile[], firingPattern: AttackTile[]){
         this.shipTiles = shipTiles;
         for(const shipTile of shipTiles){
             shipTile.setShip(this);
             this.health += shipTile.maxHealth;
         }
 
-        this.attackTiles = attackTiles;
+        this.firingPattern = firingPattern;
     }
 
     notifyHit(shipTile: ShipTile, damage: number){
