@@ -1,4 +1,4 @@
-import { Orientation } from "../Orientation.js";
+import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import AttackTile from "./AttackTile.js";
 import ShipTile from "./ShipTile.js";
 

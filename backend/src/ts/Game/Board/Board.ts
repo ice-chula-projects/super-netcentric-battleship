@@ -1,8 +1,8 @@
-import Coordinate from "../Coordinate.js";
-import { Orientation } from "../Orientation.js";
+import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import AttackTile from "../Ship/AttackTile.js";
 import Ship from "../Ship/Ship.js";
 import BoardTile from "./BoardTile.js";
+import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 
 export default class Board{
     readonly size: number;

@@ -1,4 +1,4 @@
-import Coordinate from "../Coordinate.js";
+import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Ship from "./Ship.js";
 
 export default class ShipTile {

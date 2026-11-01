@@ -1,4 +1,4 @@
-import Coordinate from "../Coordinate.js";
+import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 
 export default class AttackTile{
     readonly damage: number;
