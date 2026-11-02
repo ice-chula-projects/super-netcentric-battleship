@@ -8,21 +8,23 @@ import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import User from "../User/User.js";
 import { UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
+
+//responsible for game logic and sending messages to clients
 export default class Game{
     id:string;
     gameSettings: GameSettings;
-    boards: {
-        [Player.Player1]: Board,
-        [Player.Player2]: Board
-    } | null = null;
+    boards!: {
+        [Player.Player1]: Board;
+        [Player.Player2]: Board;
+    };
 
     playerUsers: {
-        [Player.Player1]: User | null,
-        [Player.Player2]: User | null
-    } = {[Player.Player1]: null, [Player.Player2]: null};
+        [Player.Player1]: User,
+        [Player.Player2]: User
+    };
 
     currentTurn: Player | null = null;
-    gameState: GameState = GameState.Lobby;
+    gameState: GameState = GameState.ShipPlacement;
     score: {
         [Player.Player1]: number,
         [Player.Player2]: number
@@ -31,19 +33,25 @@ export default class Game{
         [Player.Player2]: 0
     }
 
-    constructor(id: string, gameSettings: GameSettings){
+    constructor(id: string, gameSettings: GameSettings, player1User: User, player2User: User){
         this.id = id;
         this.gameSettings = gameSettings;
+        this.playerUsers = {
+            [Player.Player1]: player1User,
+            [Player.Player2]: player2User
+        }
+
+        this.resetBoards();
     }
 
     addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation){
-        if(this.boards == null) throw new Error("Attempted to add a ship before board is set up")
         const board = this.boards[player];
         const ship = Ship.fromType(shipType);
         ship.setOrientation(orientation);
+        if(board.totalFleetValue + ship.value > this.gameSettings.maxFleetValue) throw new Error("Added ship will exceed maximum fleet value");
+
         const updatedTiles = board.placeShip(ship, location);
         this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
-
     }
 
     fire(player: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
@@ -80,7 +88,7 @@ export default class Game{
         user.socket.send(message.toJsonString());
     }
 
-    initializeBoards(): void{
+    resetBoards(): void{
         this.boards = {
             [Player.Player1]: new Board(this, this.gameSettings.boardSize),
             [Player.Player2]: new Board(this, this.gameSettings.boardSize)

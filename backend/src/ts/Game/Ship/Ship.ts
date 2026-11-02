@@ -6,6 +6,7 @@ import ShipDefinitions, { ShipDefinition, ShipType } from "@super-netcentric-bat
 export default class Ship{
     id: number | null = null;
     type: ShipType;
+    value: number;
 
     //hull
     shipTiles: ShipTile[];
@@ -35,6 +36,7 @@ export default class Ship{
 
     constructor(shipDefinition: ShipDefinition){
         this.type = shipDefinition.type;
+        this.value = shipDefinition.value;
         const shipTiles = [];
 
         for(const shipHullTile of shipDefinition.hull){

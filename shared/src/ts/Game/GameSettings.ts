@@ -1,3 +1,4 @@
 export default interface GameSettings{
-    boardSize: number
+    boardSize: number,
+    maxFleetValue: number
 }

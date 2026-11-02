@@ -56,6 +56,10 @@ export default class Board{
         return this.ships.some((ship) => ship.alive);
     }
 
+    get totalFleetValue(): number{
+        return this.ships.map(x => x.value).reduce((a,b) => a + b);
+    }
+
     constructor(game: Game, size: number){
         this.game = game;
         this.size = size;
