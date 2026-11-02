@@ -27,6 +27,11 @@ export class UpdateBoardTileStatusesNotificationMessageBuilder implements Update
         return this;
     }
 
+    setBoardTileStatuses(boardTileStatuses: BoardTileStatus[]){
+        this.boardTileStatuses = boardTileStatuses;
+        return this;
+    }
+
     toJsonString(){
         return JSON.stringify(this);
     };

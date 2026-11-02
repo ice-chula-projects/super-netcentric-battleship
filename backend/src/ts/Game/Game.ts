@@ -55,8 +55,8 @@ export default class Game{
 
     initializeBoards(): void{
         this.boards = {
-            [Player.Player1]: new Board(this, this.gameSettings.boardSize),
-            [Player.Player2]: new Board(this, this.gameSettings.boardSize)
+            [Player.Player1]: new Board(this,Player.Player1, this.gameSettings.boardSize),
+            [Player.Player2]: new Board(this,Player.Player2,  this.gameSettings.boardSize)
         };
     }
 

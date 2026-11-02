@@ -38,12 +38,11 @@ export default class Ship{
         const shipTiles = [];
 
         for(const shipHullTile of shipDefinition.hull){
-            shipTiles.push(new ShipTile(shipHullTile.relativeCoordinate, shipHullTile.maxHealth));
+            shipTiles.push(new ShipTile(this, shipHullTile.relativeCoordinate, shipHullTile.maxHealth));
         }
 
         this.shipTiles = shipTiles;
         for(const shipTile of shipTiles){
-            shipTile.setShip(this);
             this.health += shipTile.maxHealth;
         }
 
