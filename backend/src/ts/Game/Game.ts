@@ -8,6 +8,7 @@ import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import User from "../User/User.js";
 import { UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import Random from "../lib/Random.js";
 
 //responsible for game logic and sending messages to clients
 export default class Game{
@@ -23,7 +24,7 @@ export default class Game{
         [Player.Player2]: User
     };
 
-    currentTurn: Player | null = null;
+    currentTurn: Player
     gameState: GameState = GameState.ShipPlacement;
     score: {
         [Player.Player1]: number,
@@ -40,6 +41,9 @@ export default class Game{
             [Player.Player1]: player1User,
             [Player.Player2]: player2User
         }
+
+        //random first player
+        this.currentTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
 
         this.resetBoards();
     }
@@ -60,21 +64,31 @@ export default class Game{
         this.gameState = GameState.ShipPlacement;
     }
 
-    fire(player: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
+    fire(attackingPlayer: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
         if(this.gameState != GameState.Battle) throw new Error("Tried to fire a volley in non Battle State");
-        const attackingShip = this.boards[player].getShipById(attackingShipId);
+        const attackingShip = this.boards[attackingPlayer].getShipById(attackingShipId);
         if(!attackingShip.alive) throw new Error("Attempted to fire a volley from a dead ship");
-        const opponentPlayer = getOppositePlayer(player);
+        const opponentPlayer = getOppositePlayer(attackingPlayer);
         const targetBoard = this.boards[opponentPlayer];
 
         const updatedTiles = targetBoard.fire(attackingShip.firingPattern, location, orientation);
         this.notifyBoardTileUpdateToBothPlayers(opponentPlayer, updatedTiles);
+
+        if(!targetBoard.alive) this.endGame(attackingPlayer);
+        this.switchTurns();
+    }
+
+    switchTurns(){
+        this.currentTurn = getOppositePlayer(this.currentTurn);
     }
 
     endGame(winner: Player){
         if(this.gameState != GameState.Battle) throw new Error("Tried to end a game in non Battle State");
         this.gameState = GameState.End;
         this.score[winner]++;
+
+        //if a rematch happens set the winner to be the first plyer of the next game
+        this.currentTurn = winner;
     }
 
     rematch(){
