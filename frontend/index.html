@@ -3,44 +3,182 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="ico" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="app.css">
     <title>Ship Ship Hooray!</title>
+ 
+    <!-- Apply the saved theme before first paint so there is no light/dark flash -->
+    <script>
+      (function () {
+        var pref = "system";
+        try { pref = localStorage.getItem("theme-pref") || "system"; } catch (e) {}
+        var dark = pref === "dark" ||
+          (pref === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      })();
+    </script>
+ 
   </head>
-  <body style="background-color: aliceblue;">
+  <body>
     <div id="app">
-        <header>
-            <p style="font-weight: bold;" id="current-username"></p>
-            <input type="text" id="new-username">
-            <button id="change-username-button">Change Username</button>
-        </header>
-        <div style="display: flex; gap: 2rem">
-            <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
-            <div>
-                <h1>Global Chat</h1>
-                <ul id="global-chat"></ul>
-                <input type="text" id="current-message">
-                <button id="send-to-global-chat-button">Send</button>
-            </div>
+      <header class="app-header">
+        <div class="header-left">
+          <button class="icon-btn" id="sidebar-toggle" type="button"
+                  aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <h1 class="game-title">Ship Ship Hooray!</h1>
         </div>
-        <div>
-            <h1>Active Users</h1>
+ 
+        <div class="header-right">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark mode">
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
+ 
+          <div class="menu-wrap">
+            <button class="icon-btn" id="settings-toggle" type="button"
+                    aria-label="Settings" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+            </button>
+            <div class="popover" id="settings-menu" hidden>
+              <h2>Settings</h2>
+              <fieldset>
+                <legend>Theme</legend>
+                <label><input type="radio" name="theme-pref" value="system"> Match my device</label>
+                <label><input type="radio" name="theme-pref" value="light"> Light</label>
+                <label><input type="radio" name="theme-pref" value="dark"> Dark</label>
+              </fieldset>
+            </div>
+          </div>
+ 
+          <div class="menu-wrap">
+            <button class="icon-btn" id="account-toggle" type="button"
+                    aria-label="Account" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu">
+              <span class="avatar" id="avatar" aria-hidden="true">?</span>
+            </button>
+            <div class="popover" id="account-menu" hidden>
+              <h2>Account</h2>
+              <!-- Same ids as before, so src/index.ts keeps working -->
+              <p id="current-username"></p>
+              <div class="account-row">
+                <input type="text" id="new-username" aria-label="New username" placeholder="New username">
+                <button id="change-username-button" type="button">Change Username</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+ 
+      <div class="app-body">
+        <aside class="sidebar" id="sidebar">
+          <section>
+            <h3>Active Users</h3>
             <button id="refresh-active-users-button">Refresh</button>
             <ul id="active-users"></ul>
-        </div>
-        <div>
+          </section>
+          <section>
             <h3>Join Game</h3>
-                <p>Id:</p>
-                <input type="text" id="current-game-id">
-                <button id="join-game">Join</button>
-
-        </div>
+            <p>Id:</p>
+            <input type="text" id="current-game-id">
+            <button id="join-game">Join</button>
+          </section>
+        </aside>
+ 
+        <main class="main">
+          <div class="game-row">
+            <canvas width="500" height="500" id="canvas"></canvas>
+            <div class="chat">
+              <h1>Global Chat</h1>
+              <ul id="global-chat"></ul>
+              <input type="text" id="current-message">
+              <button id="send-to-global-chat-button">Send</button>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
+ 
+    <!-- Header behaviors -->
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+ 
+        // Theme
+        function getPref() {
+          try { return localStorage.getItem("theme-pref") || "system"; } catch (e) { return "system"; }
+        }
+        function setPref(pref) {
+          try { localStorage.setItem("theme-pref", pref); } catch (e) {}
+          applyTheme();
+        }
+        function applyTheme() {
+          var pref = getPref();
+          var dark = pref === "dark" || (pref === "system" && mq.matches);
+          root.setAttribute("data-theme", dark ? "dark" : "light");
+          var btn = document.getElementById("theme-toggle");
+          btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+          var radio = document.querySelector('input[name="theme-pref"][value="' + pref + '"]');
+          if (radio) radio.checked = true;
+        }
+        document.getElementById("theme-toggle").addEventListener("click", function () {
+          var isDark = root.getAttribute("data-theme") === "dark";
+          setPref(isDark ? "light" : "dark");
+        });
+        document.querySelectorAll('input[name="theme-pref"]').forEach(function (r) {
+          r.addEventListener("change", function () { setPref(r.value); });
+        });
+        mq.addEventListener("change", function () { if (getPref() === "system") applyTheme(); });
+        applyTheme();
+ 
+        // Sidebar
+        var app = document.getElementById("app");
+        var sidebarBtn = document.getElementById("sidebar-toggle");
+        if (window.matchMedia("(max-width: 800px)").matches) app.classList.add("sidebar-collapsed");
+        sidebarBtn.setAttribute("aria-expanded", String(!app.classList.contains("sidebar-collapsed")));
+        sidebarBtn.addEventListener("click", function () {
+          var collapsed = app.classList.toggle("sidebar-collapsed");
+          sidebarBtn.setAttribute("aria-expanded", String(!collapsed));
+        });
+ 
+        // Popups (settings, account)
+        var pairs = [
+          [document.getElementById("settings-toggle"), document.getElementById("settings-menu")],
+          [document.getElementById("account-toggle"), document.getElementById("account-menu")]
+        ];
+        function closeAll(except) {
+          pairs.forEach(function (p) {
+            if (p[1] !== except) { p[1].hidden = true; p[0].setAttribute("aria-expanded", "false"); }
+          });
+        }
+        pairs.forEach(function (p) {
+          p[0].addEventListener("click", function (e) {
+            e.stopPropagation();
+            closeAll(p[1]);
+            p[1].hidden = !p[1].hidden;
+            p[0].setAttribute("aria-expanded", String(!p[1].hidden));
+          });
+          p[1].addEventListener("click", function (e) { e.stopPropagation(); });
+        });
+        document.addEventListener("click", function () { closeAll(null); });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAll(null); });
+ 
+        // Avatar initial follows the username text
+        var nameEl = document.getElementById("current-username");
+        var avatar = document.getElementById("avatar");
+        function syncAvatar() {
+          var name = (nameEl.textContent || "").trim();
+          avatar.textContent = name ? name.charAt(0).toUpperCase() : "?";
+        }
+        new MutationObserver(syncAvatar).observe(nameEl, { childList: true, characterData: true, subtree: true });
+        syncAvatar();
+      })();
+    </script>
     <script type="module" src="/src/index.ts"></script>
-
-    <h1>Ship Ship Hooray!</h1>
   </body>
 </html>

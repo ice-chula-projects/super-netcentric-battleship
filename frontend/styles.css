@@ -1,1 +1,172 @@
+:root {
+  color-scheme: light;
+  --bg: aliceblue;
+  --surface: #ffffff;
+  --surface-2: #e6f0fb;
+  --text: #14213d;
+  --muted: #5a6b86;
+  --border: #c9d8ec;
+  --accent: #d62839;        /* signal-flag red, matches the original canvas border */
+  --accent-text: #ffffff;
+  --focus: #1f6feb;
+  --shadow: 0 6px 20px rgba(20, 33, 61, 0.14);
+  --header-h: 56px;
+  --sidebar-w: 260px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b1626;
+  --surface: #12233b;
+  --surface-2: #1a2f4d;
+  --text: #e8f0fb;
+  --muted: #9db0cc;
+  --border: #284265;
+  --accent: #ff5a68;
+  --accent-text: #1a0508;
+  --focus: #6aa8ff;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
 
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-left, .header-right { display: flex; align-items: center; gap: 0.5rem; }
+
+.game-title {
+  margin: 0;
+  font-family: "Jersey 10", "Courier New", monospace;
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.icon-btn:hover { background: var(--surface-2); }
+.icon-btn[aria-expanded="true"],
+.icon-btn[aria-pressed="true"] { background: var(--surface-2); border-color: var(--border); }
+.icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* Theme toggle shows the icon for the mode you would switch to */
+#theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] #theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] #theme-toggle .icon-moon { display: none; }
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+#account-toggle { width: auto; padding: 3px; border-radius: 999px; }
+
+/* Popups (settings + account) */
+.menu-wrap { position: relative; }
+.popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 260px;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.popover[hidden] { display: none; }
+.popover h2 { margin: 0 0 0.75rem; font-size: 1rem; }
+.popover fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 0.4rem; }
+.popover legend { padding: 0; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
+.popover label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.account-row { display: grid; gap: 0.5rem; }
+.account-row input { width: 100%; padding: 0.4rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); }
+#current-username { margin: 0 0 0.75rem; font-weight: bold; }
+
+/* Layout */
+.app-body { display: flex; min-height: calc(100vh - var(--header-h)); }
+
+.sidebar {
+  width: var(--sidebar-w);
+  flex: none;
+  padding: 1rem;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.sidebar h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.sidebar section + section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.sidebar ul { padding-left: 1.1rem; }
+#app.sidebar-collapsed .sidebar { display: none; }
+
+.main { flex: 1; min-width: 0; padding: 1rem; }
+.game-row { display: flex; flex-wrap: wrap; gap: 2rem; }
+
+#canvas {
+  border: 1px solid var(--accent);
+  width: 500px;
+  height: 500px;
+  max-width: 100%;
+  margin: 3px;
+  background: var(--surface);
+}
+.chat h1 { margin-top: 0; font-size: 1.4rem; }
+#global-chat { max-height: 380px; overflow-y: auto; padding-left: 1.1rem; }
+
+.sidebar button, .chat button, .account-row button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.sidebar button:hover, .chat button:hover, .account-row button:hover { border-color: var(--accent); }
+.chat input, .sidebar input { padding: 0.4rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); }
+
+/* Small screens: sidebar becomes an overlay */
+@media (max-width: 800px) {
+  .sidebar { position: fixed; z-index: 15; top: var(--header-h); bottom: 0; left: 0; box-shadow: var(--shadow); }
+  .game-title { font-size: 1.6rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .icon-btn { transition: background-color 0.15s; }
+}
