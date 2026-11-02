@@ -1,13 +1,11 @@
 import GameServer from "../GameServer.js";
 import Random from "../lib/Random.js";
 import User from "../User/User.js";
-import Game from "./Game.js";
-import Lobby from "./Lobby.js";
+import GameLobby from "./GameLobby.js";
 
-export default class GameManager{
+export default class GameLobbyManager{
     readonly gameServer: GameServer;
-    activeGames: Record<string, Game> = {};
-    lobbies: Record<string, Lobby> = {};
+    lobbies: Record<string, GameLobby> = {};
 
     constructor(gameServer: GameServer){
         this.gameServer = gameServer;
@@ -25,7 +23,7 @@ export default class GameManager{
     createLobby(hostUser: User){
         if(hostUser.currentlyInGameLobby) throw new Error("Attempted to create a new lobby while host is already in a lobby");
         const lobbyCode = this.generateNewLobbyCode();
-        const lobby = new Lobby(hostUser, lobbyCode, this.gameServer.chatManager);
+        const lobby = new GameLobby(hostUser, lobbyCode, this.gameServer.chatManager);
 
         this.lobbies[lobbyCode] = lobby;
     }

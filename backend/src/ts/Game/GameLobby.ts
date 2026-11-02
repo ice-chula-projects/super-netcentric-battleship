@@ -2,7 +2,7 @@ import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@sup
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
 
-export default class Lobby{
+export default class GameLobby{
     isPublic: boolean = false;
     name: string = "Untitled Lobby";
     description: string = "";
