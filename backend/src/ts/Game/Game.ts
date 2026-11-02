@@ -12,7 +12,6 @@ import Random from "../lib/Random.js";
 
 //responsible for game logic and sending messages to clients
 export default class Game{
-    id:string;
     gameSettings: GameSettings;
     boards!: {
         [Player.Player1]: Board;
@@ -34,8 +33,7 @@ export default class Game{
         [Player.Player2]: 0
     }
 
-    constructor(id: string, gameSettings: GameSettings, player1User: User, player2User: User){
-        this.id = id;
+    constructor(gameSettings: GameSettings, player1User: User, player2User: User){
         this.gameSettings = gameSettings;
         this.playerUsers = {
             [Player.Player1]: player1User,
