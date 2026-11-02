@@ -6,7 +6,7 @@ type DatabaseState = {
   users: AuthUser[]
 }
 
-export class Database {
+export class UserDatabase {
   private filename: string
 
   constructor(filename: string) {

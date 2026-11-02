@@ -9,7 +9,7 @@ import GameManager from "./Game/GameManager.js";
 import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
 import crypto from "crypto";
 import AuthManager from "./Authentication/AuthenticationManager.js";
-import { Database } from "./Database/Database.js";
+import { UserDatabase } from "./Database/UserDatabase.js";
 import { AuthUser } from "./Authentication/types.js";
 import { RegisterMessage } from "../../../shared/src/ts/ClientMessage/RegisterMessage.js";
 import { LoginMessage } from "../../../shared/src/ts/ClientMessage/LoginMessage.js";
@@ -20,11 +20,11 @@ export default class GameServer {
     readonly chatManager: ChatManager;
     readonly gameManager: GameManager;
     readonly authManager: AuthManager;
-    readonly database: Database;
+    readonly database: UserDatabase;
 
     constructor(port: number) {
         this.authManager = new AuthManager();
-        this.database = new Database("./data/users.json");
+        this.database = new UserDatabase("./data/users.json");
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));

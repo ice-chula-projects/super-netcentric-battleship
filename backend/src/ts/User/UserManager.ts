@@ -1,15 +1,15 @@
 import User from "./User.js";
-import { Database } from "../Database/Database.js";
+import { UserDatabase } from "../Database/UserDatabase.js";
 import type { AuthUser } from "../Authentication/types.js";
 
 //TODO: add database for persistent user info storage
 export default class UserManager{
     private activeUsers: Record<string, User> = {};
-    private database: Database;
+    private database: UserDatabase;
   
     activeUserCount: number = 0;
 
-    constructor(database: Database) {
+    constructor(database: UserDatabase) {
         this.database = database;
     }
   
