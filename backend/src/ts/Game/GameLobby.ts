@@ -1,12 +1,14 @@
 import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
+import Game from "./Game.js";
 
 export default class GameLobby{
     isPublic: boolean = false;
     name: string = "Untitled Lobby";
     description: string = "";
     gameSettings: GameSettings;
+    activeGame: Game | null = null;
 
     readonly id: string;
     readonly hostId: string;
@@ -16,6 +18,10 @@ export default class GameLobby{
 
     get isFull(): boolean{
         return this.players.length >= 2;
+    }
+
+    get gameInProgress(): boolean{
+        return this.activeGame != null;
     }
 
     setPublic(isPublic: boolean){
@@ -55,5 +61,11 @@ export default class GameLobby{
 
         this.players.splice(0,this.players.length);
         this.chatManager.removeChannel(this.chatChannelId);
+    }
+
+    startGame(){
+        if(!this.isFull) throw new Error("Cannot start game when lobby is not full");
+
+        this.activeGame = new Game(this.gameSettings,this.players[0], this.players[1]);
     }
 }

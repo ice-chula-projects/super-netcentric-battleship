@@ -34,4 +34,16 @@ export default class GameLobbyManager{
         if(lobby == null) throw new Error("Lobby does not exist");
         lobby.addUser(user);
     }
+
+    getLobbies(): GameLobby[]{
+        return Object.values(this.lobbies);
+    }
+
+    removeLobby(lobbyCode: string){
+        const lobby = this.lobbies[lobbyCode]; 
+        if(lobby == null) throw new Error("Lobby does not exist");
+        lobby.deleteLobby();
+
+        delete this.lobbies[lobbyCode];
+    }
 }
