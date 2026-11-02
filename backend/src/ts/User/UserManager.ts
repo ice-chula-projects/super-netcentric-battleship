@@ -1,6 +1,6 @@
 import User from "./User.js";
 import { Database } from "../Database/Database.js";
-import type { AuthUser } from "../Auth/types.js";
+import type { AuthUser } from "../Authentication/types.js";
 
 //TODO: add database for persistent user info storage
 export default class UserManager{

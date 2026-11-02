@@ -8,9 +8,9 @@ import User from "./User/User.js";
 import GameManager from "./Game/GameManager.js";
 import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
 import crypto from "crypto";
-import AuthManager from "./Auth/AuthManager.js";
+import AuthManager from "./Authentication/AuthenticationManager.js";
 import { Database } from "./Database/Database.js";
-import { AuthUser } from "./Auth/types.js";
+import { AuthUser } from "./Authentication/types.js";
 import { RegisterMessage } from "../../../shared/src/ts/ClientMessage/RegisterMessage.js";
 import { LoginMessage } from "../../../shared/src/ts/ClientMessage/LoginMessage.js";
 

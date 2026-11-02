@@ -1,4 +1,4 @@
-import type { AuthUser, AuthPassword } from "../Auth/types.js"
+import type { AuthUser, AuthPassword } from "../Authentication/types.js"
 import fs from "fs/promises"
 import path from "path"
 

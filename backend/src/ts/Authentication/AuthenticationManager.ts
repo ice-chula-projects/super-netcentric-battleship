@@ -2,7 +2,7 @@ import * as crypto from "crypto"
 import { promisify } from "util"
 import { AuthPassword } from "./types.js"
 
-export default class AuthManager {
+export default class AuthenticationManager {
   private iterations: number
   private keyLength: number
   private algorithm: string
