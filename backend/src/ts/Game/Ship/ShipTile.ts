@@ -8,13 +8,14 @@ export default class ShipTile {
     readonly relativeCoordinates: Coordinate;
     absoluteCoordinates: Coordinate | null = null;
     
-    ship: Ship | null = null
+    ship: Ship
 
     get alive(): boolean{
         return this.health > 0;
     }
 
-    constructor(relativeCoordinates: Coordinate, maxHealth: number = 1){
+    constructor(ship: Ship, relativeCoordinates: Coordinate, maxHealth: number = 1){
+        this.ship = ship;
         this.relativeCoordinates = relativeCoordinates;
         this.maxHealth = maxHealth;
         this.health = maxHealth;
@@ -24,11 +25,8 @@ export default class ShipTile {
         this.absoluteCoordinates = coordinate;
     }
 
-    setShip(ship:Ship){
-        this.ship = ship;
-    }
-
     notifyHit(damage: number){
         this.health -= damage;
+        if(this.health < 0) this.health = 0;
     }
 }

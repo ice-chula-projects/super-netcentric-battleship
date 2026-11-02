@@ -10,4 +10,8 @@ export class CoordinateFactory{
             y: y
         };
     }
+
+    static copyCoordinate(coordinate: Coordinate): Coordinate{
+        return this.createCoordinate(coordinate.x, coordinate.y);
+    }
 }
