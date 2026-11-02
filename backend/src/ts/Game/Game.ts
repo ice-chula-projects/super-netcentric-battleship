@@ -33,6 +33,8 @@ export default class Game{
         [Player.Player2]: 0
     }
 
+    timeoutInterval: number | null = null;
+
     constructor(gameSettings: GameSettings, player1User: User, player2User: User){
         this.gameSettings = gameSettings;
         this.playerUsers = {
@@ -44,6 +46,21 @@ export default class Game{
         this.currentTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
 
         this.resetBoards();
+    }
+
+    resetTimeoutInterval(){
+        if(this.timeoutInterval != null) clearInterval(this.timeoutInterval);
+        setInterval(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn);
+    }
+
+    handleTimeout(){
+        if(this.gameState != GameState.Battle) return;
+        this.timeoutInterval = null;
+
+        //add notification to client about timeout here
+        this.switchTurns();
+
+        this.resetTimeoutInterval();
     }
 
     addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation){
@@ -59,7 +76,8 @@ export default class Game{
 
     startBattle(){
         if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to start a game that isn't in ship placement state");
-        this.gameState = GameState.ShipPlacement;
+        this.gameState = GameState.Battle;
+        this.resetTimeoutInterval();
     }
 
     fire(attackingPlayer: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
