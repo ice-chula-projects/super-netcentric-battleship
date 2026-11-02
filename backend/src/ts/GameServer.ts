@@ -5,6 +5,7 @@ import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerE
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
@@ -28,7 +29,7 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
+        const userId = uuidv4();
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
