@@ -5,10 +5,12 @@ import GameMessage from "../../GameMessage.js";
 import { ServerMessageType } from "../ServerMessageType.js";
 
 export type BoardTileStatus = {
+    boardOwner: Player,
     state: BoardTileState,
     coordinate: Coordinate,
-    boardOwner: Player,
-    health: number | null
+    health: number | null,
+    maxHealth: number | null,
+    shipId: number | null
 }
 
 export interface UpdateBoardTileStatusesNotificationMessage extends GameMessage{

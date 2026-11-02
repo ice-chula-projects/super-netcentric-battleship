@@ -1,5 +1,5 @@
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
-import Board from "./Board/Board.js";
+import Board, { BoardTileUpdate } from "./Board/Board.js";
 import {getOppositePlayer, Player} from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
@@ -7,6 +7,7 @@ import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import User from "../User/User.js";
+import { UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 export default class Game{
     id:string;
     gameSettings: GameSettings;
@@ -40,23 +41,49 @@ export default class Game{
         const board = this.boards[player];
         const ship = Ship.fromType(shipType);
         ship.setOrientation(orientation);
-        board.placeShip(ship, location);
+        const updatedTiles = board.placeShip(ship, location);
+        this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
+
     }
 
     fire(player: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
         if(this.boards == null) throw new Error("Attempted to fire a volley before board is set up");
         const attackingShip = this.boards[player].getShipById(attackingShipId);
         if(!attackingShip.alive) throw new Error("Attempted to fire a volley from a dead ship");
+        const opponentPlayer = getOppositePlayer(player);
+        const targetBoard = this.boards[opponentPlayer];
 
-        const targetBoard = this.boards[getOppositePlayer(player)];
+        const updatedTiles = targetBoard.fire(attackingShip.firingPattern, location, orientation);
+        this.notifyBoardTileUpdateToBothPlayers(opponentPlayer, updatedTiles);
+    }
 
-        targetBoard.fire(attackingShip.firingPattern, location, orientation);
+    notifyBoardTileUpdateToBothPlayers(boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
+        this.notifyBoardTileUpdateToPlayerUser(Player.Player1, boardOwner, boardTileUpdates);
+        this.notifyBoardTileUpdateToPlayerUser(Player.Player2, boardOwner, boardTileUpdates);
+    }
+
+    notifyBoardTileUpdateToPlayerUser(targetUserPlayer: Player, boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
+        const user = this.playerUsers[targetUserPlayer];
+        if(user == null) throw new Error("Tried to notify user before user is initialized");
+        const message = new UpdateBoardTileStatusesNotificationMessageBuilder()
+        for(const boardTileUpdate of boardTileUpdates){
+            message.addBoardTileStatus({
+                boardOwner: boardOwner,
+                state: boardTileUpdate.state,
+                coordinate: boardTileUpdate.coordinates,
+                health: boardTileUpdate.health,
+                maxHealth: boardTileUpdate.maxHealth,
+                shipId: boardTileUpdate.shipId
+            })
+        }
+
+        user.socket.send(message.toJsonString());
     }
 
     initializeBoards(): void{
         this.boards = {
-            [Player.Player1]: new Board(this,Player.Player1, this.gameSettings.boardSize),
-            [Player.Player2]: new Board(this,Player.Player2,  this.gameSettings.boardSize)
+            [Player.Player1]: new Board(this, this.gameSettings.boardSize),
+            [Player.Player2]: new Board(this, this.gameSettings.boardSize)
         };
     }
 

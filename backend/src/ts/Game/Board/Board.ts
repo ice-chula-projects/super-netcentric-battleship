@@ -9,7 +9,7 @@ import { BoardTileState } from "@super-netcentric-battleship/shared/Game/BoardTi
 import ShipTile from "../Ship/ShipTile.js";
 
 //returned to the engine to be passed to the client to update their visuals
-export class UpdatedBoardTile {
+export class BoardTileUpdate {
     readonly coordinates: Coordinate
     readonly state: BoardTileState
     readonly health: number | null = null;
@@ -34,7 +34,7 @@ export class UpdatedBoardTile {
             shipId = shipTile.ship.id;
         } 
 
-        return new UpdatedBoardTile(coordinate, state, health, maxHealth, shipId);
+        return new BoardTileUpdate(coordinate, state, health, maxHealth, shipId);
     }
 
     constructor(coordinate: Coordinate, state: BoardTileState, health: number | null = null, maxHealth: number | null = null, shipId: number | null = null){
@@ -51,15 +51,13 @@ export default class Board{
     readonly board: BoardTile[][];
     readonly ships: Ship[] = [];
     readonly game: Game;
-    readonly player: Player;
 
     get alive(): boolean{
         return this.ships.some((ship) => ship.alive);
     }
 
-    constructor(game: Game, player: Player, size: number){
+    constructor(game: Game, size: number){
         this.game = game;
-        this.player = player;
         this.size = size;
 
         this.board = [];
@@ -77,7 +75,7 @@ export default class Board{
         return this.ships[id];
     }
 
-    placeShip(ship: Ship, coordinates: Coordinate): UpdatedBoardTile[]{
+    placeShip(ship: Ship, coordinates: Coordinate): BoardTileUpdate[]{
         //check for collisions
         for(const shipTile of ship.shipTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(shipTile.relativeCoordinates, coordinates, ship.orientation);
@@ -88,20 +86,20 @@ export default class Board{
         ship.setId(this.ships.length);
         this.ships.push(ship);
 
-        const updatedBoardTiles: UpdatedBoardTile[] = [];
+        const updatedBoardTiles: BoardTileUpdate[] = [];
         for(const shipTile of ship.shipTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(shipTile.relativeCoordinates, coordinates, ship.orientation);
             shipTile.setAbsoluteCoordinates(absoluteCoordinate);
             this.board[absoluteCoordinate.x][absoluteCoordinate.y].shipTile = shipTile;
 
-            updatedBoardTiles.push(UpdatedBoardTile.fromBoardTile(absoluteCoordinate, this.board[absoluteCoordinate.x][absoluteCoordinate.y]));
+            updatedBoardTiles.push(BoardTileUpdate.fromBoardTile(absoluteCoordinate, this.board[absoluteCoordinate.x][absoluteCoordinate.y]));
         }
 
         return updatedBoardTiles;
     }
 
-    fire(attackTiles: AttackTile[], coordinate: Coordinate, orientation: Orientation): UpdatedBoardTile[]{
-        const updatedBoardTiles: UpdatedBoardTile[] = [];
+    fire(attackTiles: AttackTile[], coordinate: Coordinate, orientation: Orientation): BoardTileUpdate[]{
+        const updatedBoardTiles: BoardTileUpdate[] = [];
         for(const attackTile of attackTiles){
             const absoluteCoordinate = this.relativeCoordinateToAbsoluteCoordinate(attackTile.relativeCoordinates, coordinate, orientation);
             if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) continue;
@@ -129,9 +127,9 @@ export default class Board{
         return updatedBoardTiles;
     }
 
-    getTileState(coordinate: Coordinate): UpdatedBoardTile{
+    getTileState(coordinate: Coordinate): BoardTileUpdate{
         const tile = this.board[coordinate.x][coordinate.y];
-        return UpdatedBoardTile.fromBoardTile(coordinate, tile);
+        return BoardTileUpdate.fromBoardTile(coordinate, tile);
     }
 
     /**
