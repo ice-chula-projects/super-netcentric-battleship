@@ -45,6 +45,7 @@ export default class Game{
     }
 
     addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation){
+        if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to add ship in non ship placement state") 
         const board = this.boards[player];
         const ship = Ship.fromType(shipType);
         ship.setOrientation(orientation);
@@ -54,8 +55,13 @@ export default class Game{
         this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
     }
 
+    startBattle(){
+        if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to start a game that isn't in ship placement state");
+        this.gameState = GameState.ShipPlacement;
+    }
+
     fire(player: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
-        if(this.boards == null) throw new Error("Attempted to fire a volley before board is set up");
+        if(this.gameState != GameState.Battle) throw new Error("Tried to fire a volley in non Battle State");
         const attackingShip = this.boards[player].getShipById(attackingShipId);
         if(!attackingShip.alive) throw new Error("Attempted to fire a volley from a dead ship");
         const opponentPlayer = getOppositePlayer(player);
@@ -63,6 +69,18 @@ export default class Game{
 
         const updatedTiles = targetBoard.fire(attackingShip.firingPattern, location, orientation);
         this.notifyBoardTileUpdateToBothPlayers(opponentPlayer, updatedTiles);
+    }
+
+    endGame(winner: Player){
+        if(this.gameState != GameState.Battle) throw new Error("Tried to end a game in non Battle State");
+        this.gameState = GameState.End;
+        this.score[winner]++;
+    }
+
+    rematch(){
+        if(this.gameState != GameState.End) throw new Error("Tried to rematch a game in non End State");
+        this.gameState = GameState.ShipPlacement;
+        this.resetBoards();
     }
 
     notifyBoardTileUpdateToBothPlayers(boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
