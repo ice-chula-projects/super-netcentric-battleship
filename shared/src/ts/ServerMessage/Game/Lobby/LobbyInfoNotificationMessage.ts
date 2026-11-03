@@ -11,8 +11,8 @@ export interface LobbyPlayerInformation{
     ready: boolean
 }
 
-export interface LobbyInformationNotificationMessage extends GameMessage{
-    readonly type: ServerMessageType.LobbyInformationNotification;
+export interface LobbyInfoNotificationMessage extends GameMessage{
+    readonly type: ServerMessageType.LobbyInfoNotification;
     lobbyCode: string;
     
     name: string;
@@ -25,8 +25,8 @@ export interface LobbyInformationNotificationMessage extends GameMessage{
     connectedUsers: LobbyPlayerInformation[]
 }
 
-export class LobbyInformationNotificationMessageBuilder implements LobbyInformationNotificationMessage{
-    readonly type = ServerMessageType.LobbyInformationNotification;
+export class LobbyInfoNotificationMessageBuilder implements LobbyInfoNotificationMessage{
+    readonly type = ServerMessageType.LobbyInfoNotification;
     readonly timestamp: number = Date.now();
 
     lobbyCode: string = "";

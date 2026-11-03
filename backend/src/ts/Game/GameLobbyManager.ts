@@ -65,6 +65,10 @@ export default class GameLobbyManager{
         return Object.values(this.lobbies);
     }
 
+    getPublicLobbies(): GameLobby[]{
+        return this.getLobbies().filter(x => x.isPublic);
+    }
+
     removeLobby(lobbyCode: string){
         const lobby = this.lobbies[lobbyCode]; 
         if(lobby == null) throw new Error("Lobby does not exist");

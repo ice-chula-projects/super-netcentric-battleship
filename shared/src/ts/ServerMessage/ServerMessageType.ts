@@ -5,6 +5,7 @@ export enum ServerMessageType{
     ActiveUsersInfo = "activeUsersInfo",
     ChatMessageNotification = "chatMessageNotification",
     UpdateBoardTileStatusesNotification = "updateBoardTileStatusesNotification",
-    LobbyInformationNotification = "lobbyInformationNotification",
-    CurrentTurnNotification = "currentTurnNotification"
+    LobbyInfoNotification = "lobbyInfoNotification",
+    CurrentTurnNotification = "currentTurnNotification",
+    PublicLobbiesInfo = "publicLobbiesInfo"
 }

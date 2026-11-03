@@ -9,6 +9,7 @@ import { JoinLobbyMessage } from "./Game/Lobby/JoinLobbyMessage.js";
 import { ModifyGameSettingsMessage } from "./Game/Lobby/ModifyGameSettingsMessage.js";
 import { StartGameMessage } from "./Game/Lobby/StartGameMessage.js";
 import { UpdateReadyStateMessage } from "./Game/Lobby/UpdateReadyStateMessage.js";
+import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMessage.js";
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
@@ -22,6 +23,7 @@ export * from "./Game/Lobby/JoinLobbyMessage.js"
 export * from "./Game/Lobby/ModifyGameSettingsMessage.js"
 export * from "./Game/Lobby/StartGameMessage.js"
 export * from "./Game/Lobby/UpdateReadyStateMessage.js"
+export * from "./Game/Lobby/RequestPublicLobbiesMessage.js"
 
 export type ClientMessage = PingMessage |
 RequestUserInfoMessage |
@@ -33,4 +35,5 @@ CreateLobbyMessage |
 JoinLobbyMessage |
 ModifyGameSettingsMessage |
 StartGameMessage |
-UpdateReadyStateMessage;
+UpdateReadyStateMessage |
+RequestPublicLobbiesMessage;

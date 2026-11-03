@@ -9,5 +9,6 @@ export enum ClientMessageType{
     joinLobby = "joinLobby",
     modifyGameSettings = "modifyGameSettings",
     startGame = "startGame",
-    updateReadyState = "updateReadyState"
+    updateReadyState = "updateReadyState",
+    requestPublicLobbies = "requestPublicLobbies"
 }

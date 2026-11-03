@@ -2,7 +2,7 @@ import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@sup
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
-import { LobbyInformationNotificationMessage, LobbyInformationNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 
 export interface LobbyMember{
@@ -62,7 +62,7 @@ export default class GameLobby{
         this.addUser(hostUser);
     }
 
-    toLobbyInformationMessage(): LobbyInformationNotificationMessage{
+    toLobbyInformationMessage(): LobbyInfoNotificationMessage{
         const connectedUsers: LobbyPlayerInformation[] = []
 
         for(const member of this.members){
@@ -75,7 +75,7 @@ export default class GameLobby{
             })
         }
         
-        return new LobbyInformationNotificationMessageBuilder()
+        return new LobbyInfoNotificationMessageBuilder()
         .setLobbyCode(this.id)
         .setName(this.name)
         .setDescription(this.description)

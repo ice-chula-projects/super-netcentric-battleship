@@ -102,6 +102,26 @@ export default class GameServer {
         if (response != null) websocket.send(response.toJsonString());
     }
 
+    paginate<T>(allMembers:T[], requestedPage: number, requestedMembersPerPage: number | null): {pagninatedMembers: T[], page: number, membersPerPage: number}{
+        const memberCount = allMembers.length
+        
+        //TODO: configuration
+        const maxUsersPerPage = 50;
+        const membersPerPage = requestedMembersPerPage == null ? maxUsersPerPage : Math.max(0, Math.min(maxUsersPerPage, requestedMembersPerPage));
+
+        //clamp page
+        const page = Math.max(0, Math.min(requestedPage, Math.ceil(memberCount/membersPerPage) - 1));
+        
+        const startingIndex = page * membersPerPage
+        const pagninatedMembers = allMembers.slice(startingIndex, Math.min(startingIndex + membersPerPage, memberCount));
+
+        return {
+            pagninatedMembers: pagninatedMembers,
+            page: page,
+            membersPerPage: membersPerPage
+        }
+    }
+
     //message handlers
     handlePingMessage(pingMessage: PingMessage): PongMessage{
         return new PongMessageBuilder().setMessage(pingMessage.message + " pong");
@@ -126,22 +146,13 @@ export default class GameServer {
     handleRequestActiveUsersMessage(requestActiveUsersMessage: RequestActiveUsersMessage): ServerMessage{
         const activeUsers = this.userManager.getActiveUsers();
         const activeUserCount = this.userManager.activeUserCount;
-
-        //TODO: configuration
-        const maxUsersPerPage = 50;
-        const usersPerPage = requestActiveUsersMessage.usersPerPage == null ? maxUsersPerPage : Math.max(0, Math.min(maxUsersPerPage, requestActiveUsersMessage.usersPerPage));
-
-        //clamp page
-        const page = Math.max(0, Math.min(requestActiveUsersMessage.page, Math.ceil(activeUserCount/usersPerPage) - 1));
-        
-        const startingIndex = page * usersPerPage
-        const paginatedActiveUsers = activeUsers.slice(startingIndex, Math.min(startingIndex + usersPerPage, activeUsers.length));
+        const paginated = this.paginate(activeUsers, requestActiveUsersMessage.page, requestActiveUsersMessage.usersPerPage);
 
         return new ActiveUsersInfoMessageBuilder()
         .setTotalActiveUsers(activeUserCount)
-        .setPage(page)
-        .setActiveUsers(paginatedActiveUsers.map((user:User) => {return {username: user.username, id:user.id}}))
-        .setUsersPerPage(usersPerPage)
+        .setPage(paginated.page)
+        .setActiveUsers(paginated.pagninatedMembers.map((user:User) => {return {username: user.username, id:user.id}}))
+        .setUsersPerPage(paginated.membersPerPage)
     }
 
     //TODO: send chat history to user when the user subscribes to a channel
