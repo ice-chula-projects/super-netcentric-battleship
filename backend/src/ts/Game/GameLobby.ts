@@ -2,7 +2,7 @@ import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@sup
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
-import { LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { GameStartNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 
 export interface LobbyMember{
@@ -161,7 +161,14 @@ export default class GameLobby{
 
     startGame(){
         if(!this.isFull) throw new Error("Cannot start game when lobby is not full");
-        
-        this.activeGame = new Game(this.gameSettings,this.members[0].user, this.members[1].user);
+        if(this.gameInProgress) throw new Error("Cannot start a new game while game is already in progess");
+
+        const player1User = this.members[0].user;
+        const player2User = this.members[1].user;
+
+        player1User.socket.send(new GameStartNotificationMessageBuilder().setPlayerId(Player.Player1).toJsonString());
+        player2User.socket.send(new GameStartNotificationMessageBuilder().setPlayerId(Player.Player2).toJsonString());
+
+        this.activeGame = new Game(this.gameSettings, player1User, player2User);
     }
 }
