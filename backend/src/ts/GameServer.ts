@@ -72,22 +72,22 @@ export default class GameServer {
             case ClientMessageType.SendToChat:
                 response = this.handleSendToChatMessage(message, user);
             break;
-            case ClientMessageType.createLobby:
+            case ClientMessageType.CreateLobby:
                 response = this.handleCreateLobbyMessage(message, user);
             break;
-            case ClientMessageType.joinLobby:
+            case ClientMessageType.JoinLobby:
                 response = this.handleJoinLobbyMessage(message, user);
             break;
-            case ClientMessageType.modifyGameSettings:
+            case ClientMessageType.ModifyGameSettings:
                 response = this.handleModifyGameSettingsMessage(message, user);
             break;
-            case ClientMessageType.startGame:
+            case ClientMessageType.StartGame:
                 response = this.handleStartGameMessage(user);
             break;
-            case ClientMessageType.updateReadyState:
+            case ClientMessageType.UpdateReadyState:
                 response = this.handleUpdateReadyStateMessage(message, user);
             break;
-            case ClientMessageType.requestPublicLobbies:
+            case ClientMessageType.RequestPublicLobbies:
                 response = this.handleRequestPublicLobbiesMessage(message);
             break;
             default:

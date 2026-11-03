@@ -3,13 +3,13 @@ import GameMessage from "../../../GameMessage.js";
 import { ClientMessageType } from "../../ClientMessageType.js";
 
 export interface ModifyGameSettingsMessage extends GameMessage{
-    readonly type: ClientMessageType.modifyGameSettings;
+    readonly type: ClientMessageType.ModifyGameSettings;
 
     settings: Partial<GameSettings>
 }
 
 export class ModifyGameSettingsMessageBuilder implements ModifyGameSettingsMessage{
-    readonly type = ClientMessageType.modifyGameSettings;
+    readonly type = ClientMessageType.ModifyGameSettings;
     readonly timestamp: number = Date.now();
     settings: Partial<GameSettings> = {};
 

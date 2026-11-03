@@ -2,7 +2,7 @@ import GameMessage from "../../../GameMessage.js";
 import { ClientMessageType } from "../../ClientMessageType.js";
 
 export interface CreateLobbyMessage extends GameMessage{
-    readonly type: ClientMessageType.createLobby;
+    readonly type: ClientMessageType.CreateLobby;
 
     name: string;
     description: string;
@@ -10,7 +10,7 @@ export interface CreateLobbyMessage extends GameMessage{
 }
 
 export class CreateLobbyMessageBuilder implements CreateLobbyMessage{
-    readonly type = ClientMessageType.createLobby;
+    readonly type = ClientMessageType.CreateLobby;
     readonly timestamp: number = Date.now();
 
     name: string = "Untitled Lobby";

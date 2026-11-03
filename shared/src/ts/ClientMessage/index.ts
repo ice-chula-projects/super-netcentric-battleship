@@ -10,20 +10,26 @@ import { ModifyGameSettingsMessage } from "./Game/Lobby/ModifyGameSettingsMessag
 import { StartGameMessage } from "./Game/Lobby/StartGameMessage.js";
 import { UpdateReadyStateMessage } from "./Game/Lobby/UpdateReadyStateMessage.js";
 import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMessage.js";
+import { FireVolleyActionMessage } from "./Game/FireVolleyActionMessage.js";
+import { PlaceShipActionMessage } from "./Game/PlaceShipActionMessage.js";
+import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
-export * from "./User/RequestUserInfoMessage.js"
-export * from "./User/UpdateUserInfoMessage.js"
-export * from "./User/RequestActiveUsersMessage.js"
-export * from "./Chat/UpdateChatChannelSubscriptionMessage.js"
-export * from "./Chat/SendToChatMessage.js"
-export * from "./Game/Lobby/CreateLobbyMessage.js"
-export * from "./Game/Lobby/JoinLobbyMessage.js"
-export * from "./Game/Lobby/ModifyGameSettingsMessage.js"
-export * from "./Game/Lobby/StartGameMessage.js"
+export * from "./User/RequestUserInfoMessage.js";
+export * from "./User/UpdateUserInfoMessage.js";
+export * from "./User/RequestActiveUsersMessage.js";
+export * from "./Chat/UpdateChatChannelSubscriptionMessage.js";
+export * from "./Chat/SendToChatMessage.js";
+export * from "./Game/Lobby/CreateLobbyMessage.js";
+export * from "./Game/Lobby/JoinLobbyMessage.js";
+export * from "./Game/Lobby/ModifyGameSettingsMessage.js";
+export * from "./Game/Lobby/StartGameMessage.js";
 export * from "./Game/Lobby/UpdateReadyStateMessage.js"
-export * from "./Game/Lobby/RequestPublicLobbiesMessage.js"
+export * from "./Game/Lobby/RequestPublicLobbiesMessage.js";
+export * from "./Game/FireVolleyActionMessage.js";
+export * from "./Game/PlaceShipActionMessage.js";
+export * from "./Game/UseAbilityActionMessage.js";
 
 export type ClientMessage = PingMessage |
 RequestUserInfoMessage |
@@ -36,4 +42,7 @@ JoinLobbyMessage |
 ModifyGameSettingsMessage |
 StartGameMessage |
 UpdateReadyStateMessage |
-RequestPublicLobbiesMessage;
+RequestPublicLobbiesMessage |
+FireVolleyActionMessage |
+PlaceShipActionMessage |
+UseAbilityActionMessage;

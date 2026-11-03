@@ -2,13 +2,13 @@ import GameMessage from "../../../GameMessage.js";
 import { ClientMessageType } from "../../ClientMessageType.js";
 
 export interface JoinLobbyMessage extends GameMessage{
-    readonly type: ClientMessageType.joinLobby;
+    readonly type: ClientMessageType.JoinLobby;
 
     lobbyCode: string
 }
 
 export class JoinLobbyMessageBuilder implements JoinLobbyMessage{
-    readonly type = ClientMessageType.joinLobby;
+    readonly type = ClientMessageType.JoinLobby;
     readonly timestamp: number = Date.now();
     lobbyCode: string = "";
 
