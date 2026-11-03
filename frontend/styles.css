@@ -13,6 +13,9 @@
     --color-satellite-foreground: #F3FFFB;
     --color-satellite-foreground-focus: #CCE7DE;
     --color-satellite-foreground-border: #89A4A4;
+    --color-satellite-foreground-text: #6C7C7C;
+    --color-satellite-accent: #475D7D;
+    background: #9A89A9;
 }
 
 [popover] {
@@ -43,6 +46,7 @@ button:hover {
 button.secondary {
     background-color: var(--color-satellite-foreground);
     border: 2px solid var(--color-satellite-foreground-border);
+    color: var(--color-satellite-foreground-text);
     transition: 0.2s;
 }
 
@@ -52,28 +56,47 @@ button.secondary:hover {
     font-weight: bold;
 }
 
+button.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 8px;
+  background-color: var(--color-satellite-foreground);
+  border: 2px solid var(--color-satellite-foreground-border);
+  transition: 0.2s;
+  color: var(--text);
+  cursor: pointer;
+}
+
+button.icon:hover,
+button.icon[aria-pressed="true"] {
+    background-color: var(--color-satellite-foreground-focus);
+    border-color: var(--color-satellite-glow);
+}
+button.icon[aria-expanded="true"] {
+    background-color: var(--color-satellite-foreground-focus);
+}
+button.icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+
 h1 {
     font-size: 1.5rem;
     letter-spacing: 3%;
-    color: darkblue;
+    color: var(--color-satellite-accent);
 }
 
 body {
-    height: 100%;
+    height: 100vh;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-image: linear-gradient(to bottom, #655561 0%, #9A89A9 100%);
+    overflow-x: clip;
 }
 
-header {
-    padding: 1rem 2rem;
-    position: sticky;
-    align-items: flex-end;
-    height: auto;
-    background-image: linear-gradient(120deg, var(--color-satellite-glow), var(--color-satellite-base));
-    border-radius: 0 0 8px 8px;
-    border-bottom: 2px solid var(--color-satellite-glow);
-    box-shadow: 0 5px 4px 6px #00000025;
+#app {
+    position: relative;
 }
 
 .flex-space {
@@ -82,9 +105,44 @@ header {
     justify-content: space-between;
 }
 
-header .right {
-    display: flex;
-    gap: 1rem;
+/* Sidebar */
+
+aside {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+
+    height: 100vh;
+    padding: calc(var(--header-height) + 1rem) 1rem 1rem 1rem;
+    background-image: linear-gradient(to bottom, var(--color-satellite-base), var(--color-satellite-glow));
+    border-left: 2px solid var(--color-satellite-glow);
+    overflow-y: auto;
+
+    transform: translateX(0);
+    transition: transform 250ms ease;
+    z-index: 10;
+}
+
+#app.sidebar-collapsed aside {
+    transform: translateX(100%);
+    pointer-events: none;
+}
+
+aside h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+aside section + section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+aside ul {
+    padding-left: 1.1rem;
 }
 
 .space-grotesk-bold {

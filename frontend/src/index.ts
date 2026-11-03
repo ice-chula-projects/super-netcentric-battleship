@@ -2,7 +2,14 @@ import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessag
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
 import Camera from "./Camera";
 import { Game } from "./Game";
+import "./components/ChatSidebar";
+import "./components/GameHeader";
+import "./components/ChatMessage";
+import type ChatMessage from "./components/ChatMessage";
+import type ChatSidebar from "./components/ChatSidebar";
+import type GameHeader from "./components/GameHeader";
 
+console.log("index.ts loaded");
 //TODO: config
 const PORT = 17040;
 
@@ -13,15 +20,8 @@ const game = new Game(webSocket);
 const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, game);
 
 //TODO: move none setup logic outside of index.ts
-function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {
-  const messageElement = document.createElement("li")
-  messageElement.innerHTML = `
-    <p style="font-weight: bold;">${author.username}</p>
-    <span style="color: gray; font-size: 10px;">${timestamp.toTimeString()}</span>
-    <p>${messageText}</p>
-  `
-  return messageElement
-}
+const header = document.querySelector("game-header") as GameHeader
+const chatSidebar = document.querySelector("chat-sidebar") as ChatSidebar
 
 let currentUser: { username: string, id: string };
 webSocket.addEventListener("open", () => {
@@ -35,12 +35,22 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
   console.log(serverMessage);
   switch (serverMessage.type) {
     case ServerMessage.ServerMessageType.ChatMessageNotification:
-      document.querySelector("#global-chat")?.appendChild(messageComponent(serverMessage.author, new Date(serverMessage.timestamp), serverMessage.message))
+    case ServerMessage.ServerMessageType.ChatMessageNotification:
+      chatSidebar.addMessage(
+        serverMessage.author,
+        new Date(serverMessage.timestamp),
+        serverMessage.message,
+        serverMessage.author.username === currentUser?.username
+      );
+      break;
       break;
     case ServerMessage.ServerMessageType.UserInfo:
-      currentUser = serverMessage.userInfo
+      if (serverMessage.userInfo.username === null || serverMessage.userInfo.id === null) {
+        return
+      }
+      currentUser = serverMessage.userInfo as unknown as { username: string; id: string; }
       game.playerId = serverMessage.userInfo.id;
-      document.querySelector("#current-username").innerHTML = currentUser.username
+      header.username = currentUser.username
       if (!/guest\#\d\d\d\d\d\d/.test(currentUser.username)) {
         alert(`Hello ${currentUser.username}`)
         webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
@@ -48,6 +58,9 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
       break;
     case ServerMessage.ServerMessageType.ActiveUsersInfo:
       const activeUsers = document.querySelector("#active-users")
+      if (activeUsers === null) {
+        break;
+      }
       activeUsers.innerHTML = ""
       for (const user of serverMessage.activeUsers) {
         const userElement = document.createElement("li")
@@ -81,35 +94,48 @@ window.webSocket = webSocket;
 //@ts-ignore
 window.camera = camera;
 
-document.querySelector("#send-to-global-chat-button")?.addEventListener("click", () => {
-  const messageText = (document.querySelector("#current-message") as HTMLInputElement).value;
-  (document.querySelector("#current-message") as HTMLInputElement).value = ""
-  document.querySelector("#global-chat")?.appendChild(messageComponent(currentUser, new Date(), messageText))
-  if (messageText.trim().length === 0) {
+chatSidebar.addEventListener("send-chat-message", (event) => {
+  const { message, channelId } = (
+    event as CustomEvent<{
+      message: string;
+      channelId: string;
+    }>
+  ).detail;
+
+  chatSidebar.addMessage(
+    currentUser,
+    new Date(),
+    message,
+    true
+  );
+  
+  webSocket.send(
+    new ClientMessage.SendToChatMessageBuilder()
+      .setChannelId(channelId)
+      .setMessage(message)
+      .toJsonString()
+  );
+});
+
+header?.addEventListener("change-username", (event) => {
+  const { username } = (event as CustomEvent<{ username: string }>).detail;
+
+  if (username === currentUser.username || username.trim().length === 0) {
     return;
   }
-  webSocket.send(new ClientMessage.SendToChatMessageBuilder().setChannelId("global").setMessage(messageText).toJsonString())
-})
 
-document.querySelector("#change-username-button")?.addEventListener("click", (event) => {
-  event.preventDefault()
-  const popoverElement: HTMLElement | null = document.querySelector("#username-form")
-  popoverElement?.hidePopover()
-  const username = (document.querySelector("#new-username") as HTMLInputElement).value
-  if (username === currentUser.username || username.trim().length === 0) {
-    return
-  }
-  webSocket.send(new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString())
-})
+  webSocket.send(
+    new ClientMessage.UpdateUserInfoMessageBuilder()
+      .setUsername(username)
+      .toJsonString()
+  );
+});
+
+header?.addEventListener("join-game", (event) => {
+  const { gameId } = (event as CustomEvent<{ gameId: string }>).detail;
+  game.joinGame(gameId);
+});
 
 document.querySelector("#refresh-active-users-button")?.addEventListener("click", () => {
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
-})
-
-document.querySelector("#join-game")?.addEventListener("click", (event) => {
-  event.preventDefault()
-  const popoverElement: HTMLElement | null = document.querySelector("#lobby-form")
-  popoverElement?.hidePopover()
-  const gameId = (document.querySelector("#current-game-id") as HTMLInputElement).value;
-  game.joinGame(gameId);
 })

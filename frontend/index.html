@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -12,45 +13,16 @@
   </head>
   <body>
     <div id="app">
-        <header class="flex-space">
-            <h1 class="space-mono-bold">
-                Ship Ship Hooray!
-            </h1>
-            <div class="right">
-                <div>
-                    <button popovertarget="lobby-form" id="current-game-id" class="space-grotesk-medium secondary">Join Game</button>
-                    <form id="lobby-form" popover>
-                        <h3 class="space-grotesk-medium">Join Game</h3>
-                        <label for="current-game-id">Game ID</label>
-                        <input type="text" id="current-game-id">
-                        <button type="submit" id="join-game" class="secondary">Join</button>
-                    </form>
-                </div>
-                <div>
-                    <button popovertarget="username-form" id="current-username" class="space-grotesk-medium secondary"></button>
-                    <form id="username-form" popover>
-                        <label for="new-username">Enter new username:</label><br>
-                        <input type="text" id="new-username" placeholder="Ex. Alice">
-                        <button type="submit" id="change-username-button" class="secondary">Change Username</button>
-                    </form>
-                </div>
-            </div>
-        </header>
-        <div style="display: flex; gap: 2rem">
+        <game-header></game-header>
+        <chat-sidebar></chat-sidebar>
+        <main style="padding-top: var(--header-height); gap: 2rem">
             <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
-            <div>
-                <h1>Global Chat</h1>
-                <ul id="global-chat"></ul>
-                <input type="text" id="current-message">
-                <button id="send-to-global-chat-button">Send</button>
-            </div>
-        </div>
-        <div>
-            <h1>Active Users</h1>
+        </main>
+        <section>
+            <h3>Active Users</h3>
             <button id="refresh-active-users-button">Refresh</button>
             <ul id="active-users"></ul>
-        </div>
-        
+        </section>
     </div>
   </body>
 </html>
