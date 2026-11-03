@@ -46,6 +46,8 @@ export default class Camera {
         y: null
     }
 
+    timerTextRoundingDecimalPlaces: number = 2;
+
     currentInputOrientation: Orientation = Orientation.Right;
     // for ship placement
     currentlySelectedShipPlaceType: ShipType = ShipType.Standard;
@@ -103,8 +105,9 @@ export default class Camera {
 
         if (!this.gameManager.active) return;
         this.drawBoards();
-        this.drawTurnText();
-        this.drawGameId();
+
+        if(this.gameManager.currentGameState == GameState.Battle) this.drawTimerText();
+        
     }
 
     handleMouseClick() {
@@ -225,6 +228,7 @@ export default class Camera {
         }
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`
+        context.textAlign = "left";
         context.fillText(label, x, y + size + this.textSize);
         context.strokeText(label, x, y + size + this.textSize);
     }
@@ -310,6 +314,17 @@ export default class Camera {
     drawBoards() {
         this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board", BoardHighlightMode.Player);
         this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
+    }
+
+    drawTimerText() {
+        const timeSinceLastUpdate = (Date.now() - this.gameManager.lastTurnUpdateTimeStamp) / 1000;
+        const remainingTime = Math.max(0, this.gameManager.currentGameSettings.timeLimitPerTurn - timeSinceLastUpdate);
+
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`;
+        context.textAlign = "center";
+        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.canvas.height - this.textSize);
     }
 
     drawTurnText() {
