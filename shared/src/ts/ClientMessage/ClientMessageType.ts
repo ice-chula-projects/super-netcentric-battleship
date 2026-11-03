@@ -12,6 +12,6 @@ export enum ClientMessageType{
     UpdateReadyState = "updateReadyState",
     RequestPublicLobbies = "requestPublicLobbies",
     FireVolleyAction = "fireVolleyAction",
-    PlaceShipAction = "placeShipAction",
+    InitializeFleetAction = "InitializeFleetAction",
     UseAbilityAction = "useAbilityAction"
 }

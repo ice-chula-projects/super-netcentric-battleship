@@ -9,7 +9,7 @@ import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js
 import User from "../User/User.js";
 import { CurrentTurnNotificationMessageBuilder, UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import Random from "../lib/Random.js";
-import { ClientActionMessage, ClientMessageType } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientActionMessage, ClientMessageType, ShipPlacement } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 //responsible for game logic and sending messages to clients
 export default class Game{
@@ -23,10 +23,11 @@ export default class Game{
         [Player.Player1]: User,
         [Player.Player2]: User
     };
+    timeoutIntervalId: number | null = null;
 
     currentTurn!: Player
     gameState: GameState = GameState.ShipPlacement;
-    score: {
+    readonly score: {
         [Player.Player1]: number,
         [Player.Player2]: number
     } = {
@@ -34,7 +35,17 @@ export default class Game{
         [Player.Player2]: 0
     }
 
-    timeoutIntervalId: number | null = null;
+    readonly fleetInitialized: {
+        [Player.Player1]: boolean,
+        [Player.Player2]: boolean
+    } = {
+        [Player.Player1]: false,
+        [Player.Player2]: false
+    }
+
+    get fleetsInitialzed(): boolean{
+        return this.fleetInitialized[Player.Player1] && this.fleetInitialized[Player.Player2];
+    }
 
     constructor(gameSettings: GameSettings, player1User: User, player2User: User){
         this.gameSettings = gameSettings;
@@ -50,6 +61,8 @@ export default class Game{
 
     initializeGame(){
         this.gameState = GameState.ShipPlacement;
+        this.fleetInitialized[Player.Player1] = false; 
+        this.fleetInitialized[Player.Player2] = false; 
         this.resetBoards();
     }
     
@@ -72,15 +85,31 @@ export default class Game{
         this.resetTimeoutInterval();
     }
 
-    addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation){
-        if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to add ship in non ship placement state") 
+    initializeFleet(player: Player, fleet:ShipPlacement[]){
+        if(this.gameState != GameState.ShipPlacement) throw new Error("Cannot initialize fleet in non ship placement state");
+        if(this.fleetInitialized[player]) throw new Error("Fleet already initialized");
+
+        const fleetValue = fleet.map(x => Ship.fromType(x.shipType).value).reduce((a,b) => a + b);
+        if(fleetValue > this.gameSettings.maxFleetValue) throw new Error("Fleet value exceeds maximum fleet value");
+
+        const updatedTiles = [];
+        for(const ship of fleet){
+            updatedTiles.push(... this.addShip(player, ship.shipType, ship.location, ship.orientation));
+        }
+
+        this.fleetInitialized[player] = true;
+
+        this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
+
+        if(this.fleetsInitialzed) this.startBattle();
+    }
+
+    addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation): BoardTileUpdate[]{
         const board = this.boards[player];
         const ship = Ship.fromType(shipType);
         ship.setOrientation(orientation);
-        if(board.totalFleetValue + ship.value > this.gameSettings.maxFleetValue) throw new Error("Added ship will exceed maximum fleet value");
 
-        const updatedTiles = board.placeShip(ship, location);
-        this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
+        return board.placeShip(ship, location);
     }
 
     startBattle(){
@@ -129,8 +158,8 @@ export default class Game{
             case ClientMessageType.FireVolleyAction:
                 this.fire(actingPlayer, clientActionMessage.originatingShipId, clientActionMessage.targetCoordinates, clientActionMessage.volleyOrientation);
             break;
-            case ClientMessageType.PlaceShipAction:
-                this.addShip(actingPlayer, clientActionMessage.shipType, clientActionMessage.location, clientActionMessage.orientation);
+            case ClientMessageType.InitializeFleetAction:
+                this.initializeFleet(actingPlayer, clientActionMessage.fleet);
             break;
             case ClientMessageType.UseAbilityAction:
                 throw new Error("Abilities have not been implemented");

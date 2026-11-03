@@ -11,7 +11,7 @@ import { StartGameMessage } from "./Game/Lobby/StartGameMessage.js";
 import { UpdateReadyStateMessage } from "./Game/Lobby/UpdateReadyStateMessage.js";
 import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMessage.js";
 import { FireVolleyActionMessage } from "./Game/FireVolleyActionMessage.js";
-import { PlaceShipActionMessage } from "./Game/PlaceShipActionMessage.js";
+import { InitializeFleetActionMessage } from "./Game/InitializeFleetActionMessage.js";
 import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
 
 export * from "./ClientMessageType.js";
@@ -28,7 +28,7 @@ export * from "./Game/Lobby/StartGameMessage.js";
 export * from "./Game/Lobby/UpdateReadyStateMessage.js"
 export * from "./Game/Lobby/RequestPublicLobbiesMessage.js";
 export * from "./Game/FireVolleyActionMessage.js";
-export * from "./Game/PlaceShipActionMessage.js";
+export * from "./Game/InitializeFleetActionMessage.js";
 export * from "./Game/UseAbilityActionMessage.js";
 
 export type ClientMessage = PingMessage |
@@ -44,9 +44,9 @@ StartGameMessage |
 UpdateReadyStateMessage |
 RequestPublicLobbiesMessage |
 FireVolleyActionMessage |
-PlaceShipActionMessage |
+InitializeFleetActionMessage |
 UseAbilityActionMessage;
 
 export type ClientActionMessage = FireVolleyActionMessage |
-PlaceShipActionMessage |
+InitializeFleetActionMessage |
 UseAbilityActionMessage;

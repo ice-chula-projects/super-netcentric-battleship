@@ -91,7 +91,7 @@ export default class GameServer {
                 response = this.handleRequestPublicLobbiesMessage(message);
             break;
             case ClientMessageType.FireVolleyAction:
-            case ClientMessageType.PlaceShipAction:
+            case ClientMessageType.InitializeFleetAction:
             case ClientMessageType.UseAbilityAction:
                 response = this.handleClientActionMessage(message, user);
             break;
