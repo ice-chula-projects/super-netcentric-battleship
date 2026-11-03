@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
@@ -87,6 +87,9 @@ export default class GameServer {
             case ClientMessageType.updateReadyState:
                 response = this.handleUpdateReadyStateMessage(message, user);
             break;
+            case ClientMessageType.requestPublicLobbies:
+                response = this.handleRequestPublicLobbiesMessage(message);
+            break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
@@ -106,8 +109,8 @@ export default class GameServer {
         const memberCount = allMembers.length
         
         //TODO: configuration
-        const maxUsersPerPage = 50;
-        const membersPerPage = requestedMembersPerPage == null ? maxUsersPerPage : Math.max(0, Math.min(maxUsersPerPage, requestedMembersPerPage));
+        const maxMembersPerPage = 50;
+        const membersPerPage = requestedMembersPerPage == null ? maxMembersPerPage : Math.max(0, Math.min(maxMembersPerPage, requestedMembersPerPage));
 
         //clamp page
         const page = Math.max(0, Math.min(requestedPage, Math.ceil(memberCount/membersPerPage) - 1));
@@ -208,9 +211,27 @@ export default class GameServer {
         return null;
     }
 
-    
     handleUpdateReadyStateMessage(updateReadyStateMessage: UpdateReadyStateMessage, user: User): ServerMessage | null{
         this.gameLobbyManager.updateReadyStatus(user, updateReadyStateMessage.ready);
         return null;
+    }
+
+    handleRequestPublicLobbiesMessage(requestPublicLobbiesMessage: RequestPublicLobbiesMessage): ServerMessage | null{
+        const publicLobbies = this.gameLobbyManager.getPublicLobbies();
+        const totalPublicLobbies = publicLobbies.length;
+        const paginatedLobbies = this.paginate(publicLobbies, requestPublicLobbiesMessage.page, requestPublicLobbiesMessage.lobbiesPerPage);
+
+        return new PublicLobbiesInfoMessageBuilder()
+        .setLobbies(paginatedLobbies.pagninatedMembers.map(x=>{
+            return {
+                lobbyCode: x.id,
+                name: x.name,
+                description: x.description,
+                memberCount: x.members.length
+            }
+        }))
+        .setPage(paginatedLobbies.page)
+        .setTotalLobbies(totalPublicLobbies)
+        .setlobbiesPerPage(paginatedLobbies.membersPerPage);
     }
 }

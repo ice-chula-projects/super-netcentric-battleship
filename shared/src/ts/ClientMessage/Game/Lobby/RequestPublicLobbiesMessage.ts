@@ -3,11 +3,24 @@ import { ClientMessageType } from "../../ClientMessageType.js";
 
 export interface RequestPublicLobbiesMessage extends GameMessage{
     readonly type: ClientMessageType.requestPublicLobbies;
+    page: number,
+    lobbiesPerPage: number | null
 }
 
 export class RequestPublicLobbiesMessageBuilder implements RequestPublicLobbiesMessage{
     readonly type = ClientMessageType.requestPublicLobbies;
     readonly timestamp: number = Date.now();
+    page: number = 0;
+    lobbiesPerPage: number | null = null;
+    
+    setPage(page: number){
+        this.page = page;
+        return this;
+    }
+
+    setLobbiesPerPage(lobbiesPerPage: number | null){
+        this.lobbiesPerPage = lobbiesPerPage;
+    }
 
     toJsonString(){
         return JSON.stringify(this);
