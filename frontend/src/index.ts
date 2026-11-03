@@ -1,7 +1,8 @@
-import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
+import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import Camera from "./Game/Camera";
-import { Game } from "./Game/GameManager";
+import { Game, GameManager } from "./Game/GameManager";
+import { LobbyManager } from "./Game/LobbyManager";
 
 //TODO: config
 const PORT = 17040;
@@ -11,6 +12,9 @@ const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
 const game = new Game(webSocket);
 const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, game);
+
+const gameManager = new GameManager(webSocket);
+const lobbyManager = new LobbyManager(webSocket, gameManager);
 
 //TODO: move none setup logic outside of index.ts
 function messageComponent(author: { username: string }, timestamp: Date, messageText: string) {
@@ -71,6 +75,11 @@ window.ClientMessage = ClientMessage;
 window.webSocket = webSocket;
 //@ts-ignore
 window.camera = camera;
+//@ts-ignore
+window.lobbyManager = lobbyManager;
+//@ts-ignore
+window.gameManager = gameManager;
+//@ts-ignore
 
 document.querySelector("#send-to-global-chat-button").addEventListener("click", () => {
   const messageText = (document.querySelector("#current-message") as HTMLInputElement).value;
