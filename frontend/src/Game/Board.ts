@@ -28,6 +28,12 @@ export default class GameBoard{
         }
     }
 
+    getTile(x: number, y: number){
+        if(x < 0 || x >= this.size || y < 0 || y >= this.size) throw new Error("Tile out of bounds")
+
+        return this.board[x][y];
+    }
+
     updateTileState(state: BoardTileStatus){
         this.board[state.coordinate.x][state.coordinate.y] = {
             state: state.state,

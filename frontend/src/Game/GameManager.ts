@@ -1,4 +1,4 @@
-import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
+import { getOppositePlayer, Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import GameBoard from "./Board";
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 import { CurrentTurnNotificationMessage, ServerMessage, ServerMessageType, UpdateBoardTileStatusesNotificationMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
@@ -25,6 +25,16 @@ export class GameManager{
         this.webSocket = webSocket;
 
         this.webSocket.addEventListener("message", this.handleServerMessage.bind(this));
+    }
+
+    getPlayerBoard(): GameBoard{
+        if(!this.active) throw new Error("Game is not Active");
+        return this.boards[this.playerId];
+    }
+
+    getOpponentBoard(): GameBoard{
+        if(!this.active) throw new Error("Game is not Active");
+        return this.boards[getOppositePlayer(this.playerId)];
     }
 
     fireVolley(originatingShipId: number, targetCoordinates: Coordinate, volleyOrientation: Orientation){
