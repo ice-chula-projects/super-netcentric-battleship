@@ -106,7 +106,10 @@ export default class Camera {
         if (!this.gameManager.active) return;
         this.drawBoards();
 
-        if(this.gameManager.currentGameState == GameState.Battle) this.drawTimerText();
+        if(this.gameManager.currentGameState == GameState.Battle){
+            this.drawTimerText();
+            this.drawTurnText();
+        };
         
     }
 
@@ -324,17 +327,17 @@ export default class Camera {
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`;
         context.textAlign = "center";
-        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.canvas.height - this.textSize);
+        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.textSize);
     }
 
     drawTurnText() {
-        // if(this.game.playersTurn == null || this.game.state != GameStates.Fighting) return;
-        // const turnText = this.game.playersTurn? "Your Turn" : "Opponent's Turn"
+        const turnText = this.gameManager.isPlayersTurn? "Your Turn" : "Opponent's Turn"
 
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.textColor;
-        // context.font = `${this.textSize}px Arial`
-        // context.fillText(turnText, 0, this.canvas.height - this.textSize);
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(turnText, this.canvas.width / 2, this.canvas.height - this.textSize);
     }
 
     drawGameId() {
