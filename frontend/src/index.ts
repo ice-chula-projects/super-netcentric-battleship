@@ -1,7 +1,7 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
-import Camera from "./Camera";
-import { Game } from "./Game";
+import Camera from "./Game/Camera";
+import { Game } from "./Game/GameManager";
 
 //TODO: config
 const PORT = 17040;
@@ -57,15 +57,6 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
       break;
     case ServerMessage.ServerMessageType.Error:
       alert(serverMessage.error);
-    break;
-    case ServerMessage.ServerMessageType.GameStateNotification:
-      game.informGameState(serverMessage);
-    break;
-    case ServerMessage.ServerMessageType.GameActionResultNotificaction:
-      game.informShotResult(serverMessage.hit);
-    break;
-    case ServerMessage.ServerMessageType.OpponentGameActionNotification:
-      game.informOpponentAction(serverMessage.x, serverMessage.y);
     break;
   }
 })

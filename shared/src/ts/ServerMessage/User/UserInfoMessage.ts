@@ -1,5 +1,5 @@
-import GameMessage from "../GameMessage.js";
-import { ServerMessageType } from "./ServerMessageType.js";
+import GameMessage from "../../GameMessage.js";
+import { ServerMessageType } from "../ServerMessageType.js";
 
 export interface UserInfoMessage extends GameMessage{
     readonly type: ServerMessageType.UserInfo;

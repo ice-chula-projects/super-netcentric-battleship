@@ -1,18 +1,18 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, JoinGameMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendBoardSetupMessage, SendGameActionMessage, SendToChatMessage, Ship, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
-import GameManager from "./Game/GameManager.js";
-import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
+import { v4 as uuidv4 } from 'uuid';
+import GameLobbyManager from "./Game/GameLobbyManager.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
-    readonly gameManager: GameManager;
+    readonly gameLobbyManager: GameLobbyManager;
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
@@ -25,14 +25,14 @@ export default class GameServer {
 
         this.userManager = new UserManager();
         this.chatManager = new ChatManager();
-        this.gameManager = new GameManager(this);
+        this.gameLobbyManager = new GameLobbyManager(this);
 
         this.chatManager.addChannel("global");
     }
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
+        const userId = uuidv4();
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
@@ -51,8 +51,9 @@ export default class GameServer {
             return;
         }
 
-        let response: ServerMessage | null;
-        switch(message.type){
+        let response: ServerMessage | null = null;
+        try{
+            switch(message.type){
             case ClientMessageType.Ping:
                 response = this.handlePingMessage(message);
             break;
@@ -71,20 +72,63 @@ export default class GameServer {
             case ClientMessageType.SendToChat:
                 response = this.handleSendToChatMessage(message, user);
             break;
-            case ClientMessageType.JoinGame:
-                response = this.handleJoinGameMessage(message, user);
+            case ClientMessageType.CreateLobby:
+                response = this.handleCreateLobbyMessage(message, user);
             break;
-            case ClientMessageType.SendBoardSetup:
-                response = this.handleSendBoardSetupMessage(message, user);
+            case ClientMessageType.JoinLobby:
+                response = this.handleJoinLobbyMessage(message, user);
             break;
-            case ClientMessageType.SendGameAction:
-                response = this.handleSendGameActionMessage(message, user);
+            case ClientMessageType.ModifyGameSettings:
+                response = this.handleModifyGameSettingsMessage(message, user);
+            break;
+            case ClientMessageType.StartGame:
+                response = this.handleStartGameMessage(user);
+            break;
+            case ClientMessageType.UpdateReadyState:
+                response = this.handleUpdateReadyStateMessage(message, user);
+            break;
+            case ClientMessageType.RequestPublicLobbies:
+                response = this.handleRequestPublicLobbiesMessage(message);
+            break;
+            case ClientMessageType.FireVolleyAction:
+            case ClientMessageType.InitializeFleetAction:
+            case ClientMessageType.UseAbilityAction:
+                response = this.handleClientActionMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
+
+        } catch(error){
+            if (error instanceof Error){
+                response = new ServerErrorMessageBuilder().setError(error.message);
+            } else {
+                response = new ServerErrorMessageBuilder().setError("unknown internal server error");
+            }
+        }
         
         if (response != null) websocket.send(response.toJsonString());
+    }
+
+    paginate<T>(allMembers:T[], requestedPage: number | null, requestedMembersPerPage: number | null): {pagninatedMembers: T[], page: number, membersPerPage: number}{
+        const memberCount = allMembers.length
+        
+        //TODO: configuration
+        const maxMembersPerPage = 50;
+        const membersPerPage = requestedMembersPerPage == null ? maxMembersPerPage : Math.max(0, Math.min(maxMembersPerPage, requestedMembersPerPage));
+
+        //clamp page
+        if(requestedPage == null) requestedPage = 0;
+        const page = Math.max(0, Math.min(requestedPage, Math.ceil(memberCount/membersPerPage) - 1));
+        
+        const startingIndex = page * membersPerPage
+        const pagninatedMembers = allMembers.slice(startingIndex, Math.min(startingIndex + membersPerPage, memberCount));
+
+        return {
+            pagninatedMembers: pagninatedMembers,
+            page: page,
+            membersPerPage: membersPerPage
+        }
     }
 
     //message handlers
@@ -111,22 +155,13 @@ export default class GameServer {
     handleRequestActiveUsersMessage(requestActiveUsersMessage: RequestActiveUsersMessage): ServerMessage{
         const activeUsers = this.userManager.getActiveUsers();
         const activeUserCount = this.userManager.activeUserCount;
-
-        //TODO: configuration
-        const maxUsersPerPage = 50;
-        const usersPerPage = requestActiveUsersMessage.usersPerPage == null ? maxUsersPerPage : Math.max(0, Math.min(maxUsersPerPage, requestActiveUsersMessage.usersPerPage));
-
-        //clamp page
-        const page = Math.max(0, Math.min(requestActiveUsersMessage.page, Math.ceil(activeUserCount/usersPerPage) - 1));
-        
-        const startingIndex = page * usersPerPage
-        const paginatedActiveUsers = activeUsers.slice(startingIndex, Math.min(startingIndex + usersPerPage, activeUsers.length));
+        const paginated = this.paginate(activeUsers, requestActiveUsersMessage.page, requestActiveUsersMessage.usersPerPage);
 
         return new ActiveUsersInfoMessageBuilder()
         .setTotalActiveUsers(activeUserCount)
-        .setPage(page)
-        .setActiveUsers(paginatedActiveUsers.map((user:User) => {return {username: user.username, id:user.id}}))
-        .setUsersPerPage(usersPerPage)
+        .setPage(paginated.page)
+        .setActiveUsers(paginated.pagninatedMembers.map((user:User) => {return {username: user.username, id:user.id}}))
+        .setUsersPerPage(paginated.membersPerPage)
     }
 
     //TODO: send chat history to user when the user subscribes to a channel
@@ -159,50 +194,55 @@ export default class GameServer {
         return null;
     }
 
-    handleJoinGameMessage(joinGameMessage: JoinGameMessage, user: User): ServerMessage | null{
-        const gameId = joinGameMessage.gameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("gameId cannot be null");
-        if(!this.gameManager.gameExists(joinGameMessage.gameId)) this.gameManager.createGame(gameId);
-        if(this.gameManager.gameIsFull(gameId)) return new ServerErrorMessageBuilder().setError("requested gameId is full");
-
-        
-        try{
-            this.gameManager.addPlayerUser(gameId, user);
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
+    handleCreateLobbyMessage(createLobbyMessage: CreateLobbyMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.createLobby(user, createLobbyMessage.name, createLobbyMessage.description, createLobbyMessage.isPublic);
 
         return null;
     }
 
-    handleSendBoardSetupMessage(sendBoardSetupMessage: SendBoardSetupMessage, user: User): ServerMessage | null{
-        const gameId = user.currentGameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("user not currently in game");
-        
-        //TODO: validation
-        try{
-            this.gameManager.setUpBoard(gameId, user, sendBoardSetupMessage.ships.map((ship:Ship) => {return new GameShip(ship.x, ship.y, ship.orientation == "down"? ShipOrientation.Down : ShipOrientation.Right)}));
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
-        
+    handleJoinLobbyMessage(joinLobbyMessage: JoinLobbyMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.joinLobby(user, joinLobbyMessage.lobbyCode);
+
         return null;
     }
 
-    handleSendGameActionMessage(sendGameActionMessage: SendGameActionMessage, user: User): ServerMessage | null{
-        const gameId = user.currentGameId;
-        if(gameId == null) return new ServerErrorMessageBuilder().setError("user not currently in game");
-        
-        //TODO: validation
-        try{
-            this.gameManager.takeTurn(gameId, user, sendGameActionMessage.x, sendGameActionMessage.y);
-        } catch (error){
-            console.log(error);
-            return new ServerErrorMessageBuilder().setError("internal server error");
-        }
-        
+    handleModifyGameSettingsMessage(modifyGameSettingsMessage: ModifyGameSettingsMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.modifyGameSettings(user, modifyGameSettingsMessage.settings);
+        return null;
+    }
+
+    
+    handleStartGameMessage(user: User): ServerMessage | null{
+        this.gameLobbyManager.requestGameStart(user);
+        return null;
+    }
+
+    handleUpdateReadyStateMessage(updateReadyStateMessage: UpdateReadyStateMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.updateReadyStatus(user, updateReadyStateMessage.ready);
+        return null;
+    }
+
+    handleRequestPublicLobbiesMessage(requestPublicLobbiesMessage: RequestPublicLobbiesMessage): ServerMessage | null{
+        const publicLobbies = this.gameLobbyManager.getPublicLobbies();
+        const totalPublicLobbies = publicLobbies.length;
+        const paginatedLobbies = this.paginate(publicLobbies, requestPublicLobbiesMessage.page, requestPublicLobbiesMessage.lobbiesPerPage);
+
+        return new PublicLobbiesInfoMessageBuilder()
+        .setLobbies(paginatedLobbies.pagninatedMembers.map(x=>{
+            return {
+                lobbyCode: x.id,
+                name: x.name,
+                description: x.description,
+                memberCount: x.members.length
+            }
+        }))
+        .setPage(paginatedLobbies.page)
+        .setTotalLobbies(totalPublicLobbies)
+        .setlobbiesPerPage(paginatedLobbies.membersPerPage);
+    }
+
+    handleClientActionMessage(clientActionMessage: ClientActionMessage, user: User): ServerMessage | null {
+        this.gameLobbyManager.notifyClientActionMessage(clientActionMessage, user);
         return null;
     }
 }

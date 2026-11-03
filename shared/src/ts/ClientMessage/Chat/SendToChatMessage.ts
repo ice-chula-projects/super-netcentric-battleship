@@ -1,5 +1,5 @@
-import GameMessage from "../GameMessage.js";
-import { ClientMessageType } from "./ClientMessageType.js";
+import GameMessage from "../../GameMessage.js";
+import { ClientMessageType } from "../ClientMessageType.js";
 
 export interface SendToChatMessage extends GameMessage{
     readonly type: ClientMessageType.SendToChat;

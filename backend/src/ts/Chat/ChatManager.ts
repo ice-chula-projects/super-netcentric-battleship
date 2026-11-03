@@ -2,9 +2,20 @@ import { ChatMessageNotificationMessageBuilder } from "@super-netcentric-battles
 import ChatChannel from "./ChatChannel.js";
 import ChatMessage from "./ChatMessage.js";
 import User from "../User/User.js";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class ChatManager {
     readonly channels: Record<string, ChatChannel> = {};
+
+
+    generateNewChannelId(): string {
+        const existngChannelIds = Object.keys(this.channels);
+        while (true) {
+            const channelId = uuidv4();
+            if (existngChannelIds.includes(channelId)) continue;
+            return channelId;
+        }
+    }
 
     addChannel(channelId: string){
         if(this.channelExists(channelId)) throw new Error("Tried to add a channel with duplicate Id");
