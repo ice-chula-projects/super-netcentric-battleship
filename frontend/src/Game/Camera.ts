@@ -31,6 +31,7 @@ export default class Camera {
             [BoardTileState.Ship]: "darkgrey"
         }
     highlightColor: string = "#ffffff55"
+    attackingShipHighlightColor: string = "#ff111155"
 
     strokeColor: string = "black";
     backgroundColor: string = "#5093d4";
@@ -219,6 +220,11 @@ export default class Camera {
                 context.fillRect(currentX, currentY, deltaX, deltaY);
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
 
+                if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId){
+                    context.fillStyle = this.attackingShipHighlightColor;
+                    context.fillRect(currentX, currentY, deltaX, deltaY);
+                }
+
                 if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
                     context.fillStyle = this.highlightColor;
                     context.fillRect(currentX, currentY, deltaX, deltaY);
@@ -274,15 +280,13 @@ export default class Camera {
             //highlight the selected ship in battle mode
             case GameState.Battle:
                 const currentTile = playerBoard.getTile(x, y);
-                if (this.attackingShip == null) {
-                    if (this.selectedBoard != playerId) return false;
-                    const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (this.selectedBoard != playerId) return false;
 
-                    if (selectedTile.shipId == null) return false;
-                    return selectedTile.shipId == currentTile.shipId;
-                } else {
-                    return currentTile.shipId == this.attackingShip.shipId;
-                }
+                const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (selectedTile.shipId == null) return false;
+
+                return selectedTile.shipId == currentTile.shipId;
+
         }
 
         return highlight
