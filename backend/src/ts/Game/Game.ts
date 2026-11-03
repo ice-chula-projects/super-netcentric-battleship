@@ -122,7 +122,7 @@ export default class Game{
     fire(attackingPlayer: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
         if(this.gameState != GameState.Battle) throw new Error("Tried to fire a volley in non Battle State");
         const attackingShip = this.boards[attackingPlayer].getShipById(attackingShipId);
-        if(!attackingShip.alive) throw new Error("Attempted to fire a volley from a dead ship");
+        if(!attackingShip.alive) throw new Error("Cannot fire a volley from a dead ship");
         const opponentPlayer = getOppositePlayer(attackingPlayer);
         const targetBoard = this.boards[opponentPlayer];
 
@@ -153,15 +153,16 @@ export default class Game{
     }
 
     takeAction(clientActionMessage: ClientActionMessage, actingPlayer: Player){
-        if(actingPlayer != this.currentTurn) throw new Error("Cannot take action when it isn't the player's turn");
         switch(clientActionMessage.type){
             case ClientMessageType.FireVolleyAction:
+                if(actingPlayer != this.currentTurn) throw new Error("Cannot fire a volley when it isn't the player's turn");
                 this.fire(actingPlayer, clientActionMessage.originatingShipId, clientActionMessage.targetCoordinates, clientActionMessage.volleyOrientation);
             break;
             case ClientMessageType.InitializeFleetAction:
                 this.initializeFleet(actingPlayer, clientActionMessage.fleet);
             break;
             case ClientMessageType.UseAbilityAction:
+                if(actingPlayer != this.currentTurn) throw new Error("Cannot use ability when it isn't the player's turn");
                 throw new Error("Abilities have not been implemented");
             break;
             default:

@@ -23,6 +23,7 @@ export class InitializeFleetActionMessageBuilder implements InitializeFleetActio
 
     setFleet(fleet: ShipPlacement[]){
         this.fleet = fleet;
+        return this;
     }
 
     toJsonString(){

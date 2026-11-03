@@ -145,7 +145,7 @@ export default class GameLobby{
     }
 
     notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: User){
-        if(this.gameInProgress) throw new Error("Cannot take actions while game is not in progress");
+        if(!this.gameInProgress) throw new Error("Cannot take actions while game is not in progress");
         this.activeGame?.takeAction(clientActionMessage, this.getPlayerIdFromUser(actingUser))
     }
 
