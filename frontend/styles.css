@@ -497,3 +497,90 @@ body {
     }
   }
 }
+
+.room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.room-header h2 {
+  margin: 0;
+}
+
+.badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-public {
+  background: rgba(46, 204, 113, 0.2);
+  color: #27ae60;
+  border: 1px solid #2ecc71;
+}
+
+.badge-private {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.room-desc {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.room-code-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: var(--surface-2);
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+}
+
+.room-code-box .code-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.room-code-box strong {
+  font-family: "Jersey 10", monospace;
+  font-size: 1.5rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.room-players {
+  margin-bottom: 1.25rem;
+}
+
+.room-players h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.room-players ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.status-ready {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.btn-ready-active {
+  background: #2ecc71 !important;
+  color: #ffffff !important;
+}

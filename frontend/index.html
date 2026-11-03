@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <title>Ship Ship Hooray!</title>
 
-    <!-- Apply the saved theme before first paint so there is no light/dark flash -->
+    <!-- Apply saved theme before first paint -->
     <script>
       (function () {
         var pref = "system";
@@ -20,7 +20,6 @@
         document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
       })();
     </script>
-
   </head>
   <body>
     <div id="app">
@@ -34,7 +33,6 @@
         </div>
 
         <div class="header-right">
-          <!-- Lobby Action Buttons -->
           <button class="header-btn" id="create-lobby-btn" type="button">Create Lobby</button>
           <button class="header-btn" id="join-lobby-btn" type="button">Join Lobby</button>
 
@@ -85,15 +83,13 @@
               <ul id="active-users"></ul>
             </section>
 
-            <!-- Public Lobbies List Section -->
+            <!-- Public Lobbies Section -->
             <section>
               <div class="sidebar-header-row">
                 <h3>Public Lobbies</h3>
                 <button id="refresh-lobbies-button">Refresh</button>
               </div>
-              <div id="lobbies-list" class="lobbies-list">
-                <!-- Dynamic lobby cards populated via JS -->
-              </div>
+              <div id="lobbies-list" class="lobbies-list"></div>
             </section>
 
             <section>
@@ -190,7 +186,39 @@
       </div>
     </div>
 
-    <!-- Header behaviour: theme, sidebar, popovers, modals, lobby management -->
+    <!-- Created Active Lobby Room Popup -->
+    <div class="modal-overlay" id="lobby-room-modal" hidden>
+      <div class="modal-content" role="dialog" aria-labelledby="room-lobby-name">
+        <button class="modal-close" id="leave-lobby-room" aria-label="Leave Lobby">&times;</button>
+        
+        <div class="room-header">
+          <h2 id="room-lobby-name">Lobby Name</h2>
+          <span id="room-access-badge" class="badge">Public</span>
+        </div>
+
+        <p id="room-lobby-desc" class="room-desc"></p>
+
+        <!-- Code block shown for private lobbies -->
+        <div id="room-code-container" class="room-code-box" hidden>
+          <span class="code-label">Join Code:</span>
+          <strong id="room-lobby-code">------</strong>
+        </div>
+
+        <div class="room-players">
+          <h3>Players</h3>
+          <ul id="room-player-list">
+            <li><span id="room-host-name">Host</span> (Host) - <span class="status-ready">Ready</span></li>
+          </ul>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="leave-lobby-btn">Leave</button>
+          <button type="button" class="btn-primary" id="ready-lobby-btn">Ready</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header behaviour script -->
     <script>
       (function () {
         var root = document.documentElement;
@@ -244,7 +272,7 @@
           }
         });
 
-        // ----- Popovers (settings, account) -----
+        // ----- Popovers -----
         var pairs = [
           [document.getElementById("settings-toggle"), document.getElementById("settings-menu")],
           [document.getElementById("account-toggle"), document.getElementById("account-menu")]
@@ -266,18 +294,23 @@
         document.addEventListener("click", function () { closeAll(null); });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAll(null); });
 
-        // ----- Lobby Modals & Public Lobbies -----
+        // ----- Lobby Modals -----
         var createBtn = document.getElementById("create-lobby-btn");
         var joinBtn = document.getElementById("join-lobby-btn");
         var createModal = document.getElementById("create-lobby-modal");
         var joinModal = document.getElementById("join-lobby-modal");
+        var lobbyRoomModal = document.getElementById("lobby-room-modal");
+
         var closeCreateBtn = document.getElementById("close-create-modal");
         var cancelCreateBtn = document.getElementById("cancel-create-modal");
         var closeJoinBtn = document.getElementById("close-join-modal");
         var cancelJoinBtn = document.getElementById("cancel-join-modal");
+        var leaveLobbyRoomBtn = document.getElementById("leave-lobby-room");
+        var leaveLobbyBtn = document.getElementById("leave-lobby-btn");
+        var readyLobbyBtn = document.getElementById("ready-lobby-btn");
+
         var createForm = document.getElementById("create-lobby-form");
         var joinForm = document.getElementById("join-lobby-form");
-        var lobbiesList = document.getElementById("lobbies-list");
 
         function openModal(modal) { if (modal) modal.hidden = false; }
         function closeModal(modal) { if (modal) modal.hidden = true; }
@@ -290,120 +323,78 @@
         closeJoinBtn.addEventListener("click", function () { closeModal(joinModal); });
         cancelJoinBtn.addEventListener("click", function () { closeModal(joinModal); });
 
-        [createModal, joinModal].forEach(function (modal) {
-          modal.addEventListener("click", function (e) {
-            if (e.target === modal) closeModal(modal);
-          });
+        function exitRoom() {
+          closeModal(lobbyRoomModal);
+          document.dispatchEvent(new CustomEvent("game:left"));
+        }
+        leaveLobbyRoomBtn.addEventListener("click", exitRoom);
+        leaveLobbyBtn.addEventListener("click", exitRoom);
+
+        readyLobbyBtn.addEventListener("click", function () {
+          var isReady = readyLobbyBtn.classList.toggle("btn-ready-active");
+          readyLobbyBtn.textContent = isReady ? "Unready" : "Ready";
+          document.dispatchEvent(new CustomEvent("lobby:ready", { detail: { isReady: isReady } }));
         });
-        document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape") {
-            closeModal(createModal);
-            closeModal(joinModal);
-          }
-        });
 
-        // Sample initial public lobbies state
-        var publicLobbies = [
-          { id: "game-101", name: "Pirate Bay Brawl", creator: "CaptainJack", description: "Casual 1v1 match, all skill levels welcome!" },
-          { id: "game-102", name: "Pro Fleet Only", creator: "AdmiralNelson", description: "Competitive match. Fast turns." }
-        ];
+        // Helper to populate room popup
+        function showLobbyRoom(data) {
+          document.getElementById("room-lobby-name").textContent = data.lobbyName;
+          document.getElementById("room-lobby-desc").textContent = data.lobbyDescription || "No description provided.";
+          
+          var badge = document.getElementById("room-access-badge");
+          var codeBox = document.getElementById("room-code-container");
+          var codeEl = document.getElementById("room-lobby-code");
 
-        function renderPublicLobbies(lobbies) {
-          lobbiesList.replaceChildren();
-          if (lobbies.length === 0) {
-            var emptyText = document.createElement("p");
-            emptyText.className = "lobby-description";
-            emptyText.textContent = "No active public lobbies.";
-            lobbiesList.appendChild(emptyText);
-            return;
+          badge.textContent = data.accessType.toUpperCase();
+          badge.className = "badge " + (data.accessType === "private" ? "badge-private" : "badge-public");
+
+          if (data.accessType === "private") {
+            codeBox.hidden = false;
+            codeEl.textContent = data.code || Math.random().toString(36).substring(2, 8).toUpperCase();
+          } else {
+            codeBox.hidden = true;
           }
 
-          lobbies.forEach(function (lobby) {
-            var card = document.createElement("div");
-            card.className = "lobby-card";
+          readyLobbyBtn.textContent = "Ready";
+          readyLobbyBtn.classList.remove("btn-ready-active");
 
-            var cardHeader = document.createElement("div");
-            cardHeader.className = "lobby-card-header";
-
-            var title = document.createElement("span");
-            title.className = "lobby-title";
-            title.textContent = lobby.name;
-
-            var creator = document.createElement("span");
-            creator.className = "lobby-creator";
-            creator.textContent = "by " + lobby.creator;
-
-            cardHeader.appendChild(title);
-            cardHeader.appendChild(creator);
-
-            var desc = document.createElement("p");
-            desc.className = "lobby-description";
-            desc.textContent = lobby.description || "No description provided.";
-
-            var joinCardBtn = document.createElement("button");
-            joinCardBtn.className = "join-lobby-card-btn";
-            joinCardBtn.type = "button";
-            joinCardBtn.textContent = "Join";
-            joinCardBtn.addEventListener("click", function () {
-              document.dispatchEvent(new CustomEvent("game:joined", { detail: { gameId: lobby.id } }));
-            });
-
-            card.appendChild(cardHeader);
-            card.appendChild(desc);
-            card.appendChild(joinCardBtn);
-
-            lobbiesList.appendChild(card);
-          });
+          closeModal(createModal);
+          closeModal(joinModal);
+          openModal(lobbyRoomModal);
         }
 
-        // Render initial lobbies
-        renderPublicLobbies(publicLobbies);
-
-        // Listen for new lobbies dynamically created
-        document.addEventListener("lobby:created", function (e) {
-          var details = e.detail;
-          if (details && details.accessType === "public") {
-            var currentUser = (document.getElementById("current-username").textContent || "").trim() || "Player";
-            publicLobbies.push({
-              id: "game-" + Math.floor(Math.random() * 1000),
-              name: details.lobbyName,
-              creator: currentUser,
-              description: details.lobbyDescription
-            });
-            renderPublicLobbies(publicLobbies);
-          }
-        });
-
-        document.getElementById("refresh-lobbies-button").addEventListener("click", function () {
-          renderPublicLobbies(publicLobbies);
-        });
-
-        // Form submissions
         createForm.addEventListener("submit", function (e) {
           e.preventDefault();
           var formData = new FormData(createForm);
+          var code = Math.random().toString(36).substring(2, 8).toUpperCase();
           var details = {
             lobbyName: formData.get("lobbyName"),
             lobbyDescription: formData.get("lobbyDescription"),
-            accessType: formData.get("accessType")
+            accessType: formData.get("accessType"),
+            code: code
           };
-          
+
+          showLobbyRoom(details);
           document.dispatchEvent(new CustomEvent("lobby:created", { detail: details }));
           createForm.reset();
-          closeModal(createModal);
         });
 
         joinForm.addEventListener("submit", function (e) {
           e.preventDefault();
           var formData = new FormData(joinForm);
           var code = formData.get("lobbyCode");
-          
+
+          showLobbyRoom({
+            lobbyName: "Private Match",
+            lobbyDescription: "Joined via invite code.",
+            accessType: "private",
+            code: code
+          });
           document.dispatchEvent(new CustomEvent("game:joined", { detail: { gameId: code } }));
           joinForm.reset();
-          closeModal(joinModal);
         });
 
-        // ----- Avatar initial follows the username text -----
+        // Avatar sync
         var nameEl = document.getElementById("current-username");
         var avatar = document.getElementById("avatar");
         function syncAvatar() {
@@ -413,7 +404,7 @@
         new MutationObserver(syncAvatar).observe(nameEl, { childList: true, characterData: true, subtree: true });
         syncAvatar();
 
-        // ----- Chat tabs (Global / Game) -----
+        // Chat tabs
         var tabs = { global: document.getElementById("tab-global"), game: document.getElementById("tab-game") };
         var panels = { global: document.getElementById("panel-global"), game: document.getElementById("panel-game") };
         var logs = { global: document.getElementById("global-chat"), game: document.getElementById("game-chat") };
@@ -434,26 +425,6 @@
         Object.keys(tabs).forEach(function (k) {
           tabs[k].addEventListener("click", function () { showTab(k); });
         });
-        document.querySelector(".chat-tabs").addEventListener("keydown", function (e) {
-          if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-          var other = activeTab === "global" ? "game" : "global";
-          if (tabs[other].disabled) return;
-          showTab(other);
-          tabs[other].focus();
-        });
-
-        Object.keys(logs).forEach(function (k) {
-          new MutationObserver(function () {
-            logs[k].scrollTop = logs[k].scrollHeight;
-            if (activeTab !== k) tabs[k].querySelector(".unread").hidden = false;
-          }).observe(logs[k], { childList: true });
-        });
-
-        [["current-message", "send-to-global-chat-button"], ["game-message", "send-to-game-chat-button"]].forEach(function (pair) {
-          document.getElementById(pair[0]).addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && !e.isComposing) document.getElementById(pair[1]).click();
-          });
-        });
 
         var gameInput = document.getElementById("game-message");
         var gameSend = document.getElementById("send-to-game-chat-button");
@@ -463,7 +434,7 @@
           tabs.game.disabled = false;
           gameInput.disabled = false;
           gameSend.disabled = false;
-          gameNote.textContent = "Private chat: Only players in this match can see it.";
+          gameNote.textContent = "Private chat for game: " + (id || "");
           showTab("game");
         });
         document.addEventListener("game:left", function () {
