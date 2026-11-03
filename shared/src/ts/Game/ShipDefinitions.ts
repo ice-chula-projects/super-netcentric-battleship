@@ -4,7 +4,9 @@ export interface ShipDefinition {
     type: ShipType,
     value: number,
     hull: ShipHullTile[],
-    firingPattern: ShipFiringPatternTile[]
+    firingPattern: ShipFiringPatternTile[],
+    name: string,
+    description: string
 }
 
 type ShipHullTile = {
@@ -21,12 +23,14 @@ class ShipDefinitionFactory {
     /**
      * 
      * @param type type of the ship
+     * @param name name of the ship, used in the frontend
+     * @param description description of the ship, used in the frontend
      * @param value value of the ship in points
      * @param hull array of ship hull tiles representing the ship's layout
      * @param firingPattern array of ship firing patten tiles representing the ship's firing pattern, if no value is given defaults to the same pattern and damage as the ship's hull
      * @returns 
      */
-    static createShipDefinition(type: ShipType, value: number, hull: ShipHullTile[], firingPattern?: ShipFiringPatternTile[]): ShipDefinition {
+    static createShipDefinition(type: ShipType, name: string, description: string, value: number, hull: ShipHullTile[], firingPattern?: ShipFiringPatternTile[]): ShipDefinition {
         if (firingPattern == null) {
             firingPattern = [];
             for (const hullTile of hull) {
@@ -36,6 +40,8 @@ class ShipDefinitionFactory {
 
         return {
             type: type,
+            name: name,
+            description: description,
             value: value,
             hull: hull,
             firingPattern: firingPattern
@@ -70,7 +76,10 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
     [ShipType.Standard]: ShipDefinitionFactory.createShipDefinition(
         //type (should be same as key)
         ShipType.Standard,
-        
+        //name of the ship, used in the frontend
+        "Standard",
+        //description of the ship, used in the frontend
+        "Standard ship, 4 long with 1 tile attack",
         //value in points
         1,
 
@@ -89,7 +98,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
     // Since no firing pattern is defined the ship will have the same firing pattern as it's hull (a + shape with 3 damage in the center and 1 everywhere else)
         [ShipType.Star]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Star,
-
+        "Star",
+        "Star ship, center has 3 health",
         5,
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
