@@ -31,6 +31,7 @@ export default class Camera {
             [BoardTileState.Ship]: "darkgrey"
         }
     highlightColor: string = "#ffffff55"
+    attackingShipHighlightColor: string = "#ff111155"
 
     strokeColor: string = "black";
     backgroundColor: string = "#5093d4";
@@ -45,6 +46,8 @@ export default class Camera {
         x: null,
         y: null
     }
+
+    timerTextRoundingDecimalPlaces: number = 2;
 
     currentInputOrientation: Orientation = Orientation.Right;
     // for ship placement
@@ -103,8 +106,12 @@ export default class Camera {
 
         if (!this.gameManager.active) return;
         this.drawBoards();
-        this.drawTurnText();
-        this.drawGameId();
+
+        if(this.gameManager.currentGameState == GameState.Battle){
+            this.drawTimerText();
+            this.drawTurnText();
+        };
+        
     }
 
     handleMouseClick() {
@@ -213,6 +220,11 @@ export default class Camera {
                 context.fillRect(currentX, currentY, deltaX, deltaY);
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
 
+                if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId){
+                    context.fillStyle = this.attackingShipHighlightColor;
+                    context.fillRect(currentX, currentY, deltaX, deltaY);
+                }
+
                 if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
                     context.fillStyle = this.highlightColor;
                     context.fillRect(currentX, currentY, deltaX, deltaY);
@@ -225,6 +237,7 @@ export default class Camera {
         }
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`
+        context.textAlign = "left";
         context.fillText(label, x, y + size + this.textSize);
         context.strokeText(label, x, y + size + this.textSize);
     }
@@ -267,15 +280,13 @@ export default class Camera {
             //highlight the selected ship in battle mode
             case GameState.Battle:
                 const currentTile = playerBoard.getTile(x, y);
-                if (this.attackingShip == null) {
-                    if (this.selectedBoard != playerId) return false;
-                    const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (this.selectedBoard != playerId) return false;
 
-                    if (selectedTile.shipId == null) return false;
-                    return selectedTile.shipId == currentTile.shipId;
-                } else {
-                    return currentTile.shipId == this.attackingShip.shipId;
-                }
+                const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (selectedTile.shipId == null) return false;
+
+                return selectedTile.shipId == currentTile.shipId;
+
         }
 
         return highlight
@@ -312,14 +323,25 @@ export default class Camera {
         this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
     }
 
-    drawTurnText() {
-        // if(this.game.playersTurn == null || this.game.state != GameStates.Fighting) return;
-        // const turnText = this.game.playersTurn? "Your Turn" : "Opponent's Turn"
+    drawTimerText() {
+        const timeSinceLastUpdate = (Date.now() - this.gameManager.lastTurnUpdateTimeStamp) / 1000;
+        const remainingTime = Math.max(0, this.gameManager.currentGameSettings.timeLimitPerTurn - timeSinceLastUpdate);
 
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.textColor;
-        // context.font = `${this.textSize}px Arial`
-        // context.fillText(turnText, 0, this.canvas.height - this.textSize);
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`;
+        context.textAlign = "center";
+        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.textSize);
+    }
+
+    drawTurnText() {
+        const turnText = this.gameManager.isPlayersTurn? "Your Turn" : "Opponent's Turn"
+
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(turnText, this.canvas.width / 2, this.canvas.height - this.textSize);
     }
 
     drawGameId() {
