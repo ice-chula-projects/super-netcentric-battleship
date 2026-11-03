@@ -6,16 +6,21 @@ export default class User{
     readonly socket: WebSocket;
     readonly id: string;
     readonly subscribedChatChannelIds: string[] = [];
-    currentlyInGameLobby: boolean = false;
+    currentLobbyCode: string | null = null;
+
     active: boolean = true;
     username: string;
+    
+    get currentlyInGameLobby(): boolean{
+        return this.currentLobbyCode != null;
+    } 
 
     setUsername(username:string){
         this.username = username;
     }
 
-    setCurrentlyInGameLobby(currentlyInGameLobby: boolean){
-        this.currentlyInGameLobby = currentlyInGameLobby;
+    setCurrentLobbyCode(currentLobbyCode: string | null){
+        this.currentLobbyCode = currentLobbyCode;
     }
 
     //TODO: random username system

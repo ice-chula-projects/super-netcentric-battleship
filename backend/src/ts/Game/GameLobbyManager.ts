@@ -20,19 +20,23 @@ export default class GameLobbyManager{
         }
     }
 
-    createLobby(hostUser: User){
+    createLobby(hostUser: User, name: string, description: string, isPublic: boolean): GameLobby{
         if(hostUser.currentlyInGameLobby) throw new Error("Attempted to create a new lobby while host is already in a lobby");
         const lobbyCode = this.generateNewLobbyCode();
-        const lobby = new GameLobby(hostUser, lobbyCode, this.gameServer.chatManager);
+        const lobby = new GameLobby(hostUser, lobbyCode, this.gameServer.chatManager, name, description, isPublic);
 
         this.lobbies[lobbyCode] = lobby;
+
+        return lobby;
     }
 
-    joinLobby(user: User, lobbyCode: string){
+    joinLobby(user: User, lobbyCode: string): GameLobby{
         if(user.currentlyInGameLobby) throw new Error("Attempted to join a lobby while user is already in lobby");
         const lobby = this.lobbies[lobbyCode]; 
         if(lobby == null) throw new Error("Lobby does not exist");
         lobby.addUser(user);
+
+        return lobby;
     }
 
     getLobbies(): GameLobby[]{

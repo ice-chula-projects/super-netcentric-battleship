@@ -7,7 +7,7 @@ import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import User from "../User/User.js";
-import { UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { CurrentTurnNotificationMessageBuilder, UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import Random from "../lib/Random.js";
 
 //responsible for game logic and sending messages to clients
@@ -23,7 +23,7 @@ export default class Game{
         [Player.Player2]: User
     };
 
-    currentTurn: Player
+    currentTurn!: Player
     gameState: GameState = GameState.ShipPlacement;
     score: {
         [Player.Player1]: number,
@@ -33,7 +33,7 @@ export default class Game{
         [Player.Player2]: 0
     }
 
-    timeoutInterval: number | null = null;
+    timeoutIntervalId: number | null = null;
 
     constructor(gameSettings: GameSettings, player1User: User, player2User: User){
         this.gameSettings = gameSettings;
@@ -42,20 +42,28 @@ export default class Game{
             [Player.Player2]: player2User
         }
 
-        //random first player
-        this.currentTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
+        //random first turn
+        this.randomizeTurn();
+        this.initializeGame();
+    }
 
+    initializeGame(){
+        this.gameState = GameState.ShipPlacement;
         this.resetBoards();
+    }
+    
+    randomizeTurn(){
+        this.currentTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
     }
 
     resetTimeoutInterval(){
-        if(this.timeoutInterval != null) clearInterval(this.timeoutInterval);
-        setInterval(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn);
+        if(this.timeoutIntervalId != null) clearTimeout(this.timeoutIntervalId);
+        setTimeout(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn);
     }
 
     handleTimeout(){
+        this.timeoutIntervalId = null;
         if(this.gameState != GameState.Battle) return;
-        this.timeoutInterval = null;
 
         //add notification to client about timeout here
         this.switchTurns();
@@ -77,6 +85,7 @@ export default class Game{
     startBattle(){
         if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to start a game that isn't in ship placement state");
         this.gameState = GameState.Battle;
+        this.notifyCurrentTurn();
         this.resetTimeoutInterval();
     }
 
@@ -96,6 +105,7 @@ export default class Game{
 
     switchTurns(){
         this.currentTurn = getOppositePlayer(this.currentTurn);
+        this.notifyCurrentTurn();
     }
 
     endGame(winner: Player){
@@ -109,8 +119,7 @@ export default class Game{
 
     rematch(){
         if(this.gameState != GameState.End) throw new Error("Tried to rematch a game in non End State");
-        this.gameState = GameState.ShipPlacement;
-        this.resetBoards();
+        this.initializeGame();
     }
 
     notifyBoardTileUpdateToBothPlayers(boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
@@ -134,6 +143,14 @@ export default class Game{
         }
 
         user.socket.send(message.toJsonString());
+    }
+
+    notifyCurrentTurn(){
+        const message = new CurrentTurnNotificationMessageBuilder()
+        .setCurrentTurn(this.currentTurn);
+
+        this.playerUsers[Player.Player1].socket.send(message.toJsonString());
+        this.playerUsers[Player.Player2].socket.send(message.toJsonString());
     }
 
     resetBoards(): void{

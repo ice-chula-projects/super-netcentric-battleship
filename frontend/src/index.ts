@@ -58,15 +58,6 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
     case ServerMessage.ServerMessageType.Error:
       alert(serverMessage.error);
     break;
-    case ServerMessage.ServerMessageType.GameStateNotification:
-      game.informGameState(serverMessage);
-    break;
-    case ServerMessage.ServerMessageType.GameActionResultNotificaction:
-      game.informShotResult(serverMessage.hit);
-    break;
-    case ServerMessage.ServerMessageType.OpponentGameActionNotification:
-      game.informOpponentAction(serverMessage.x, serverMessage.y);
-    break;
   }
 })
 

@@ -2,19 +2,20 @@ import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@sup
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
+import { LobbyInformationNotificationMessage, LobbyInformationNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 
 export default class GameLobby{
-    isPublic: boolean = false;
-    name: string = "Untitled Lobby";
-    description: string = "";
-    gameSettings: GameSettings;
-    activeGame: Game | null = null;
-
     readonly id: string;
     readonly hostId: string;
     readonly players: User[] = [];
     readonly chatManager: ChatManager;
     readonly chatChannelId: string;
+
+    isPublic: boolean = false;
+    name: string = "Untitled Lobby";
+    description: string = "";
+    gameSettings: GameSettings;
+    activeGame: Game | null = null;
 
     get isFull(): boolean{
         return this.players.length >= 2;
@@ -36,7 +37,11 @@ export default class GameLobby{
         this.description = description;
     }
 
-    constructor(hostUser: User, id:string, chatManager: ChatManager){
+    constructor(hostUser: User, id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean){
+        this.name = name;
+        this.description = description;
+        this.isPublic = isPublic;
+        
         this.id = id;
         this.hostId = hostUser.id;
         this.chatManager = chatManager;
@@ -47,16 +52,28 @@ export default class GameLobby{
         this.addUser(hostUser);
     }
 
+    toLobbyInformationMessage(): LobbyInformationNotificationMessage{
+        return new LobbyInformationNotificationMessageBuilder()
+        .setLobbyCode(this.id)
+        .setName(this.name)
+        .setDescription(this.description)
+        .setIsPublic(this.isPublic)
+        .setGameSettings(this.gameSettings)
+        .setChatChannelId(this.chatChannelId)
+    }
+
     addUser(user: User){
         if(this.isFull) throw new Error("Attempted to add a user to a full lobby");
         this.players.push(user);
         this.chatManager.subscribe(user, this.chatChannelId);
-        user.setCurrentlyInGameLobby(true);
+
+        user.setCurrentLobbyCode(this.id);
+        user.socket.send(this.toLobbyInformationMessage().toJsonString());
     }
 
     deleteLobby(){
         for(const user of this.players){
-            user.setCurrentlyInGameLobby(false);
+            user.setCurrentLobbyCode(null);
         }
 
         this.players.splice(0,this.players.length);

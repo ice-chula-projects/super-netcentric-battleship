@@ -1,16 +1,18 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
 import { v4 as uuidv4 } from 'uuid';
+import GameLobbyManager from "./Game/GameLobbyManager.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
+    readonly gameLobbyManager: GameLobbyManager;
 
     constructor(port: number){
         this.webSocketServer = new WebSocketServer({port:port});
@@ -23,6 +25,7 @@ export default class GameServer {
 
         this.userManager = new UserManager();
         this.chatManager = new ChatManager();
+        this.gameLobbyManager = new GameLobbyManager(this);
 
         this.chatManager.addChannel("global");
     }
@@ -69,6 +72,12 @@ export default class GameServer {
             case ClientMessageType.SendToChat:
                 response = this.handleSendToChatMessage(message, user);
             break;
+            case ClientMessageType.createLobby:
+                response = this.handleCreateLobbyMessage(message, user);
+            break;
+            case ClientMessageType.joinLobby:
+                response = this.handleJoinLobbyMessage(message, user);
+            break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
@@ -76,6 +85,8 @@ export default class GameServer {
         } catch(error){
             if (error instanceof Error){
                 response = new ServerErrorMessageBuilder().setError(error.message);
+            } else {
+                response = new ServerErrorMessageBuilder().setError("unknown internal server error");
             }
         }
         
@@ -150,6 +161,18 @@ export default class GameServer {
         if(message.length > MAX_MESSAGE_LENGTH) return new ServerErrorMessageBuilder().setError("chat message is too long");
         
         this.chatManager.sendMessage(message, user, channelId);
+
+        return null;
+    }
+
+    handleCreateLobbyMessage(createLobbyMessage: CreateLobbyMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.createLobby(user, createLobbyMessage.name, createLobbyMessage.description, createLobbyMessage.isPublic);
+
+        return null;
+    }
+
+    handleJoinLobbyMessage(joinLobbyMessage: JoinLobbyMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.joinLobby(user, joinLobbyMessage.lobbyCode);
 
         return null;
     }

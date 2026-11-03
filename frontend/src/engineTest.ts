@@ -1,53 +1,27 @@
-import Board from "@super-netcentric-battleship/shared/Game/Board/Board.js";
-import Ship from "@super-netcentric-battleship/shared/Game/Ship/Ship.js";
-import ShipTile from "@super-netcentric-battleship/shared/Game/Ship/ShipTile.js";
-import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
-import Camera from "./Camera";
-import GameBoard, { BoardTileTypes } from "./Board";
-import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
-import AttackTile from "@super-netcentric-battleship/shared/Game/Ship/AttackTile.js";
+import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
+import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
 
-const shipTiles = [
-    new ShipTile(new Coordinate(0,0)),
-    new ShipTile(new Coordinate(0,-1)),
-    new ShipTile(new Coordinate(0,-2)),
-    new ShipTile(new Coordinate(1,0)),
-    new ShipTile(new Coordinate(2,0)),
-    new ShipTile(new Coordinate(2,-1)),
-    new ShipTile(new Coordinate(3,-1)),
-]
+//TODO: config
+const PORT = 17040;
 
-const attackTiles = [
-    new AttackTile(new Coordinate(0,0), 5)
-]
+//find the game server at the same host with different port
+const url = "ws://" + window.location.hostname + ":" + PORT;
+const webSocket = new WebSocket(url);
 
-const ship = new Ship(shipTiles, attackTiles);
-ship.orientation = Orientation.Down
-const board = new Board(8);
-board.placeShip(ship, new Coordinate(0,3));
-ship.orientation = Orientation.Right
-board.placeShip(ship, new Coordinate(4,4));
-board.fire(attackTiles, new Coordinate(0, 3), Orientation.Right);
+webSocket.addEventListener("open", () => {
+  console.log("connected")
+})
+webSocket.addEventListener("close", ()=>{console.log("disconnected"), alert("Server probably crashed, pls tell me about it")})
+webSocket.addEventListener("message", (message: MessageEvent) => {
+  const serverMessage = JSON.parse(message.data) as ServerMessage.ServerMessageType
+  console.log(serverMessage);
+})
 
-//render visualization of board
-const gameBoard = new GameBoard()
-for(let x = 0; x < 8; x++){
-    for(let y = 0; y < 8; y++){
-        const type = board.board[x][y].hasShip ? (board.board[x][y].shipTile.health < 1 ? BoardTileTypes.Hit : BoardTileTypes.Ship) : BoardTileTypes.Empty;
-        gameBoard.setTile(x, y, type)
-    }
-}
-const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, null);
-camera.stop();
-camera.drawBoard(gameBoard, 20, 20, 460, "board")
+//expose to console for testing
 
 //@ts-ignore
-window.board = board;
+window.ServerMessage = ServerMessage;
 //@ts-ignore
-window.Ship = Ship;
+window.ClientMessage = ClientMessage;
 //@ts-ignore
-window.Board = Board;
-//@ts-ignore
-window.Coordinate = Coordinate;
-//@ts-ignore
-window.ShipTile = ShipTile;
+window.webSocket = webSocket;

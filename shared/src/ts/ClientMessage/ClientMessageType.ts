@@ -4,5 +4,10 @@ export enum ClientMessageType{
     UpdateUserInfo = "updateUserInfo",
     RequestActiveUsers = "requestActiveUsers",
     UpdateChatChannelSubscription = "updateChatChannelSubscription",
-    SendToChat = "sendToChat"
+    SendToChat = "sendToChat",
+    createLobby = "createLobby",
+    joinLobby = "joinLobby",
+    modifyGameSettings = "modifyGameSettings",
+    startGame = "startGame",
+    updateReadyState = "updateReadyState"
 }

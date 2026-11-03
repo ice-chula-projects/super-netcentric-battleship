@@ -4,5 +4,7 @@ export enum ServerMessageType{
     Error = "error",
     ActiveUsersInfo = "activeUsersInfo",
     ChatMessageNotification = "chatMessageNotification",
-    UpdateBoardTileStatusesNotification = "updateBoardTileStatusesNotification"
+    UpdateBoardTileStatusesNotification = "updateBoardTileStatusesNotification",
+    LobbyInformationNotification = "lobbyInformationNotification",
+    CurrentTurnNotification = "currentTurnNotification"
 }
