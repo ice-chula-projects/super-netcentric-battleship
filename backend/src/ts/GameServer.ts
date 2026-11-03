@@ -93,6 +93,7 @@ export default class GameServer {
             case ClientMessageType.FireVolleyAction:
             case ClientMessageType.InitializeFleetAction:
             case ClientMessageType.UseAbilityAction:
+            case ClientMessageType.RequestRematchAction:
                 response = this.handleClientActionMessage(message, user);
             break;
             default:
