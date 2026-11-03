@@ -9,5 +9,7 @@ export enum ServerMessageType{
     CurrentTurnNotification = "currentTurnNotification",
     PublicLobbiesInfo = "publicLobbiesInfo",
     GameStartNotification = "gameStartNotification",
-    GameEndNotification = "gameEndNotification"
+    GameEndNotification = "gameEndNotification",
+    MatchCompleteNotification = "matchCompleteNotificationMessage",
+    RematchStatusNotification = "rematchStatusNotificationMessage"
 }
