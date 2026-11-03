@@ -104,7 +104,7 @@ export default class Camera {
         this.clear();
         this.drawBackground();
 
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.initialized) return;
         this.drawBoards();
 
         if(this.gameManager.currentGameState == GameState.Battle){
@@ -115,7 +115,7 @@ export default class Camera {
     }
 
     handleMouseClick() {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
         switch (this.gameManager.currentGameState) {
             case GameState.ShipPlacement:
                 if (this.selectedBoard != this.gameManager.playerId) return;
@@ -142,7 +142,7 @@ export default class Camera {
     }
 
     handleMouseMove(mouseEvent: MouseEvent) {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
 
         const mouseX = mouseEvent.offsetX;
         const mouseY = mouseEvent.offsetY;
@@ -182,7 +182,7 @@ export default class Camera {
     }
 
     handleKeyPress(keyboardEvent: KeyboardEvent) {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
 
         switch (keyboardEvent.key) {
             case "Tab":

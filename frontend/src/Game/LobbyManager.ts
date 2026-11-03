@@ -120,10 +120,10 @@ export class LobbyManager{
     }
 
     handleGameStartNotificationMessage(gameStartNotificationMessage: GameStartNotificationMessage){
-        this.gameManager.startGame(this.currentLobbyInfo.gameSettings, gameStartNotificationMessage.playerId);
+        this.gameManager.initializeGame(this.currentLobbyInfo.gameSettings, gameStartNotificationMessage.playerId);
     }
 
     handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
-        this.gameManager.stopGame();
+        this.gameManager.unInitializeGame();
     }
 }
