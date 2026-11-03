@@ -2,12 +2,12 @@ import GameMessage from "../../../GameMessage.js";
 import { ClientMessageType } from "../../ClientMessageType.js";
 
 export interface UpdateReadyStateMessage extends GameMessage{
-    readonly type: ClientMessageType.updateReadyState;
+    readonly type: ClientMessageType.UpdateReadyState;
     ready: boolean;
 }
 
 export class UpdateReadyStateMessageBuilder implements UpdateReadyStateMessage{
-    readonly type = ClientMessageType.updateReadyState;
+    readonly type = ClientMessageType.UpdateReadyState;
     readonly timestamp: number = Date.now();
     ready = false;
 
