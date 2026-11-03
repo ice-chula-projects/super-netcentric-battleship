@@ -15,34 +15,39 @@ export class BoardTileUpdate {
     readonly health: number | null = null;
     readonly maxHealth: number | null = null;
     readonly shipId: number | null = null;
+    readonly shipType: number | null = null
 
     static fromBoardTile(coordinate: Coordinate, boardTile: BoardTile){
         let state: BoardTileState;
         let health: number | null = null;
         let maxHealth: number | null = null;
         let shipId: number | null = null;
+        let shipType: number | null = null;
         const shipTile = boardTile.shipTile;
 
         if(shipTile == null) state = BoardTileState.Empty;
         else{
             if(shipTile.health >= shipTile.maxHealth) state = BoardTileState.Ship;
-            else if (shipTile.alive) state = BoardTileState.DamagedShip;
-            else state = BoardTileState.DestroyedShip
+            else if (shipTile.alive) state = BoardTileState.DamagedTile;
+            else if (shipTile.ship.alive) state = BoardTileState.DestoyedTile;
+            else state = BoardTileState.DestroyedShip;
 
             health = shipTile.health;
             maxHealth = shipTile.maxHealth;
             shipId = shipTile.ship.id;
+            shipType = shipTile.ship.type;
         } 
 
-        return new BoardTileUpdate(coordinate, state, health, maxHealth, shipId);
+        return new BoardTileUpdate(coordinate, state, health, maxHealth, shipId, shipType);
     }
 
-    constructor(coordinate: Coordinate, state: BoardTileState, health: number | null = null, maxHealth: number | null = null, shipId: number | null = null){
+    constructor(coordinate: Coordinate, state: BoardTileState, health: number | null = null, maxHealth: number | null = null, shipId: number | null = null, shipType: number | null = null){
         this.coordinates = coordinate;
         this.state = state;
         this.health = health;
         this.maxHealth = maxHealth;
         this.shipId = shipId;
+        this.shipType = shipType;
     }
 }
 
@@ -110,21 +115,23 @@ export default class Board{
             const tile = this.board[absoluteCoordinate.x][absoluteCoordinate.y];
             const shipTile = tile.shipTile;
 
-            //reveal the tile
-            updatedBoardTiles.push(this.getTileState(absoluteCoordinate));
             //if the tile has a ship
             if(shipTile != null) {
                 //if this ship is already dead dont do anything
                 if(!shipTile.ship?.alive) continue;
-                shipTile.notifyHit(attackTile.damage);
+                shipTile.ship.notifyHit(shipTile, attackTile.damage);
                 
                 //if the ship died from the hit update all tiles in the ship
                 if(shipTile.ship != null && !shipTile.ship.alive){
                     for(const tile of shipTile.ship.shipTiles){
-                        if(tile == shipTile) continue;
                         if(tile.absoluteCoordinates != null) updatedBoardTiles.push(this.getTileState(tile.absoluteCoordinates));
                     }
+                } else {
+                    //otw just reveal the tile
+                    updatedBoardTiles.push(this.getTileState(absoluteCoordinate));
                 }
+            } else{
+                updatedBoardTiles.push(this.getTileState(absoluteCoordinate));
             }
         }
 

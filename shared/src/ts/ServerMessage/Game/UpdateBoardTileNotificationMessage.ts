@@ -1,6 +1,7 @@
 import { BoardTileState } from "../../Game/BoardTileState.js";
 import Coordinate from "../../Game/Coordinate.js";
 import { Player } from "../../Game/Player.js";
+import { ShipType } from "../../Game/ShipDefinitions.js";
 import GameMessage from "../../GameMessage.js";
 import { ServerMessageType } from "../ServerMessageType.js";
 
@@ -10,7 +11,8 @@ export type BoardTileStatus = {
     coordinate: Coordinate,
     health: number | null,
     maxHealth: number | null,
-    shipId: number | null
+    shipId: number | null,
+    shipType: ShipType | null
 }
 
 export interface UpdateBoardTileStatusesNotificationMessage extends GameMessage{

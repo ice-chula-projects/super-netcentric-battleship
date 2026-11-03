@@ -5,6 +5,7 @@ import { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coor
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import { LobbyManager } from "./Game/LobbyManager";
 import { GameManager } from "./Game/GameManager";
+import Camera from "./Game/Camera";
 
 //TODO: config
 const PORT = 17040;
@@ -15,6 +16,8 @@ const webSocket = new WebSocket(url);
 
 const gameManager = new GameManager(webSocket);
 const lobbyManager = new LobbyManager(webSocket, gameManager);
+const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, gameManager);
+
 
 const testFleet: ClientMessage.ShipPlacement[] = [
     {shipType: ShipType.Standard, location: CoordinateFactory.createCoordinate(0,0), orientation: Orientation.Right},
@@ -46,3 +49,5 @@ window.testFleet = testFleet;
 window.lobbyManager = lobbyManager;
 //@ts-ignore
 window.gameManager = gameManager;
+//@ts-ignore
+window.camera = camera;

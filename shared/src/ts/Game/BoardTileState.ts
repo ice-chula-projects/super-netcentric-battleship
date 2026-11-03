@@ -2,6 +2,7 @@ export enum BoardTileState {
     Hidden,
     Empty,
     Ship,
-    DamagedShip,
+    DamagedTile,
+    DestoyedTile,
     DestroyedShip
 }

@@ -7,7 +7,14 @@ export class LobbyManager{
     readonly webSocket: WebSocket;
     readonly gameManager: GameManager;
 
-    currentLobbyCode: string | null = null;
+    currentLobbyInfo: {
+        lobbyCode: string
+        name: string,
+        description: string,
+        isPublic: boolean,
+        gameSettings: GameSettings,
+        chatChannelId: string
+    } | null = null
 
     publicLobbies: PublicLobbyInformation[];
     currentPublicLobbyPage: number = 0;
@@ -19,7 +26,7 @@ export class LobbyManager{
     }
 
     get currentlyInLobby(): boolean{
-        return this.currentLobbyCode != null;
+        return this.currentLobbyInfo != null;
     }
 
     constructor(webSocket: WebSocket, gameManager: GameManager){
@@ -94,7 +101,14 @@ export class LobbyManager{
 
     //TODO: insert logic that would update HTML from these
     handleLobbyInfoNotificationMessage(lobbyInfoNotificationMessage: LobbyInfoNotificationMessage){
-        this.currentLobbyCode = lobbyInfoNotificationMessage.lobbyCode;
+        this.currentLobbyInfo = {
+            lobbyCode: lobbyInfoNotificationMessage.lobbyCode,
+            name: lobbyInfoNotificationMessage.name,
+            description: lobbyInfoNotificationMessage.description,
+            isPublic: lobbyInfoNotificationMessage.isPublic,
+            gameSettings: lobbyInfoNotificationMessage.gameSettings,
+            chatChannelId: lobbyInfoNotificationMessage.chatChannelId
+        }
     }
 
     
@@ -106,10 +120,10 @@ export class LobbyManager{
     }
 
     handleGameStartNotificationMessage(gameStartNotificationMessage: GameStartNotificationMessage){
-        //insert logic here
+        this.gameManager.startGame(this.currentLobbyInfo.gameSettings, gameStartNotificationMessage.playerId);
     }
 
     handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
-        //insert logic here
+        this.gameManager.stopGame();
     }
 }

@@ -1,23 +1,36 @@
-import GameBoard from "./Board";
+import GameBoard, { BoardTile } from "./Board";
 import { BoardTileState } from "@super-netcentric-battleship/shared/Game/BoardTileState.js";
 import { GameManager } from "./GameManager";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
+import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
+import ShipDefinitions, { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
+import Coordinate, { relativeCoordinateToAbsoluteCoordinate } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 
-export default class Camera{
+//determines if the camera highlights this board as the opponent's board or the player's board
+enum BoardHighlightMode {
+    Player,
+    Opponent
+}
+
+interface AttackingShip {
+    shipId: number,
+    shipType: ShipType
+}
+
+export default class Camera {
     canvas: HTMLCanvasElement;
     gameManager: GameManager;
 
-    colors: {
-        [T in BoardTileState]: string
-    } = {
-        [BoardTileState.Hidden]: "#5093d4",
-        [BoardTileState.DamagedShip]: "red",
-        [BoardTileState.DestroyedShip]: "darkred",
-        [BoardTileState.Empty]: "lightgrey",
-        [BoardTileState.Ship]: "darkgrey",
-    }
-    highlightColor:string = "#ffffff55"
+    colors: Record<BoardTileState, string> = {
+            [BoardTileState.Hidden]: "#5093d4",
+            [BoardTileState.DamagedTile]: "red",
+            [BoardTileState.DestoyedTile]: "darkred",
+            [BoardTileState.DestroyedShip]: "darkblue",
+            [BoardTileState.Empty]: "lightgrey",
+            [BoardTileState.Ship]: "darkgrey"
+        }
+    highlightColor: string = "#ffffff55"
 
     strokeColor: string = "black";
     backgroundColor: string = "#5093d4";
@@ -28,15 +41,17 @@ export default class Camera{
     boardMargin: number = 10;
 
     selectedBoard: Player | null = null;
-    selectedBoardCoordinates: {
-        x: number | null,
-        y: number | null
-    } = {
+    selectedBoardCoordinates: Coordinate = {
         x: null,
         y: null
     }
 
     currentInputOrientation: Orientation = Orientation.Right;
+    // for ship placement
+    currentlySelectedShipPlaceType: ShipType = ShipType.Standard;
+
+    // for volley firing
+    attackingShip: AttackingShip | null = null;
 
     intervalId: number;
 
@@ -54,7 +69,7 @@ export default class Camera{
         this.changeTargetFps(target);
     }
 
-    constructor(canvas: HTMLCanvasElement, gameManager: GameManager){
+    constructor(canvas: HTMLCanvasElement, gameManager: GameManager) {
         this.canvas = canvas;
         this.gameManager = gameManager;
 
@@ -82,86 +97,104 @@ export default class Camera{
         if (wasRunning) this.start();
     }
 
-    render(){
+    render() {
         this.clear();
         this.drawBackground();
 
-        if(!this.gameManager.active) return;
+        if (!this.gameManager.active) return;
         this.drawBoards();
-        this.drawBoardHighlight();
         this.drawTurnText();
         this.drawGameId();
     }
 
-    handleMouseClick(){
-        // switch(this.game.state){
-        //     case GameStates.Deploying:
-        //         if (this.selectedBoard == Player.enemy) return;
-        //         this.game.addShip(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y, this.shipPlaceModeOrientation)
-        //     break;
-        //     case GameStates.Fighting:
-        //         if (this.selectedBoard == Player.player || !this.game.playersTurn) return;
-        //         this.game.shoot(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
-                
-        // }
+    handleMouseClick() {
+        if (!this.gameManager.active) return;
+        switch (this.gameManager.currentGameState) {
+            case GameState.ShipPlacement:
+                if (this.selectedBoard != this.gameManager.playerId) return;
+                this.gameManager.addShipToFleet(this.currentlySelectedShipPlaceType, this.selectedBoardCoordinates, this.currentInputOrientation);
+                break;
+            case GameState.Battle:
+                if (this.selectedBoard == this.gameManager.playerId) {
+                    const playerBoard = this.gameManager.getPlayerBoard();
+                    const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+
+                    if (selectedTile.shipId == null) {
+                        this.attackingShip = null;
+                    } else {
+                        this.attackingShip = {
+                            shipId: selectedTile.shipId,
+                            shipType: selectedTile.shipType
+                        }
+                    }
+
+                } else if (this.selectedBoard == this.gameManager.opponentId && this.attackingShip != null && this.gameManager.isPlayersTurn) {
+                    this.gameManager.fireVolley(this.attackingShip.shipId, this.selectedBoardCoordinates, this.currentInputOrientation);
+                }
+        }
     }
 
-    handleMouseMove(mouseEvent: MouseEvent){
-        // const mouseX = mouseEvent.offsetX;
-        // const mouseY = mouseEvent.offsetY;
+    handleMouseMove(mouseEvent: MouseEvent) {
+        if (!this.gameManager.active) return;
 
-        // if(mouseY < this.boardMargin || mouseY > this.boardMargin + this.boardSize){
-        //     this.selectedBoard = null;
-        //     this.selectedBoardCoordinates.x = null;
-        //     this.selectedBoardCoordinates.y = null;
-        //     return;
-        // }
+        const mouseX = mouseEvent.offsetX;
+        const mouseY = mouseEvent.offsetY;
 
-        // const playerBoardStartX = this.boardMargin;
-        // const playerBoardEndX = this.boardMargin + this.boardSize;
-        // const enemyBoardStartX = this.canvas.width - this.boardMargin - this.boardSize;
-        // const enemyBoardEndX = enemyBoardStartX + this.boardSize;
+        if (mouseY < this.boardMargin || mouseY > this.boardMargin + this.boardSize) {
+            this.selectedBoard = null;
+            this.selectedBoardCoordinates.x = null;
+            this.selectedBoardCoordinates.y = null;
+            return;
+        }
 
-        // if(mouseX > playerBoardStartX && mouseX < playerBoardEndX){
-        //     this.selectedBoard = Player.player;
-        //     const relativeX = mouseX - playerBoardStartX;
-        //     const relativeY = mouseY - this.boardMargin;
-        //     this.selectedBoardCoordinates.x = Math.floor(8*relativeX/(this.boardSize));
-        //     this.selectedBoardCoordinates.y = Math.floor(8*relativeY/(this.boardSize));
-        // } else if(mouseX > enemyBoardStartX && mouseX < enemyBoardEndX){
-        //     this.selectedBoard = Player.enemy;
-        //     const relativeX = mouseX - enemyBoardStartX;
-        //     const relativeY = mouseY - this.boardMargin;
-        //     this.selectedBoardCoordinates.x = Math.floor(8*relativeX/(this.boardSize));
-        //     this.selectedBoardCoordinates.y = Math.floor(8*relativeY/(this.boardSize));
-        // }
-        // else {
-        //     this.selectedBoard = null;
-        //     this.selectedBoardCoordinates.x = null;
-        //     this.selectedBoardCoordinates.y = null;
-        // }
+        const boardSize = this.gameManager.currentGameSettings.boardSize;
+        const playerBoardStartX = this.boardMargin;
+        const playerBoardEndX = this.boardMargin + this.boardSize;
+        const enemyBoardStartX = this.canvas.width - this.boardMargin - this.boardSize;
+        const enemyBoardEndX = enemyBoardStartX + this.boardSize;
+
+        if (mouseX > playerBoardStartX && mouseX < playerBoardEndX) {
+            this.selectedBoard = this.gameManager.playerId;
+            const relativeX = mouseX - playerBoardStartX;
+            const relativeY = mouseY - this.boardMargin;
+            this.selectedBoardCoordinates.x = Math.floor(boardSize * relativeX / (this.boardSize));
+            this.selectedBoardCoordinates.y = Math.floor(boardSize * relativeY / (this.boardSize));
+        } else if (mouseX > enemyBoardStartX && mouseX < enemyBoardEndX) {
+            this.selectedBoard = this.gameManager.opponentId;
+            const relativeX = mouseX - enemyBoardStartX;
+            const relativeY = mouseY - this.boardMargin;
+            this.selectedBoardCoordinates.x = Math.floor(boardSize * relativeX / (this.boardSize));
+            this.selectedBoardCoordinates.y = Math.floor(boardSize * relativeY / (this.boardSize));
+        }
+        else {
+            this.selectedBoard = null;
+            this.selectedBoardCoordinates.x = null;
+            this.selectedBoardCoordinates.y = null;
+        }
     }
 
-    handleKeyPress(keyboardEvent: KeyboardEvent){
-        switch(keyboardEvent.key){
+    handleKeyPress(keyboardEvent: KeyboardEvent) {
+        if (!this.gameManager.active) return;
+
+        switch (keyboardEvent.key) {
             case "Tab":
                 keyboardEvent.preventDefault();
                 const orientations = [Orientation.Right, Orientation.Down, Orientation.Left, Orientation.Up];
                 const currentOrientationIndex = orientations.indexOf(this.currentInputOrientation);
 
                 const nextOrientationIndex = keyboardEvent.shiftKey ? currentOrientationIndex - 1 : currentOrientationIndex + 1;
-                this.currentInputOrientation = orientations.at(nextOrientationIndex);
+                this.currentInputOrientation = orientations.at(nextOrientationIndex % 4);
                 break;
         }
     }
 
-    drawBackground(){
+    drawBackground() {
         const context = this.canvas.getContext("2d");
         context.fillStyle = this.backgroundColor;
-        context.fillRect(0,0,this.canvas.width, this.canvas.height);
+        context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    drawBoard(board: GameBoard, x: number, y: number, size: number, label: string){
+    drawBoard(board: GameBoard, x: number, y: number, size: number, label: string, highlightMode: BoardHighlightMode) {
         let currentX = x;
         let currentY = y;
         const boardSize = board.size;
@@ -170,12 +203,20 @@ export default class Camera{
 
         const context = this.canvas.getContext("2d");
         context.strokeStyle = this.strokeColor
-        for(let i = 0; i < boardSize; i++){
-            for(let j = 0; j < boardSize; j++){
-                const color = this.colors[board.getTile(i,j).state]
+        for (let i = 0; i < boardSize; i++) {
+            for (let j = 0; j < boardSize; j++) {
+                const tile = board.getTile(i, j);
+                const color = this.colors[tile.state]
+
                 context.fillStyle = color;
                 context.fillRect(currentX, currentY, deltaX, deltaY);
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
+
+                if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
+                    context.fillStyle = this.highlightColor;
+                    context.fillRect(currentX, currentY, deltaX, deltaY);
+                }
+
                 currentY += deltaY;
             }
             currentY = y;
@@ -187,51 +228,102 @@ export default class Camera{
         context.strokeText(label, x, y + size + this.textSize);
     }
 
-    drawBoards(){
-        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, this.boardMargin, this.boardSize, "Player's Board");
-        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, this.boardMargin, this.boardSize, "Opponent's Board");
+    determineIfTileIsHighlighted(x: number, y: number, highlightMode: BoardHighlightMode): boolean {
+        let highlight: boolean;
+        switch (highlightMode) {
+            case BoardHighlightMode.Player:
+                highlight = this.determineIfPlayerTileIsHighlighted(x, y);
+                break;
+            case BoardHighlightMode.Opponent:
+                highlight = this.determineIfOpponentTileIsHighlighted(x, y);
+                break;
+        }
+
+        return highlight;
     }
 
-    drawBoardHighlight(){
-        // if(this.selectedBoard == null) return;
-        // const yStart = this.boardMargin;
-        // const xStart = this.selectedBoard == Player.player?
-        // this.boardMargin :
-        // this.canvas.width - this.boardMargin - this.boardSize;
+    determineIfPlayerTileIsHighlighted(x: number, y: number): boolean {
+        let highlight = false;
 
-        // const squareSize = this.boardSize/8;
+        const playerId = this.gameManager.playerId
+        const playerBoard = this.gameManager.getPlayerBoard();
+        
 
-        // const highlightedSquareX = xStart + squareSize * this.selectedBoardCoordinates.x;
-        // const highlightedSquareY = yStart + squareSize * this.selectedBoardCoordinates.y;
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.highlightColor;
-        // context.fillRect(highlightedSquareX, highlightedSquareY ,squareSize,squareSize)
-        // if(this.game.state == GameStates.Deploying && this.selectedBoard == Player.player){
-        //     if(this.shipPlaceModeOrientation == "down"){
-        //         for(let i = 1; i <= 3; i++){
-        //             context.fillRect(highlightedSquareX, highlightedSquareY + i *squareSize ,squareSize,squareSize)
-        //         }
-        //     } else {
-        //         for(let i = 1; i <= 3; i++){
-        //             context.fillRect(highlightedSquareX + i * squareSize, highlightedSquareY,squareSize,squareSize)
-        //         }
-        //     }
-        // }
+        switch (this.gameManager.currentGameState) {
+            case GameState.ShipPlacement:
+                if (this.selectedBoard != playerId) return false;
+                const shipDefinition = ShipDefinitions[this.currentlySelectedShipPlaceType];
+
+                // this is very inefficient, but it should work, since we're redoing the absolute coordinate conversion
+                // for every tile, of every frame
+                // but a smarter solution will be messy
+                for (const hullTile of shipDefinition.hull) {
+                    const absoluteCoordinate = relativeCoordinateToAbsoluteCoordinate(hullTile.relativeCoordinate, this.selectedBoardCoordinates, this.currentInputOrientation);
+                    if (absoluteCoordinate.x == x && absoluteCoordinate.y == y) return true;
+                }
+                break;
+
+            //highlight the selected ship in battle mode
+            case GameState.Battle:
+                const currentTile = playerBoard.getTile(x, y);
+                if (this.attackingShip == null) {
+                    if (this.selectedBoard != playerId) return false;
+                    const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+
+                    if (selectedTile.shipId == null) return false;
+                    return selectedTile.shipId == currentTile.shipId;
+                } else {
+                    return currentTile.shipId == this.attackingShip.shipId;
+                }
+        }
+
+        return highlight
     }
 
-    drawTurnText(){
+    determineIfOpponentTileIsHighlighted(x: number, y: number): boolean {
+        let highlight = false;
+
+        const opponentId = this.gameManager.opponentId
+        const opponentBoard = this.gameManager.getOpponentBoard();
+
+        switch (this.gameManager.currentGameState) {
+            case GameState.ShipPlacement:
+                return false;
+                break;
+            //highlight attacked squares in battle mode if it's the player's turn
+            case GameState.Battle:
+                if (this.attackingShip == null || !this.gameManager.isPlayersTurn || this.selectedBoard != opponentId) return false;
+                const shipDefinition = ShipDefinitions[this.attackingShip.shipType];
+
+                for (const firingPattern of shipDefinition.firingPattern) {
+                    const absoluteCoordinate = relativeCoordinateToAbsoluteCoordinate(firingPattern.relativeCoordinate, this.selectedBoardCoordinates, this.currentInputOrientation);
+                    if (absoluteCoordinate.x == x && absoluteCoordinate.y == y) return true;
+                }
+                break;
+        }
+
+
+        return highlight;
+    }
+
+    drawBoards() {
+        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, this.boardMargin, this.boardSize, "Player's Board", BoardHighlightMode.Player);
+        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, this.boardMargin, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
+    }
+
+    drawTurnText() {
         // if(this.game.playersTurn == null || this.game.state != GameStates.Fighting) return;
         // const turnText = this.game.playersTurn? "Your Turn" : "Opponent's Turn"
-        
+
         // const context = this.canvas.getContext("2d");
         // context.fillStyle = this.textColor;
         // context.font = `${this.textSize}px Arial`
         // context.fillText(turnText, 0, this.canvas.height - this.textSize);
     }
 
-    drawGameId(){
+    drawGameId() {
         // if(this.game.gameId == null) return;
-        
+
         // const context = this.canvas.getContext("2d");
         // context.fillStyle = this.textColor;
         // context.font = `${this.textSize}px Arial`
@@ -239,8 +331,8 @@ export default class Camera{
         // if(this.game.opponentName != null) context.fillText("opponent name: " + this.game.opponentName, 0, 2 *this.textSize);
     }
 
-    clear(){
+    clear() {
         const context = this.canvas.getContext("2d");
-        context.clearRect(0,0,this.canvas.width, this.canvas.height);
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }

@@ -131,6 +131,7 @@ export default class Game{
 
         if(!targetBoard.alive) this.endGame(attackingPlayer);
         this.switchTurns();
+        this.resetTimeoutInterval();
     }
 
     switchTurns(){
@@ -186,7 +187,8 @@ export default class Game{
                 coordinate: boardTileUpdate.coordinates,
                 health: boardTileUpdate.health,
                 maxHealth: boardTileUpdate.maxHealth,
-                shipId: boardTileUpdate.shipId
+                shipId: boardTileUpdate.shipId,
+                shipType: boardTileUpdate.shipType
             })
         }
 
