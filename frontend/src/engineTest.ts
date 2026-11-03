@@ -3,6 +3,8 @@ import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessag
 import { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
 import { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
+import { LobbyManager } from "./Game/LobbyManager";
+import { GameManager } from "./Game/GameManager";
 
 //TODO: config
 const PORT = 17040;
@@ -10,6 +12,9 @@ const PORT = 17040;
 //find the game server at the same host with different port
 const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
+
+const gameManager = new GameManager(webSocket);
+const lobbyManager = new LobbyManager(webSocket, gameManager);
 
 const testFleet: ClientMessage.ShipPlacement[] = [
     {shipType: ShipType.Standard, location: CoordinateFactory.createCoordinate(0,0), orientation: Orientation.Right},
@@ -37,3 +42,7 @@ window.ClientMessage = ClientMessage;
 window.webSocket = webSocket;
 //@ts-ignore
 window.testFleet = testFleet;
+//@ts-ignore
+window.lobbyManager = lobbyManager;
+//@ts-ignore
+window.gameManager = gameManager;

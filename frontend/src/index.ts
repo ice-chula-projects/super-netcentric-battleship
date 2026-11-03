@@ -1,7 +1,7 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
-import Camera from "./Camera";
-import { Game } from "./Game";
+import Camera from "./Game/Camera";
+import { Game } from "./Game/GameManager";
 
 //TODO: config
 const PORT = 17040;

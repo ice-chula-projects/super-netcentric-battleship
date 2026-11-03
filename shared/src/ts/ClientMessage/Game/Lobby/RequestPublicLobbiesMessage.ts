@@ -20,6 +20,7 @@ export class RequestPublicLobbiesMessageBuilder implements RequestPublicLobbiesM
 
     setLobbiesPerPage(lobbiesPerPage: number | null){
         this.lobbiesPerPage = lobbiesPerPage;
+        return this
     }
 
     toJsonString(){

@@ -110,7 +110,7 @@ export default class GameServer {
         if (response != null) websocket.send(response.toJsonString());
     }
 
-    paginate<T>(allMembers:T[], requestedPage: number, requestedMembersPerPage: number | null): {pagninatedMembers: T[], page: number, membersPerPage: number}{
+    paginate<T>(allMembers:T[], requestedPage: number | null, requestedMembersPerPage: number | null): {pagninatedMembers: T[], page: number, membersPerPage: number}{
         const memberCount = allMembers.length
         
         //TODO: configuration
@@ -118,6 +118,7 @@ export default class GameServer {
         const membersPerPage = requestedMembersPerPage == null ? maxMembersPerPage : Math.max(0, Math.min(maxMembersPerPage, requestedMembersPerPage));
 
         //clamp page
+        if(requestedPage == null) requestedPage = 0;
         const page = Math.max(0, Math.min(requestedPage, Math.ceil(memberCount/membersPerPage) - 1));
         
         const startingIndex = page * membersPerPage
