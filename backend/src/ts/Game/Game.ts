@@ -1,130 +1,213 @@
-import Random from "../lib/Random.js";
+import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
+import Board, { BoardTileUpdate } from "./Board/Board.js";
+import {getOppositePlayer, Player} from "@super-netcentric-battleship/shared/Game/Player.js";
+import { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
+import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
+import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
+import Ship from "./Ship/Ship.js";
+import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import User from "../User/User.js";
-import GameBoard, { BoardTileTypes, GameShip } from "./GameBoard.js";
+import { CurrentTurnNotificationMessageBuilder, UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import Random from "../lib/Random.js";
+import { ClientActionMessage, ClientMessageType, ShipPlacement } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
-export enum GameState {
-    Forming,
-    Setup,
-    Battle,
-    End
-}
-
-export enum Player{
-    Player1,
-    Player2
-}
-
-export enum ShotResult{
-    Hit,
-    Miss
-}
-
+//responsible for game logic and sending messages to clients
 export default class Game{
-    readonly players: {
-        [Player.Player1]: User | null,
-        [Player.Player2]: User | null
-    } = {[Player.Player1]: null, [Player.Player2]: null}
+    gameSettings: GameSettings;
+    boards!: {
+        [Player.Player1]: Board;
+        [Player.Player2]: Board;
+    };
 
-    readonly boards: {
-        [Player.Player1]: GameBoard | null,
-        [Player.Player2]: GameBoard | null
-    } = {[Player.Player1]: null, [Player.Player2]: null}
-    readonly chatChannelId: string;
-    readonly gameId: string;
+    playerUsers: {
+        [Player.Player1]: User,
+        [Player.Player2]: User
+    };
+    timeoutIntervalId: NodeJS.Timeout | null = null;
 
-    currentPlayerTurn: Player | null = null;
-    winningPlayer: Player | null = null;
-
-    get currentPlayerUser(): User | null{
-        if (this.currentPlayerTurn == null) return null;
-        return this.players[this.currentPlayerTurn];
+    currentTurn!: Player
+    gameState: GameState = GameState.ShipPlacement;
+    readonly score: {
+        [Player.Player1]: number,
+        [Player.Player2]: number
+    } = {
+        [Player.Player1]: 0,
+        [Player.Player2]: 0
     }
 
-    get currentPlayerBoard(): GameBoard | null {
-        if (this.currentPlayerTurn == null) return null;
-        return this.boards[this.currentPlayerTurn];
+    readonly fleetInitialized: {
+        [Player.Player1]: boolean,
+        [Player.Player2]: boolean
+    } = {
+        [Player.Player1]: false,
+        [Player.Player2]: false
     }
 
-    get boardIsSetUp(): boolean{
-        return this.boards[Player.Player1] != null && this.boards[Player.Player2] != null;
+    get fleetsInitialzed(): boolean{
+        return this.fleetInitialized[Player.Player1] && this.fleetInitialized[Player.Player2];
     }
 
-    get isInProgress(): boolean{
-        return this.gameState != GameState.Forming && this.gameState != GameState.End;
-    }
-
-    get isFull(): boolean{
-        return this.gameState != GameState.Forming;
-    }
-
-    gameState: GameState = GameState.Forming;
-    
-
-    constructor(gameId: string, chatChannelId: string){
-        this.gameId = gameId;
-        this.chatChannelId = chatChannelId;
-    }
-
-    private transitionGameState(gameState: GameState){
-        switch(gameState){
-            case GameState.Setup:
-                this.gameState = GameState.Setup;
-            break;
-            case GameState.Battle:
-                this.currentPlayerTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
-                this.gameState = GameState.Battle;
-            break;
-            case GameState.End:
-                this.winningPlayer = this.currentPlayerTurn;
-                this.gameState = GameState.End;
-            break;
+    constructor(gameSettings: GameSettings, player1User: User, player2User: User){
+        this.gameSettings = gameSettings;
+        this.playerUsers = {
+            [Player.Player1]: player1User,
+            [Player.Player2]: player2User
         }
+
+        //random first turn
+        this.randomizeTurn();
+        this.initializeGame();
     }
 
-    private switchTurns(){
-        this.currentPlayerTurn = this.currentPlayerTurn == Player.Player1 ? Player.Player2 : Player.Player1;
-    }
-
-    addPlayerUser(user: User): Player{
-        if(this.players[Player.Player1] == null){
-            this.players[Player.Player1] = user;
-            return Player.Player1;
-        }
-        this.players[Player.Player2] = user;
-        this.transitionGameState(GameState.Setup);
-        return Player.Player2;
-    }
-
-    getPlayerFromUser(user: User): Player{
-        if (this.players[Player.Player1] == user) return Player.Player1;
-        else if (this.players[Player.Player2] == user) return Player.Player2;
-
-        throw new Error("given user is not part of game");
-    }
-
-    isUserInGame(user: User){
-        return this.players[Player.Player1] == user || this.players[Player.Player2] == user;
+    initializeGame(){
+        this.gameState = GameState.ShipPlacement;
+        this.fleetInitialized[Player.Player1] = false; 
+        this.fleetInitialized[Player.Player2] = false; 
+        this.resetBoards();
     }
     
-    setupBoard(player: Player, ships: GameShip[]){
-        if(this.gameState != GameState.Setup) throw new Error("cannot setup board in non setup state");
-        if(this.boards[player] != null) throw new Error("tried to setup an existing board");
-        const board = new GameBoard(ships);
-        this.boards[player] = board;
-
-        if (this.boardIsSetUp) this.transitionGameState(GameState.Battle);
+    randomizeTurn(){
+        this.currentTurn = Random.randomBoolean() ? Player.Player1 : Player.Player2;
     }
 
-    takeTurn(x: number, y: number): ShotResult{
-        if(this.gameState != GameState.Battle) throw new Error("cannot take turns in non battle state");
-        const board = this.currentPlayerTurn == Player.Player1? this.boards[Player.Player2] : this.boards[Player.Player1];
-        const result = board?.shoot(x,y);
-        if(board?.allShipsSunk) {
-            this.transitionGameState(GameState.End);
-            return ShotResult.Hit;
-        }
-        
+    resetTimeoutInterval(){
+        if(this.timeoutIntervalId != null) clearTimeout(this.timeoutIntervalId);
+        this.timeoutIntervalId = (setTimeout(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn));
+    }
+
+    handleTimeout(){
+        this.timeoutIntervalId = null;
+        if(this.gameState != GameState.Battle) return;
+
+        //add notification to client about timeout here
         this.switchTurns();
-        return result == BoardTileTypes.Hit? ShotResult.Hit : ShotResult.Miss;
+
+        this.resetTimeoutInterval();
     }
+
+    initializeFleet(player: Player, fleet:ShipPlacement[]){
+        if(this.gameState != GameState.ShipPlacement) throw new Error("Cannot initialize fleet in non ship placement state");
+        if(this.fleetInitialized[player]) throw new Error("Fleet already initialized");
+
+        const fleetValue = fleet.map(x => Ship.fromType(x.shipType).value).reduce((a,b) => a + b);
+        if(fleetValue > this.gameSettings.maxFleetValue) throw new Error("Fleet value exceeds maximum fleet value");
+
+        const updatedTiles = [];
+        for(const ship of fleet){
+            updatedTiles.push(... this.addShip(player, ship.shipType, ship.location, ship.orientation));
+        }
+
+        this.fleetInitialized[player] = true;
+
+        this.notifyBoardTileUpdateToPlayerUser(player, player, updatedTiles);
+
+        if(this.fleetsInitialzed) this.startBattle();
+    }
+
+    addShip(player: Player, shipType: ShipType, location: Coordinate, orientation: Orientation): BoardTileUpdate[]{
+        const board = this.boards[player];
+        const ship = Ship.fromType(shipType);
+        ship.setOrientation(orientation);
+
+        return board.placeShip(ship, location);
+    }
+
+    startBattle(){
+        if(this.gameState != GameState.ShipPlacement) throw new Error("Tried to start a game that isn't in ship placement state");
+        this.gameState = GameState.Battle;
+        this.notifyCurrentTurn();
+        this.resetTimeoutInterval();
+    }
+
+    fire(attackingPlayer: Player, attackingShipId: number, location: Coordinate, orientation: Orientation){
+        if(this.gameState != GameState.Battle) throw new Error("Tried to fire a volley in non Battle State");
+        const attackingShip = this.boards[attackingPlayer].getShipById(attackingShipId);
+        if(!attackingShip.alive) throw new Error("Cannot fire a volley from a dead ship");
+        const opponentPlayer = getOppositePlayer(attackingPlayer);
+        const targetBoard = this.boards[opponentPlayer];
+
+        const updatedTiles = targetBoard.fire(attackingShip.firingPattern, location, orientation);
+        this.notifyBoardTileUpdateToBothPlayers(opponentPlayer, updatedTiles);
+
+        if(!targetBoard.alive) this.endGame(attackingPlayer);
+        this.switchTurns();
+        this.resetTimeoutInterval();
+    }
+
+    switchTurns(){
+        this.currentTurn = getOppositePlayer(this.currentTurn);
+        this.notifyCurrentTurn();
+    }
+
+    endGame(winner: Player){
+        if(this.gameState != GameState.Battle) throw new Error("Tried to end a game in non Battle State");
+        this.gameState = GameState.End;
+        this.score[winner]++;
+
+        //if a rematch happens set the winner to be the first plyer of the next game
+        this.currentTurn = winner;
+    }
+
+    rematch(){
+        if(this.gameState != GameState.End) throw new Error("Tried to rematch a game in non End State");
+        this.initializeGame();
+    }
+
+    takeAction(clientActionMessage: ClientActionMessage, actingPlayer: Player){
+        switch(clientActionMessage.type){
+            case ClientMessageType.FireVolleyAction:
+                if(actingPlayer != this.currentTurn) throw new Error("Cannot fire a volley when it isn't the player's turn");
+                this.fire(actingPlayer, clientActionMessage.originatingShipId, clientActionMessage.targetCoordinates, clientActionMessage.volleyOrientation);
+            break;
+            case ClientMessageType.InitializeFleetAction:
+                this.initializeFleet(actingPlayer, clientActionMessage.fleet);
+            break;
+            case ClientMessageType.UseAbilityAction:
+                if(actingPlayer != this.currentTurn) throw new Error("Cannot use ability when it isn't the player's turn");
+                throw new Error("Abilities have not been implemented");
+            break;
+            default:
+                throw new Error("Unsupported client action message");
+        }
+    }
+
+    notifyBoardTileUpdateToBothPlayers(boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
+        this.notifyBoardTileUpdateToPlayerUser(Player.Player1, boardOwner, boardTileUpdates);
+        this.notifyBoardTileUpdateToPlayerUser(Player.Player2, boardOwner, boardTileUpdates);
+    }
+
+    notifyBoardTileUpdateToPlayerUser(targetUserPlayer: Player, boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){
+        const user = this.playerUsers[targetUserPlayer];
+        if(user == null) throw new Error("Tried to notify user before user is initialized");
+        const message = new UpdateBoardTileStatusesNotificationMessageBuilder()
+        for(const boardTileUpdate of boardTileUpdates){
+            message.addBoardTileStatus({
+                boardOwner: boardOwner,
+                state: boardTileUpdate.state,
+                coordinate: boardTileUpdate.coordinates,
+                health: boardTileUpdate.health,
+                maxHealth: boardTileUpdate.maxHealth,
+                shipId: boardTileUpdate.shipId,
+                shipType: boardTileUpdate.shipType
+            })
+        }
+
+        user.socket.send(message.toJsonString());
+    }
+
+    notifyCurrentTurn(){
+        const message = new CurrentTurnNotificationMessageBuilder()
+        .setCurrentTurn(this.currentTurn);
+
+        this.playerUsers[Player.Player1].socket.send(message.toJsonString());
+        this.playerUsers[Player.Player2].socket.send(message.toJsonString());
+    }
+
+    resetBoards(): void{
+        this.boards = {
+            [Player.Player1]: new Board(this, this.gameSettings.boardSize),
+            [Player.Player2]: new Board(this, this.gameSettings.boardSize)
+        };
+    }
+
 }

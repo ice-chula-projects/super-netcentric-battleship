@@ -7,6 +7,7 @@ export default class User{
     // WebSocket id
     readonly id: string;
     readonly subscribedChatChannelIds: string[] = [];
+<<<<<<< HEAD
 
     currentGameId: string | null = null;
     active: boolean = true;
@@ -18,13 +19,23 @@ export default class User{
     get accountId(): string | null {
         return this._accountId;
     }
+=======
+    currentLobbyCode: string | null = null;
+
+    active: boolean = true;
+    username: string;
+    
+    get currentlyInGameLobby(): boolean{
+        return this.currentLobbyCode != null;
+    } 
+>>>>>>> game-engine
 
     setUsername(username:string){
         this.username = username;
     }
 
-    setCurrentGameId(currentGameId: string | null){
-        this.currentGameId = currentGameId;
+    setCurrentLobbyCode(currentLobbyCode: string | null){
+        this.currentLobbyCode = currentLobbyCode;
     }
 
     //TODO: random username system

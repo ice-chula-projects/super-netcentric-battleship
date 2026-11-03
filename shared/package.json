@@ -18,6 +18,10 @@
         "./ClientMessage.js": {
             "types": "./src/ts/ClientMessage/index.ts",
             "default": "./src/js/ClientMessage/index.js"
+        },
+        "./Game/*.js": {
+            "types": "./src/ts/Game/*.ts",
+            "default": "./src/js/Game/*.js"
         }
     }
 }

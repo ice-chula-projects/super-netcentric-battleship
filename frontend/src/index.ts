@@ -1,5 +1,6 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
+<<<<<<< HEAD
 import Camera from "./Camera";
 import { Game } from "./Game";
 import "./components/ChatSidebar";
@@ -8,6 +9,10 @@ import "./components/ChatMessage";
 import type ChatMessage from "./components/ChatMessage";
 import type ChatSidebar from "./components/ChatSidebar";
 import type GameHeader from "./components/GameHeader";
+=======
+import Camera from "./Game/Camera";
+import { Game } from "./Game/GameManager";
+>>>>>>> game-engine
 
 console.log("index.ts loaded");
 //TODO: config
@@ -70,15 +75,6 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
       break;
     case ServerMessage.ServerMessageType.Error:
       alert(serverMessage.error);
-    break;
-    case ServerMessage.ServerMessageType.GameStateNotification:
-      game.informGameState(serverMessage);
-    break;
-    case ServerMessage.ServerMessageType.GameActionResultNotificaction:
-      game.informShotResult(serverMessage.hit);
-    break;
-    case ServerMessage.ServerMessageType.OpponentGameActionNotification:
-      game.informOpponentAction(serverMessage.x, serverMessage.y);
     break;
   }
 })
