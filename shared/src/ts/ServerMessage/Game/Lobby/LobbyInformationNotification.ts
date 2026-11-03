@@ -1,6 +1,15 @@
 import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "../../../Game/GameSettings.js";
+import { Player } from "../../../Game/Player.js";
 import GameMessage from "../../../GameMessage.js";
 import { ServerMessageType } from "../../ServerMessageType.js";
+
+export interface LobbyPlayerInformation{
+    userId: string,
+    username: string,
+    isHost: boolean,
+    playerId: Player,
+    ready: boolean
+}
 
 export interface LobbyInformationNotificationMessage extends GameMessage{
     readonly type: ServerMessageType.LobbyInformationNotification;
@@ -12,6 +21,8 @@ export interface LobbyInformationNotificationMessage extends GameMessage{
     gameSettings: GameSettings;
 
     chatChannelId: string;
+
+    connectedUsers: LobbyPlayerInformation[]
 }
 
 export class LobbyInformationNotificationMessageBuilder implements LobbyInformationNotificationMessage{
@@ -26,6 +37,7 @@ export class LobbyInformationNotificationMessageBuilder implements LobbyInformat
     gameSettings: GameSettings = GameSettingsPresets[GameSettingsPresetNames.classic];
     
     chatChannelId: string = "";
+    connectedUsers: LobbyPlayerInformation[] = [];
     
     setLobbyCode(lobbyCode: string){
         this.lobbyCode = lobbyCode;
@@ -54,6 +66,11 @@ export class LobbyInformationNotificationMessageBuilder implements LobbyInformat
 
     setChatChannelId(chatChannelId: string){
         this.chatChannelId = chatChannelId;
+        return this;
+    }
+
+    setConnectedUsers(connectedUsers: LobbyPlayerInformation[]){
+        this.connectedUsers = connectedUsers;
         return this;
     }
 

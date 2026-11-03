@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, UpdateChatChannelSubscriptionMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
@@ -77,6 +77,15 @@ export default class GameServer {
             break;
             case ClientMessageType.joinLobby:
                 response = this.handleJoinLobbyMessage(message, user);
+            break;
+            case ClientMessageType.modifyGameSettings:
+                response = this.handleModifyGameSettingsMessage(message, user);
+            break;
+            case ClientMessageType.startGame:
+                response = this.handleStartGameMessage(user);
+            break;
+            case ClientMessageType.updateReadyState:
+                response = this.handleUpdateReadyStateMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -174,6 +183,23 @@ export default class GameServer {
     handleJoinLobbyMessage(joinLobbyMessage: JoinLobbyMessage, user: User): ServerMessage | null{
         this.gameLobbyManager.joinLobby(user, joinLobbyMessage.lobbyCode);
 
+        return null;
+    }
+
+    handleModifyGameSettingsMessage(modifyGameSettingsMessage: ModifyGameSettingsMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.modifyGameSettings(user, modifyGameSettingsMessage.settings);
+        return null;
+    }
+
+    
+    handleStartGameMessage(user: User): ServerMessage | null{
+        this.gameLobbyManager.requestGameStart(user);
+        return null;
+    }
+
+    
+    handleUpdateReadyStateMessage(updateReadyStateMessage: UpdateReadyStateMessage, user: User): ServerMessage | null{
+        this.gameLobbyManager.updateReadyStatus(user, updateReadyStateMessage.ready);
         return null;
     }
 }

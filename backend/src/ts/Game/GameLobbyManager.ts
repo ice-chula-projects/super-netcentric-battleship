@@ -1,3 +1,4 @@
+import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 import GameServer from "../GameServer.js";
 import Random from "../lib/Random.js";
 import User from "../User/User.js";
@@ -37,6 +38,27 @@ export default class GameLobbyManager{
         lobby.addUser(user);
 
         return lobby;
+    }
+
+    updateReadyStatus(user: User, ready: boolean){
+        const lobby = this.getUsersLobby(user);
+        lobby.updateReadyStatus(user, ready);
+    }
+
+    modifyGameSettings(user: User, gameSettings: Partial<GameSettings>){
+        const lobby = this.getUsersLobby(user);
+        lobby.requestUpdateGameSettings(user, gameSettings);
+    }
+
+    requestGameStart(user: User){
+        const lobby = this.getUsersLobby(user);
+        lobby.requestGameStart(user);
+    }
+
+    getUsersLobby(user: User){
+        if(!user.currentLobbyCode) throw new Error("User currently not in lobby");
+        if(this.lobbies[user.currentLobbyCode] == null) throw new Error("Lobby does not exist");
+        return this.lobbies[user.currentLobbyCode];
     }
 
     getLobbies(): GameLobby[]{
