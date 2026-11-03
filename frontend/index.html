@@ -66,7 +66,6 @@
             </button>
             <div class="popover" id="account-menu" hidden>
               <h2>Account</h2>
-              <!-- Same ids as before, so src/index.ts keeps working -->
               <p id="current-username"></p>
               <div class="account-row">
                 <input type="text" id="new-username" aria-label="New username" placeholder="New username">
@@ -86,13 +85,24 @@
               <button id="refresh-active-users-button">Refresh</button>
               <ul id="active-users"></ul>
             </section>
+
+            <!-- Public Lobbies List Section -->
+            <section>
+              <div class="sidebar-header-row">
+                <h3>Public Lobbies</h3>
+                <button id="refresh-lobbies-button">Refresh</button>
+              </div>
+              <div id="lobbies-list" class="lobbies-list">
+                <!-- Dynamic lobby cards populated via JS -->
+              </div>
+            </section>
+
             <section>
               <h3>Join Game</h3>
               <p>Id:</p>
               <input type="text" id="current-game-id">
               <button id="join-game">Join</button>
             </section>
-          
           </div>
         </aside>
 
@@ -181,7 +191,7 @@
       </div>
     </div>
 
-    <!-- Header behaviour: theme, sidebar, popovers, modals. -->
+    <!-- Header behaviour: theme, sidebar, popovers, modals, lobby management -->
     <script>
       (function () {
         var root = document.documentElement;
@@ -227,7 +237,6 @@
         sidebarBtn.addEventListener("click", function () {
           setSidebar(app.classList.contains("sidebar-collapsed"));
         });
-        // On small screens the sidebar is an overlay: tap the dimmed area or press Escape to close
         document.getElementById("sidebar-scrim").addEventListener("click", function () { setSidebar(false); });
         document.addEventListener("keydown", function (e) {
           if (e.key === "Escape" && mobileMq.matches && !app.classList.contains("sidebar-collapsed")) {
@@ -258,7 +267,7 @@
         document.addEventListener("click", function () { closeAll(null); });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAll(null); });
 
-        // ----- Lobby Modals -----
+        // ----- Lobby Modals & Public Lobbies -----
         var createBtn = document.getElementById("create-lobby-btn");
         var joinBtn = document.getElementById("join-lobby-btn");
         var createModal = document.getElementById("create-lobby-modal");
@@ -269,6 +278,7 @@
         var cancelJoinBtn = document.getElementById("cancel-join-modal");
         var createForm = document.getElementById("create-lobby-form");
         var joinForm = document.getElementById("join-lobby-form");
+        var lobbiesList = document.getElementById("lobbies-list");
 
         function openModal(modal) { if (modal) modal.hidden = false; }
         function closeModal(modal) { if (modal) modal.hidden = true; }
@@ -281,7 +291,6 @@
         closeJoinBtn.addEventListener("click", function () { closeModal(joinModal); });
         cancelJoinBtn.addEventListener("click", function () { closeModal(joinModal); });
 
-        // Close modal on escape key or clicking backdrop
         [createModal, joinModal].forEach(function (modal) {
           modal.addEventListener("click", function (e) {
             if (e.target === modal) closeModal(modal);
@@ -294,7 +303,83 @@
           }
         });
 
-        // Modal form submissions
+        // Sample initial public lobbies state
+        var publicLobbies = [
+          { id: "game-101", name: "Pirate Bay Brawl", creator: "CaptainJack", description: "Casual 1v1 match, all skill levels welcome!" },
+          { id: "game-102", name: "Pro Fleet Only", creator: "AdmiralNelson", description: "Competitive match. Fast turns." }
+        ];
+
+        function renderPublicLobbies(lobbies) {
+          lobbiesList.replaceChildren();
+          if (lobbies.length === 0) {
+            var emptyText = document.createElement("p");
+            emptyText.className = "lobby-description";
+            emptyText.textContent = "No active public lobbies.";
+            lobbiesList.appendChild(emptyText);
+            return;
+          }
+
+          lobbies.forEach(function (lobby) {
+            var card = document.createElement("div");
+            card.className = "lobby-card";
+
+            var cardHeader = document.createElement("div");
+            cardHeader.className = "lobby-card-header";
+
+            var title = document.createElement("span");
+            title.className = "lobby-title";
+            title.textContent = lobby.name;
+
+            var creator = document.createElement("span");
+            creator.className = "lobby-creator";
+            creator.textContent = "by " + lobby.creator;
+
+            cardHeader.appendChild(title);
+            cardHeader.appendChild(creator);
+
+            var desc = document.createElement("p");
+            desc.className = "lobby-description";
+            desc.textContent = lobby.description || "No description provided.";
+
+            var joinCardBtn = document.createElement("button");
+            joinCardBtn.className = "join-lobby-card-btn";
+            joinCardBtn.type = "button";
+            joinCardBtn.textContent = "Join";
+            joinCardBtn.addEventListener("click", function () {
+              document.dispatchEvent(new CustomEvent("game:joined", { detail: { gameId: lobby.id } }));
+            });
+
+            card.appendChild(cardHeader);
+            card.appendChild(desc);
+            card.appendChild(joinCardBtn);
+
+            lobbiesList.appendChild(card);
+          });
+        }
+
+        // Render initial lobbies
+        renderPublicLobbies(publicLobbies);
+
+        // Listen for new lobbies dynamically created
+        document.addEventListener("lobby:created", function (e) {
+          var details = e.detail;
+          if (details && details.accessType === "public") {
+            var currentUser = (document.getElementById("current-username").textContent || "").trim() || "Player";
+            publicLobbies.push({
+              id: "game-" + Math.floor(Math.random() * 1000),
+              name: details.lobbyName,
+              creator: currentUser,
+              description: details.lobbyDescription
+            });
+            renderPublicLobbies(publicLobbies);
+          }
+        });
+
+        document.getElementById("refresh-lobbies-button").addEventListener("click", function () {
+          renderPublicLobbies(publicLobbies);
+        });
+
+        // Form submissions
         createForm.addEventListener("submit", function (e) {
           e.preventDefault();
           var formData = new FormData(createForm);
@@ -304,7 +389,7 @@
             accessType: formData.get("accessType")
           };
           
-          document.dispatchEvent(new CustomEvent("lobby:create", { detail: details }));
+          document.dispatchEvent(new CustomEvent("lobby:created", { detail: details }));
           createForm.reset();
           closeModal(createModal);
         });
@@ -350,7 +435,6 @@
         Object.keys(tabs).forEach(function (k) {
           tabs[k].addEventListener("click", function () { showTab(k); });
         });
-        // Arrow keys switch tabs
         document.querySelector(".chat-tabs").addEventListener("keydown", function (e) {
           if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
           var other = activeTab === "global" ? "game" : "global";
@@ -359,7 +443,6 @@
           tabs[other].focus();
         });
 
-        // Unread dot + auto-scroll when new messages arrive
         Object.keys(logs).forEach(function (k) {
           new MutationObserver(function () {
             logs[k].scrollTop = logs[k].scrollHeight;
@@ -367,14 +450,12 @@
           }).observe(logs[k], { childList: true });
         });
 
-        // Enter sends
         [["current-message", "send-to-global-chat-button"], ["game-message", "send-to-game-chat-button"]].forEach(function (pair) {
           document.getElementById(pair[0]).addEventListener("keydown", function (e) {
             if (e.key === "Enter" && !e.isComposing) document.getElementById(pair[1]).click();
           });
         });
 
-        // Game chat is only available inside a match.
         var gameInput = document.getElementById("game-message");
         var gameSend = document.getElementById("send-to-game-chat-button");
         var gameNote = document.getElementById("game-chat-note");

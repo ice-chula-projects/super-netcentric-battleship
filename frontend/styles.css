@@ -13,7 +13,7 @@
   --shadow-side: 6px 0 24px rgba(20, 33, 61, 0.18);
   --scrim: rgba(20, 33, 61, 0.35);
   --header-h: 56px;
-  --sidebar-w: 260px;
+  --sidebar-w: 320px;       /* Increased sidebar width */
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -83,6 +83,22 @@ body {
 .icon-btn[aria-pressed="true"] { background: var(--surface-2); border-color: var(--border); }
 .icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
+.header-btn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.header-btn:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* Theme toggle shows the icon for the mode you would switch to */
@@ -125,7 +141,88 @@ body {
 .account-row input { width: 100%; padding: 0.4rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); }
 #current-username { margin: 0 0 0.75rem; font-weight: bold; }
 
-/* ---------- Layout ---------- */
+/* ---------- Modals ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.modal-content h2 { margin-top: 0; margin-bottom: 1.25rem; font-size: 1.25rem; }
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--text); }
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.form-group label { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+}
+
+.radio-group { display: flex; gap: 1.25rem; }
+.radio-group label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; font-weight: normal; }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; }
+
+.btn-primary {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ---------- Layout & Sidebar ---------- */
 .app-body { display: flex; min-height: calc(100vh - var(--header-h)); }
 
 .sidebar {
@@ -133,32 +230,94 @@ body {
   top: var(--header-h);
   align-self: flex-start;
   flex: none;
-  z-index: 5;                         /* above the board so its shadow falls on it */
+  z-index: 5;
   width: var(--sidebar-w);
   height: calc(100vh - var(--header-h));
   background: var(--surface);
   border-right: 1px solid var(--border);
   box-shadow: var(--shadow-side);
-  overflow: hidden;                   /* hides the content while the width animates to 0 */
+  overflow: hidden;
 }
 .sidebar-inner {
-  width: var(--sidebar-w);            /* fixed width so content doesn't reflow mid-animation */
+  width: var(--sidebar-w);
   height: 100%;
   padding: 1rem;
   overflow-y: auto;
 }
-.sidebar h3 { margin: 0 0 0.5rem; font-size: 1rem; }
-.sidebar section + section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.sidebar-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.sidebar h3 { margin: 0; font-size: 1rem; }
+.sidebar section + section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
 .sidebar ul { padding-left: 1.1rem; }
 #app.sidebar-collapsed .sidebar {
   width: 0;
   border-right-width: 0;
   box-shadow: none;
-  visibility: hidden;                 /* keeps hidden links/buttons out of the tab order */
+  visibility: hidden;
+}
+
+/* Public Lobbies List Styling */
+.lobbies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.lobby-card {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.lobby-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lobby-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.lobby-creator {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.lobby-description {
+  margin: 0;
+  font-size: 0.825rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.join-lobby-card-btn {
+  align-self: flex-end;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--accent-text);
+  cursor: pointer;
+}
+.join-lobby-card-btn:hover {
+  opacity: 0.9;
 }
 
 .scrim { display: none; }
-
 .main { flex: 1; min-width: 0; padding: 1rem; }
 
 .sidebar button, .chat button, .account-row button {
@@ -179,7 +338,6 @@ body {
   gap: 1rem;
 }
 
-/* Board: about half the screen width, never taller than the visible area */
 #canvas {
   flex: none;
   width: min(50vw, calc(100vh - var(--header-h) - 2rem));
@@ -189,12 +347,11 @@ body {
   background: var(--surface);
 }
 
-/* Chat: fills the rest of the row and matches the board's height */
 .chat {
   flex: 1;
   min-width: 280px;
   min-height: 320px;
-  contain: size;            /* height comes from the board, not from message count */
+  contain: size;
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -274,14 +431,12 @@ body {
 .chat-input input:disabled,
 .chat-input button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Narrow screens: board on top, chat underneath */
 @media (max-width: 1000px) {
   .game-layout { flex-direction: column; }
   #canvas { width: min(100%, calc(100vh - var(--header-h) - 2rem)); align-self: center; }
   .chat { flex: none; width: 100%; height: 380px; }
 }
 
-/* Small screens: sidebar becomes an overlay */
 @media (max-width: 800px) {
   .sidebar,
   #app.sidebar-collapsed .sidebar {
@@ -312,12 +467,9 @@ body {
   #app.sidebar-collapsed .scrim { opacity: 0; pointer-events: none; visibility: hidden; }
   .game-title { font-size: 1.6rem; }
 }
+
 @media (prefers-reduced-motion: no-preference) {
   .icon-btn { transition: background-color 0.15s; }
-}
-
-/* ---------- Sidebar animation ---------- */
-@media (prefers-reduced-motion: no-preference) {
   .sidebar {
     transition:
       width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
@@ -326,7 +478,6 @@ body {
       visibility 0s linear 0s;
   }
   #app.sidebar-collapsed .sidebar {
-    /* hide from keyboard/screen readers only after the slide-out finishes */
     transition:
       width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
       box-shadow 0.32s ease,
@@ -337,14 +488,7 @@ body {
   #app.sidebar-collapsed .scrim { transition: opacity 0.32s ease, visibility 0s linear 0.32s; }
 
   @media (max-width: 800px) {
-    /* overlay: slide with transform (smoother than animating width) */
     .sidebar,
-    #app.sidebar-collapsed .sidebar {
-      transition:
-        transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.32s ease,
-        visibility 0s linear 0s;
-    }
     #app.sidebar-collapsed .sidebar {
       transition:
         transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
@@ -352,132 +496,4 @@ body {
         visibility 0s linear 0.32s;
     }
   }
-}
-
-/* Header Action Buttons */
-.header-btn {
-  padding: 0.4rem 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface-2);
-  color: var(--text);
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: border-color 0.15s, background-color 0.15s;
-}
-.header-btn:hover {
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-/* Modal Overlay & Dialog */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--scrim);
-  backdrop-filter: blur(2px);
-}
-.modal-overlay[hidden] {
-  display: none;
-}
-
-.modal-content {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  margin: 1rem;
-  padding: 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  margin-bottom: 1.25rem;
-  font-size: 1.25rem;
-}
-
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  font-size: 1.5rem;
-  line-height: 1;
-  cursor: pointer;
-}
-.modal-close:hover {
-  color: var(--text);
-}
-
-/* Form controls inside Modals */
-.form-group {
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.form-group input[type="text"],
-.form-group textarea {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--text);
-  font-family: inherit;
-}
-
-.radio-group {
-  display: flex;
-  gap: 1.25rem;
-}
-.radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  cursor: pointer;
-  font-weight: normal;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
-
-.btn-primary {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface-2);
-  color: var(--text);
-  cursor: pointer;
 }
