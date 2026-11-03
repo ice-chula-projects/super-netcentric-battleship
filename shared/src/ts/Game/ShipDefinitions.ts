@@ -126,6 +126,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.BlueRicky]: ShipDefinitionFactory.createShipDefinition(
         ShipType.BlueRicky,
+        "BlueRicky",
+        "4-Block ⅃",
         
         4,
 
@@ -139,6 +141,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.OrangeRicky]: ShipDefinitionFactory.createShipDefinition(
         ShipType.OrangeRicky,
+        "OrangeRicky",
+        "4-Block L",
         
         4,
 
@@ -152,6 +156,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.CleavelandZ]: ShipDefinitionFactory.createShipDefinition(
         ShipType.CleavelandZ,
+        "CleavelandZ",
+        "4-Block Z",
         
         4,
 
@@ -165,6 +171,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.RhodeIslandZ]: ShipDefinitionFactory.createShipDefinition(
         ShipType.RhodeIslandZ,
+        "RhodeIslandZ",
+        "Reverse 4-Block Z",
         
         4,
 
@@ -178,6 +186,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Smashboy]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Smashboy,
+        "Smashboy",
+        "4-Block Cube",
         
         4,
 
@@ -191,6 +201,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Teewee]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Teewee,
+        "Teewee",
+        "4-Block Cube Pyramid",
         
         4,
 
@@ -204,6 +216,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.SmolHero]: ShipDefinitionFactory.createShipDefinition(
         ShipType.SmolHero,
+        "SmolHero",
+        "3-Block Line",
         
         3,
 
@@ -216,6 +230,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Auto]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Auto,
+        "Auto",
+        "5-Block Line",
         
         5,
 
@@ -230,6 +246,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Warm]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Warm,
+        "Warm",
+        "5-Block Open Pyramid",
         
         5,
 
@@ -244,6 +262,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Pro]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Pro,
+        "Pro",
+        "5-Block Abstract X",
         
         5,
 
@@ -258,20 +278,24 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Non]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Non,
+        "Non",
+        "5-Block Propellar",
         
         5,
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
-        ShipDefinitionFactory.createShipHullTile(-1, 1, 1),
-        ShipDefinitionFactory.createShipHullTile(2, 2, 1),
-        ShipDefinitionFactory.createShipHullTile(-2, -2, 1)],
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
     ),
 
         [ShipType.Pong]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Pong,
+        "Pong",
+        "5-Block Table",
         
         5,
 
@@ -286,6 +310,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Azmi]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Azmi,
+        "Azmi",
+        "5-Block X",
         
         5,
 
@@ -300,6 +326,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipType.Dot]: ShipDefinitionFactory.createShipDefinition(
         ShipType.Dot,
+        "Dot",
+        "Abandon all hope all ye who enters",
         
         20,
 
