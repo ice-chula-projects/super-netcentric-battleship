@@ -23,7 +23,7 @@ export default class Game{
         [Player.Player1]: User,
         [Player.Player2]: User
     };
-    timeoutIntervalId: number | null = null;
+    timeoutIntervalId: NodeJS.Timeout | null = null;
 
     currentTurn!: Player
     gameState: GameState = GameState.ShipPlacement;
@@ -72,7 +72,7 @@ export default class Game{
 
     resetTimeoutInterval(){
         if(this.timeoutIntervalId != null) clearTimeout(this.timeoutIntervalId);
-        setTimeout(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn);
+        this.timeoutIntervalId = (setTimeout(this.handleTimeout.bind(this), 1000 * this.gameSettings.timeLimitPerTurn));
     }
 
     handleTimeout(){
