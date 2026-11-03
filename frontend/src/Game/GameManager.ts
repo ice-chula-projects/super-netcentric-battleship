@@ -68,12 +68,12 @@ export class GameManager{
     }
 
     getPlayerBoard(): GameBoard{
-        if(!this.matchInProgress) throw new Error("Game is not Active");
+        if(!this.initialized) throw new Error("Game is not Initialized");
         return this.boards[this.playerId];
     }
 
     getOpponentBoard(): GameBoard{
-        if(!this.matchInProgress) throw new Error("Game is not Active");
+        if(!this.initialized) throw new Error("Game is not Initialized");
         return this.boards[this.opponentId];
     }
 

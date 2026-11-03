@@ -106,6 +106,7 @@ export default class Camera {
 
         if (!this.gameManager.initialized) return;
         this.drawBoards();
+        this.drawScoreText();
 
         if(this.gameManager.currentGameState == GameState.Battle){
             this.drawTimerText();
@@ -331,7 +332,7 @@ export default class Camera {
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`;
         context.textAlign = "center";
-        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.textSize);
+        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.textSize * 2);
     }
 
     drawTurnText() {
@@ -352,6 +353,16 @@ export default class Camera {
         // context.font = `${this.textSize}px Arial`
         // context.fillText("game id: " + this.game.gameId, 0, this.textSize);
         // if(this.game.opponentName != null) context.fillText("opponent name: " + this.game.opponentName, 0, 2 *this.textSize);
+    }
+
+    drawScoreText(){
+        const scoreText = `${this.gameManager.playerScore} - ${this.gameManager.opponentScore}`;
+
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(scoreText, this.canvas.width / 2, this.textSize);
     }
 
     clear() {
