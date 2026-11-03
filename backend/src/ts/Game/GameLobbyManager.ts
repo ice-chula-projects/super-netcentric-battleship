@@ -3,6 +3,7 @@ import GameServer from "../GameServer.js";
 import Random from "../lib/Random.js";
 import User from "../User/User.js";
 import GameLobby from "./GameLobby.js";
+import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 export default class GameLobbyManager{
     readonly gameServer: GameServer;
@@ -53,6 +54,11 @@ export default class GameLobbyManager{
     requestGameStart(user: User){
         const lobby = this.getUsersLobby(user);
         lobby.requestGameStart(user);
+    }
+
+    notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: User){
+        const lobby = this.getUsersLobby(actingUser);
+        lobby.notifyClientActionMessage(clientActionMessage, actingUser);
     }
 
     getUsersLobby(user: User){

@@ -46,3 +46,7 @@ RequestPublicLobbiesMessage |
 FireVolleyActionMessage |
 PlaceShipActionMessage |
 UseAbilityActionMessage;
+
+export type ClientActionMessage = FireVolleyActionMessage |
+PlaceShipActionMessage |
+UseAbilityActionMessage;

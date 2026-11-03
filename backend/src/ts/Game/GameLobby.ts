@@ -4,6 +4,7 @@ import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
 import { GameStartNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
+import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 export interface LobbyMember{
     user: User,
@@ -143,12 +144,21 @@ export default class GameLobby{
         this.startGame();
     }
 
-    getmemberFromUser(user: User): LobbyMember{
+    notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: User){
+        if(this.gameInProgress) throw new Error("Cannot take actions while game is not in progress");
+        this.activeGame?.takeAction(clientActionMessage, this.getPlayerIdFromUser(actingUser))
+    }
+
+    getMemberFromUser(user: User): LobbyMember{
         for(const member of this.members){
             if(member.user == user) return member;
         }
 
         throw new Error("User not in lobby");
+    }
+
+    getPlayerIdFromUser(user: User): Player{
+        return this.getPlayerIdFromMember(this.getMemberFromUser(user));
     }
 
     getPlayerIdFromMember(member: LobbyMember): Player{

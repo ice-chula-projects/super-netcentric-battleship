@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
@@ -89,6 +89,11 @@ export default class GameServer {
             break;
             case ClientMessageType.RequestPublicLobbies:
                 response = this.handleRequestPublicLobbiesMessage(message);
+            break;
+            case ClientMessageType.FireVolleyAction:
+            case ClientMessageType.PlaceShipAction:
+            case ClientMessageType.UseAbilityAction:
+                response = this.handleClientActionMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -233,5 +238,10 @@ export default class GameServer {
         .setPage(paginatedLobbies.page)
         .setTotalLobbies(totalPublicLobbies)
         .setlobbiesPerPage(paginatedLobbies.membersPerPage);
+    }
+
+    handleClientActionMessage(clientActionMessage: ClientActionMessage, user: User): ServerMessage | null {
+        this.gameLobbyManager.notifyClientActionMessage(clientActionMessage, user);
+        return null;
     }
 }

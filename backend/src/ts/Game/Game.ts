@@ -9,6 +9,7 @@ import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js
 import User from "../User/User.js";
 import { CurrentTurnNotificationMessageBuilder, UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import Random from "../lib/Random.js";
+import { ClientActionMessage, ClientMessageType } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 //responsible for game logic and sending messages to clients
 export default class Game{
@@ -120,6 +121,23 @@ export default class Game{
     rematch(){
         if(this.gameState != GameState.End) throw new Error("Tried to rematch a game in non End State");
         this.initializeGame();
+    }
+
+    takeAction(clientActionMessage: ClientActionMessage, actingPlayer: Player){
+        if(actingPlayer != this.currentTurn) throw new Error("Cannot take action when it isn't the player's turn");
+        switch(clientActionMessage.type){
+            case ClientMessageType.FireVolleyAction:
+                this.fire(actingPlayer, clientActionMessage.originatingShipId, clientActionMessage.targetCoordinates, clientActionMessage.volleyOrientation);
+            break;
+            case ClientMessageType.PlaceShipAction:
+                this.addShip(actingPlayer, clientActionMessage.shipType, clientActionMessage.location, clientActionMessage.orientation);
+            break;
+            case ClientMessageType.UseAbilityAction:
+                throw new Error("Abilities have not been implemented");
+            break;
+            default:
+                throw new Error("Unsupported client action message");
+        }
     }
 
     notifyBoardTileUpdateToBothPlayers(boardOwner: Player, boardTileUpdates: BoardTileUpdate[]){

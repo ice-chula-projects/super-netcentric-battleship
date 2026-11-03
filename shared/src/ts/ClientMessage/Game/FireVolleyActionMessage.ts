@@ -1,4 +1,5 @@
 import Coordinate, { CoordinateFactory } from "../../Game/Coordinate.js";
+import { Orientation } from "../../Game/Orientation.js";
 import GameMessage from "../../GameMessage.js";
 import { ClientMessageType } from "../ClientMessageType.js";
 
@@ -7,6 +8,7 @@ export interface FireVolleyActionMessage extends GameMessage{
 
     originatingShipId: number;
     targetCoordinates: Coordinate;
+    volleyOrientation: Orientation;
 }
 
 export class FireVolleyActionMessageBuilder implements FireVolleyActionMessage{
@@ -15,6 +17,7 @@ export class FireVolleyActionMessageBuilder implements FireVolleyActionMessage{
 
     originatingShipId: number = 0;
     targetCoordinates: Coordinate = CoordinateFactory.createCoordinate(0,0);
+    volleyOrientation: Orientation = Orientation.Right;
 
     setOriginatingShipId(originatingShipId: number){
         this.originatingShipId = originatingShipId;
@@ -23,6 +26,11 @@ export class FireVolleyActionMessageBuilder implements FireVolleyActionMessage{
 
     setTargetCoordinates(targetCoordinates: Coordinate){
         this.targetCoordinates = targetCoordinates;
+        return this;
+    }
+
+    setVolleyOrientation(volleyOrientation: Orientation){
+        this.volleyOrientation = volleyOrientation;
         return this;
     }
 
