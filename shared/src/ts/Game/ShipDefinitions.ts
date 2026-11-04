@@ -95,7 +95,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         //description of the ship, used in the frontend
         "Standard ship, 4 long with 1 tile attack",
         //value in points
-        1,
+        4,
 
         //define hull as a series of coordinates (x,y) and health
         //here is defined as a series of tiles at coordinates (0,0) through (3,0) each with 1 health
