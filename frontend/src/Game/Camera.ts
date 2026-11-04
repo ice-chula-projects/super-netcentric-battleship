@@ -131,7 +131,7 @@ export default class Camera {
                     const playerBoard = this.gameManager.getPlayerBoard();
                     const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
 
-                    if (selectedTile.shipId == null) {
+                    if (selectedTile.shipId == null || selectedTile.health <= 0) {
                         this.attackingShip = null;
                     } else {
                         this.attackingShip = {
@@ -228,11 +228,16 @@ export default class Camera {
 
                 context.fillStyle = color;
                 context.fillRect(currentX, currentY, deltaX, deltaY);
-                context.strokeRect(currentX, currentY, deltaX, deltaY)
+                context.strokeRect(currentX, currentY, deltaX, deltaY);
 
                 if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId && highlightMode == BoardHighlightMode.Player){
-                    context.fillStyle = this.attackingShipHighlightColor;
-                    context.fillRect(currentX, currentY, deltaX, deltaY);
+                    if(tile.health <= 0){
+                        //kinda a bad place to put this logic but time is running low
+                        this.attackingShip = null;
+                    } else {
+                        context.fillStyle = this.attackingShipHighlightColor;
+                        context.fillRect(currentX, currentY, deltaX, deltaY);
+                    }
                 }
 
                 if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
