@@ -233,12 +233,14 @@ export default class Camera {
                 if(tile.health != null){        
                     context.fillStyle = this.textColor;
                     context.font = `${deltaX / 2}px Arial`;
-                    context.textAlign = "left";
+                    context.textAlign = "center";
+                    context.textBaseline = "middle";
                     context.fillText(tile.health.toString(), currentX + deltaX/2, currentY + deltaY/2);
+                    context.textBaseline = "bottom";
                 }
 
                 if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId && highlightMode == BoardHighlightMode.Player){
-                    if(tile.health <= 0){
+                    if(tile.state == BoardTileState.DestroyedShip){
                         //kinda a bad place to put this logic but time is running low
                         this.attackingShip = null;
                     } else {
