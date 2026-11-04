@@ -37,7 +37,7 @@ export default class Camera {
     backgroundColor: string = "#5093d4";
     textColor: string = "white";
     textSize: number = 12;
-
+    victoryTextSize: number = 60;
     boardSize: number = 235;
     boardMargin: number = 10;
 
@@ -112,6 +112,10 @@ export default class Camera {
             this.drawTimerText();
             this.drawTurnText();
         };
+
+        if(this.gameManager.currentGameState == GameState.End){
+            this.drawVictoryText();
+        }
         
     }
 
@@ -203,6 +207,11 @@ export default class Camera {
         context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    drawBoards() {
+        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board", BoardHighlightMode.Player);
+        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
+    }
+
     drawBoard(board: GameBoard, x: number, y: number, size: number, label: string, highlightMode: BoardHighlightMode) {
         let currentX = x;
         let currentY = y;
@@ -221,7 +230,7 @@ export default class Camera {
                 context.fillRect(currentX, currentY, deltaX, deltaY);
                 context.strokeRect(currentX, currentY, deltaX, deltaY)
 
-                if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId){
+                if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId && highlightMode == BoardHighlightMode.Player){
                     context.fillStyle = this.attackingShipHighlightColor;
                     context.fillRect(currentX, currentY, deltaX, deltaY);
                 }
@@ -319,11 +328,6 @@ export default class Camera {
         return highlight;
     }
 
-    drawBoards() {
-        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board", BoardHighlightMode.Player);
-        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
-    }
-
     drawTimerText() {
         const timeSinceLastUpdate = (Date.now() - this.gameManager.lastTurnUpdateTimeStamp) / 1000;
         const remainingTime = Math.max(0, this.gameManager.currentGameSettings.timeLimitPerTurn - timeSinceLastUpdate);
@@ -345,14 +349,20 @@ export default class Camera {
         context.fillText(turnText, this.canvas.width / 2, this.canvas.height - this.textSize);
     }
 
-    drawGameId() {
-        // if(this.game.gameId == null) return;
+    drawVictoryText() {
+        const victoryText = this.gameManager.matchWinner == this.gameManager.playerId ? "You Win" : "You Lose";
+        
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.victoryTextSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(victoryText, this.canvas.width / 2, (this.canvas.height / 2));
+        context.strokeText(victoryText, this.canvas.width / 2,(this.canvas.height / 2));
 
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.textColor;
-        // context.font = `${this.textSize}px Arial`
-        // context.fillText("game id: " + this.game.gameId, 0, this.textSize);
-        // if(this.game.opponentName != null) context.fillText("opponent name: " + this.game.opponentName, 0, 2 *this.textSize);
+        if(!this.gameManager.rematchReqeuested) return;
+        const rematchText = this.gameManager.rematchStatus[this.gameManager.opponentId] ? "Opponent is requesting a rematch" : "Requesting a rematch";
+        context.font = `${this.textSize}px Arial`
+        context.fillText(rematchText, this.canvas.width / 2, (this.canvas.height / 2) + this.textSize);
     }
 
     drawScoreText(){

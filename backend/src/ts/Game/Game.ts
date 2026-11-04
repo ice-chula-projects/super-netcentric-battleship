@@ -195,7 +195,7 @@ export default class Game{
                 throw new Error("Abilities have not been implemented");
             break;
             case ClientMessageType.RequestRematchAction:
-
+                this.requestRematch(actingPlayer);
             break;
             default:
                 throw new Error("Unsupported client action message");

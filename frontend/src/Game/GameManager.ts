@@ -2,7 +2,7 @@ import { getOppositePlayer, Player } from "@super-netcentric-battleship/shared/G
 import GameBoard from "./Board";
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 import { CurrentTurnNotificationMessage, MatchCompleteNotificationMessage, MatchStartNotificationMessage, RematchStatusNotificationMessage, ServerMessage, ServerMessageType, UpdateBoardTileStatusesNotificationMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
-import { FireVolleyActionMessageBuilder, InitializeFleetActionMessageBuilder, ShipPlacement } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { FireVolleyActionMessageBuilder, InitializeFleetActionMessageBuilder, RequestRematchActionMessageBuilder, ShipPlacement } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import Coordinate, { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
@@ -27,6 +27,16 @@ export class GameManager{
         [Player.Player1]: number,
         [Player.Player2]: number
     } | null = null;
+
+    rematchStatus: {
+        [Player.Player1]: boolean,
+        [Player.Player2]: boolean
+    } | null = null;
+
+    get rematchReqeuested(): boolean | null{
+        if(this.rematchStatus == null) return null;
+        return this.rematchStatus[Player.Player1] || this.rematchStatus[Player.Player2];
+    }
 
     get currentGameState(): GameState | null{
         if(!this.initialized) return null;
@@ -111,6 +121,12 @@ export class GameManager{
         this.webSocket.send(message.toJsonString());
     }
 
+    requestRematch(){
+        const message = new RequestRematchActionMessageBuilder();
+
+        this.webSocket.send(message.toJsonString());
+    }
+
     handleServerMessage(message: MessageEvent){
         const serverMessage = JSON.parse(message.data) as ServerMessage;
 
@@ -143,7 +159,7 @@ export class GameManager{
     }
     
     handleRematchStatusNotificationMessage(message: RematchStatusNotificationMessage){
-        
+        this.rematchStatus = message.rematchStatus;
     }
 
     handleCurrentTurnNotificationMessage(message: CurrentTurnNotificationMessage){
@@ -177,16 +193,20 @@ export class GameManager{
         if(this.matchInProgress) throw new Error("cannot start new match when match is already in progress");
         this.initializeBoards();
         this.lastTurnUpdateTimeStamp = null;
+        this.fleet = [];
         this.matchWinner = null;
+        this.rematchStatus = {
+            [Player.Player1]: false,
+            [Player.Player2]: false
+        }
+        this.currentTurn = null;
 
         this.matchInProgress = true;
     }
 
     endMatch(winner: Player){
         if(!this.matchInProgress) throw new Error("cannot end match when no match is in progress");
-        this.lastTurnUpdateTimeStamp = null;
         this.matchWinner = winner;
-        
         this.matchInProgress = false;
     }
 
@@ -200,6 +220,7 @@ export class GameManager{
         this.fleet = [];
         this.matchWinner = null;
         this.score = null;
+        this.rematchStatus = null;
 
         this.initialized = false;
         this.matchInProgress = false;
