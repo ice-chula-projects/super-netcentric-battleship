@@ -1,9 +1,9 @@
 import { CreateLobbyMessageBuilder, JoinLobbyMessageBuilder, ModifyGameSettingsMessageBuilder, RequestPublicLobbiesMessageBuilder, StartGameMessageBuilder, UpdateReadyStateMessageBuilder } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
-import { GameEndNotificationMessage, GameStartNotificationMessage, LobbyInfoNotificationMessage, PublicLobbiesInfoMessage, PublicLobbyInformation, ServerMessage, ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { GameEndNotificationMessage, GameStartNotificationMessage, LobbyInfoNotificationMessage, LobbyPlayerInformation, PublicLobbiesInfoMessage, PublicLobbyInformation, ServerMessage, ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { GameManager } from "./GameManager";
 
-export class LobbyManager{
+export class LobbyManager extends EventTarget {
     readonly webSocket: WebSocket;
     readonly gameManager: GameManager;
 
@@ -13,10 +13,11 @@ export class LobbyManager{
         description: string,
         isPublic: boolean,
         gameSettings: GameSettings,
-        chatChannelId: string
+        chatChannelId: string,
+        connectedUsers: LobbyPlayerInformation[];
     } | null = null
 
-    publicLobbies: PublicLobbyInformation[];
+    publicLobbies: PublicLobbyInformation[] = [];
     currentPublicLobbyPage: number = 0;
     lobbiesPerPage: number = 0;
     totalPublicLobbies: number = 0;
@@ -29,7 +30,8 @@ export class LobbyManager{
         return this.currentLobbyInfo != null;
     }
 
-    constructor(webSocket: WebSocket, gameManager: GameManager){
+    constructor(webSocket: WebSocket, gameManager: GameManager) {
+        super()
         this.webSocket = webSocket;
         this.gameManager = gameManager;
     
@@ -102,13 +104,15 @@ export class LobbyManager{
     //TODO: insert logic that would update HTML from these
     handleLobbyInfoNotificationMessage(lobbyInfoNotificationMessage: LobbyInfoNotificationMessage){
         this.currentLobbyInfo = {
-            lobbyCode: lobbyInfoNotificationMessage.lobbyCode,
-            name: lobbyInfoNotificationMessage.name,
-            description: lobbyInfoNotificationMessage.description,
-            isPublic: lobbyInfoNotificationMessage.isPublic,
-            gameSettings: lobbyInfoNotificationMessage.gameSettings,
-            chatChannelId: lobbyInfoNotificationMessage.chatChannelId
-        }
+          lobbyCode: lobbyInfoNotificationMessage.lobbyCode,
+          name: lobbyInfoNotificationMessage.name,
+          description: lobbyInfoNotificationMessage.description,
+          isPublic: lobbyInfoNotificationMessage.isPublic,
+          gameSettings: lobbyInfoNotificationMessage.gameSettings,
+          chatChannelId: lobbyInfoNotificationMessage.chatChannelId,
+          connectedUsers: lobbyInfoNotificationMessage.connectedUsers
+        };
+        this.notifyStateChanged();
     }
 
     
@@ -117,13 +121,20 @@ export class LobbyManager{
         this.currentPublicLobbyPage = publicLobbiesInfoMessage.page;
         this.lobbiesPerPage = publicLobbiesInfoMessage.lobbiesPerPage;
         this.totalPublicLobbies = publicLobbiesInfoMessage.totalLobbies;
+        this.notifyStateChanged();
     }
 
     handleGameStartNotificationMessage(gameStartNotificationMessage: GameStartNotificationMessage){
-        this.gameManager.startGame(this.currentLobbyInfo.gameSettings, gameStartNotificationMessage.playerId);
+        this.gameManager.startGame(this.currentLobbyInfo!.gameSettings, gameStartNotificationMessage.playerId);
+        this.notifyStateChanged();
     }
 
     handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
         this.gameManager.stopGame();
+        this.notifyStateChanged();
+    }
+
+    private notifyStateChanged() {
+        this.dispatchEvent(new Event("state-change"));
     }
 }

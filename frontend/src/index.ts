@@ -1,18 +1,15 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
-<<<<<<< HEAD
-import Camera from "./Camera";
-import { Game } from "./Game";
+import Camera from "./Game/Camera";
+import { GameManager } from "./Game/GameManager";
+import { LobbyManager } from "./Game/LobbyManager";
 import "./components/ChatSidebar";
 import "./components/GameHeader";
 import "./components/ChatMessage";
-import type ChatMessage from "./components/ChatMessage";
+import "./components/LobbyScreen";
 import type ChatSidebar from "./components/ChatSidebar";
-import type GameHeader from "./components/GameHeader";
-=======
-import Camera from "./Game/Camera";
-import { Game } from "./Game/GameManager";
->>>>>>> game-engine
+import GameHeader from "./components/GameHeader";
+import type LobbyScreen from "./components/LobbyScreen";
 
 console.log("index.ts loaded");
 //TODO: config
@@ -21,8 +18,9 @@ const PORT = 17040;
 //find the game server at the same host with different port
 const url = "ws://" + window.location.hostname + ":" + PORT;
 const webSocket = new WebSocket(url);
-const game = new Game(webSocket);
-const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, game);
+const gameManager = new GameManager(webSocket);
+const lobbyManager = new LobbyManager(webSocket, gameManager)
+const camera = new Camera(document.getElementById("canvas") as HTMLCanvasElement, gameManager);
 
 //TODO: move none setup logic outside of index.ts
 const header = document.querySelector("game-header") as GameHeader
@@ -33,6 +31,7 @@ webSocket.addEventListener("open", () => {
   console.log("connected")
   webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString())
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
+  lobbyManager.requestPublicLobbies(0);
 })
 webSocket.addEventListener("close", ()=>{console.log("disconnected"), alert("Server probably crashed, pls tell me about it")})
 webSocket.addEventListener("message", (message: MessageEvent) => {
@@ -54,7 +53,7 @@ webSocket.addEventListener("message", (message: MessageEvent) => {
         return
       }
       currentUser = serverMessage.userInfo as unknown as { username: string; id: string; }
-      game.playerId = serverMessage.userInfo.id;
+      // game.playerId = serverMessage.userInfo.id;
       header.username = currentUser.username
       if (!/guest\#\d\d\d\d\d\d/.test(currentUser.username)) {
         alert(`Hello ${currentUser.username}`)
@@ -129,9 +128,12 @@ header?.addEventListener("change-username", (event) => {
 
 header?.addEventListener("join-game", (event) => {
   const { gameId } = (event as CustomEvent<{ gameId: string }>).detail;
-  game.joinGame(gameId);
+  // game.joinGame(gameId);
 });
 
 document.querySelector("#refresh-active-users-button")?.addEventListener("click", () => {
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())
 })
+
+const lobbyScreen = document.querySelector<GameHeader>("game-header")!.lobbyScreen;
+lobbyScreen!.manager = lobbyManager;

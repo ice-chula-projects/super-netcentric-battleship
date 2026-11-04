@@ -5,13 +5,6 @@ export enum ClientMessageType{
     RequestActiveUsers = "requestActiveUsers",
     UpdateChatChannelSubscription = "updateChatChannelSubscription",
     SendToChat = "sendToChat",
-<<<<<<< HEAD
-    SendGameAction = "sendGameAction",
-    SendBoardSetup = "sendBoardSetup",
-    JoinGame = "joinGame",
-    Login = "login",
-    Register = "register"
-=======
     CreateLobby = "createLobby",
     JoinLobby = "joinLobby",
     ModifyGameSettings = "modifyGameSettings",
@@ -20,6 +13,7 @@ export enum ClientMessageType{
     RequestPublicLobbies = "requestPublicLobbies",
     FireVolleyAction = "fireVolleyAction",
     InitializeFleetAction = "InitializeFleetAction",
-    UseAbilityAction = "useAbilityAction"
->>>>>>> game-engine
+    UseAbilityAction = "useAbilityAction",
+    Login = "login",
+    Register = "register"
 }

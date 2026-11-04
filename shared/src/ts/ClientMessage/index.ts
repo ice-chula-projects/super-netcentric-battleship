@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { JoinGameMessage } from "./JoinGameMessage.js";
-import { LoginMessage } from "./LoginMessage.js";
-import { PingMessage } from "./PingMessage.js";
-import { RegisterMessage } from "./RegisterMessage.js";
-import { RequestActiveUsersMessage } from "./RequestActiveUsersMessage.js";
-import { RequestUserInfoMessage } from "./RequestUserInfoMessage.js";
-import { SendBoardSetupMessage } from "./SendBoardSetupMessage.js";
-import { SendGameActionMessage } from "./SendGameActionMessage.js";
-import { SendToChatMessage } from "./SendToChatMessage.js";
-import { UpdateChatChannelSubscriptionMessage } from "./UpdateChatChannelSubscriptionMessage.js";
-import { UpdateUserInfoMessage } from "./UpdateUserInfoMessage.js";
-=======
 import { PingMessage } from "./PingMessage.js";
 import { RequestActiveUsersMessage } from "./User/RequestActiveUsersMessage.js";
 import { RequestUserInfoMessage } from "./User/RequestUserInfoMessage.js";
@@ -26,7 +13,6 @@ import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMe
 import { FireVolleyActionMessage } from "./Game/FireVolleyActionMessage.js";
 import { InitializeFleetActionMessage } from "./Game/InitializeFleetActionMessage.js";
 import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
->>>>>>> game-engine
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
@@ -51,13 +37,6 @@ UpdateUserInfoMessage |
 RequestActiveUsersMessage |
 UpdateChatChannelSubscriptionMessage |
 SendToChatMessage |
-<<<<<<< HEAD
-SendBoardSetupMessage |
-SendGameActionMessage |
-JoinGameMessage |
-LoginMessage |
-RegisterMessage;
-=======
 CreateLobbyMessage |
 JoinLobbyMessage |
 ModifyGameSettingsMessage |
@@ -71,4 +50,3 @@ UseAbilityActionMessage;
 export type ClientActionMessage = FireVolleyActionMessage |
 InitializeFleetActionMessage |
 UseAbilityActionMessage;
->>>>>>> game-engine

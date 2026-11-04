@@ -1,4 +1,5 @@
 import { appStyles } from "../styles";
+import LobbyScreen from "./LobbyScreen";
 
 export default class GameHeader extends HTMLElement {
   private usernameButton!: HTMLButtonElement;
@@ -68,14 +69,7 @@ export default class GameHeader extends HTMLElement {
               <span class="full-text">Join Game</span>
               <span class="mobile-text">Join</span>
             </button>
-            <form id="lobby-form" popover>
-              <h3 class="space-grotesk-medium">Join Game</h3>
-              <label for="game-id-input">Game ID</label>
-              <input type="text" id="game-id-input">
-              <button type="submit" id="join-game" class="secondary">
-                Join
-              </button>
-            </form>
+            <lobby-screen id="lobby-form" popover></lobby-screen>
           </div>
           <div>
             <button
@@ -166,6 +160,10 @@ export default class GameHeader extends HTMLElement {
   
   set username(value: string) {
     this.usernameButton.textContent = value;
+  }
+
+  get lobbyScreen(): LobbyScreen | null {
+    return this.shadowRoot?.querySelector("lobby-screen") ?? null;
   }
 }
 
