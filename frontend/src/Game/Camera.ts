@@ -22,7 +22,7 @@ export default class Camera {
     canvas: HTMLCanvasElement;
     gameManager: GameManager;
 
-    colors: Record<BoardTileState, string> = {
+    tileColors: Record<BoardTileState, string> = {
             [BoardTileState.Hidden]: "#5093d4",
             [BoardTileState.DamagedTile]: "red",
             [BoardTileState.DestoyedTile]: "darkred",
@@ -224,11 +224,18 @@ export default class Camera {
         for (let i = 0; i < boardSize; i++) {
             for (let j = 0; j < boardSize; j++) {
                 const tile = board.getTile(i, j);
-                const color = this.colors[tile.state]
+                const color = this.tileColors[tile.state]
 
                 context.fillStyle = color;
                 context.fillRect(currentX, currentY, deltaX, deltaY);
                 context.strokeRect(currentX, currentY, deltaX, deltaY);
+
+                if(tile.health != null){        
+                    context.fillStyle = this.textColor;
+                    context.font = `${deltaX / 2}px Arial`;
+                    context.textAlign = "left";
+                    context.fillText(tile.health.toString(), currentX + deltaX/2, currentY + deltaY/2);
+                }
 
                 if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId && highlightMode == BoardHighlightMode.Player){
                     if(tile.health <= 0){
