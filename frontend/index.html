@@ -77,9 +77,16 @@
         <div class="scrim" id="sidebar-scrim" aria-hidden="true"></div>
         <aside class="sidebar" id="sidebar">
           <div class="sidebar-inner">
+            <!-- Active Users Section -->
             <section>
-              <h3>Active Users</h3>
-              <button id="refresh-active-users-button">Refresh</button>
+              <div class="sidebar-header-row">
+                <h3>Active Users</h3>
+                <button id="refresh-active-users-button" class="icon-refresh-btn" type="button" aria-label="Refresh Active Users" title="Refresh Active Users">
+                  <svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
+                </button>
+              </div>
               <ul id="active-users"></ul>
             </section>
 
@@ -87,7 +94,11 @@
             <section>
               <div class="sidebar-header-row">
                 <h3>Public Lobbies</h3>
-                <button id="refresh-lobbies-button">Refresh</button>
+                <button id="refresh-lobbies-button" class="icon-refresh-btn" type="button" aria-label="Refresh Public Lobbies" title="Refresh Public Lobbies">
+                  <svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
+                </button>
               </div>
               <div id="lobbies-list" class="lobbies-list"></div>
             </section>

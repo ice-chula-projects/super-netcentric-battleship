@@ -225,7 +225,7 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
-  padding-right: 2.5rem; /* Reserve space for close (x) button */
+  padding-right: 2.5rem; /* Reserve space for close button */
 }
 
 .room-title-group {
@@ -339,13 +339,61 @@ body {
   padding: 1rem;
   overflow-y: auto;
 }
+
+/* Sidebar Section Headers with Inline Icon */
 .sidebar-header-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: flex-start; /* Keeps the button next to the heading */
+  gap: 0.4rem;                 /* Space between heading text and refresh icon */
   margin-bottom: 0.5rem;
 }
-.sidebar h3 { margin: 0; font-size: 1rem; }
+
+.sidebar-header-row h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Compact Icon-Only Refresh Button */
+/* Compact Icon-Only Refresh Button */
+.icon-refresh-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0 !important; /* Overrides global .sidebar button padding */
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.icon-refresh-btn:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.refresh-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+
+.icon-refresh-btn:hover .refresh-icon {
+  transform: rotate(180deg);
+}
+
 .sidebar section + section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
 .sidebar ul { padding-left: 1.1rem; }
 #app.sidebar-collapsed .sidebar {
