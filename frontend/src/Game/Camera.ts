@@ -115,7 +115,10 @@ export default class Camera {
         this.clear();
         this.drawBackground();
 
-        if (!this.gameManager.initialized) return;
+        if (!this.gameManager.initialized) {
+            this.attackingShip = null;
+            return;
+        };
         this.drawBoards();
         this.drawScoreText();
 
@@ -152,7 +155,7 @@ export default class Camera {
                         this.selectedBoardCoordinates.y,
                     );
 
-                    if (selectedTile.shipId == null || selectedTile.health <= 0) {
+                    if (selectedTile.shipId == null || selectedTile.state == BoardTileState.DestroyedShip) {
                         this.attackingShip = null;
                     } else {
                         this.attackingShip = {
