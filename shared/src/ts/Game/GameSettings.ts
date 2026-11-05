@@ -10,14 +10,23 @@ export default interface GameSettings{
 }
 
 export enum GameSettingsPresetNames{
-    classic
+    Classic,
+    SuperNetcentricBattleShipShipHooray
 }
 
 export const GameSettingsPresets: Record<GameSettingsPresetNames, GameSettings> = {
-    [GameSettingsPresetNames.classic]:{
+    [GameSettingsPresetNames.Classic]:{
         boardSize: 8,
         maxFleetValue: 4,
         timeLimitPerTurn: 10,
         allowedShipTypes: [ShipType.Standard]
+    },
+    [GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray]:{
+        boardSize: 16,
+        maxFleetValue: 20,
+        timeLimitPerTurn: 10,
+
+        //all ship types expect for standard (0)
+        allowedShipTypes: Object.values(ShipType).filter(x=>typeof x === "number").filter(x => x > 0)
     }
 }

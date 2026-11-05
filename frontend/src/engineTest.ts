@@ -6,6 +6,7 @@ import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientatio
 import { LobbyManager } from "./Game/LobbyManager";
 import { GameManager } from "./Game/GameManager";
 import Camera from "./Game/Camera";
+import { GameSettingsPresetNames, GameSettingsPresets } from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 
 //TODO: config
 const PORT = 17040;
@@ -51,3 +52,5 @@ window.lobbyManager = lobbyManager;
 window.gameManager = gameManager;
 //@ts-ignore
 window.camera = camera;
+
+console.log(GameSettingsPresets[GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray]);

@@ -73,7 +73,7 @@ export default class GameLobby{
         this.chatManager = chatManager;
         this.chatChannelId = chatManager.generateNewChannelId();
         this.chatManager.addChannel(this.chatChannelId);
-        this.gameSettings = GameSettingsPresets[GameSettingsPresetNames.classic];
+        this.gameSettings = GameSettingsPresets[GameSettingsPresetNames.Classic];
     }
 
     toLobbyInformationMessage(): LobbyInfoNotificationMessage{
