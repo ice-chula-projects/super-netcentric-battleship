@@ -82,7 +82,7 @@ export class GameManager extends EventTarget {
     }
 
     fleet: ShipPlacement[] = [];
-
+    fleetSubmitted: boolean = false;
     get fleetValue(): number {
         return this.fleet.map((x) => ShipDefinitions[x.shipType].value).reduce((a, b) => a + b, 0);
     }
@@ -104,12 +104,21 @@ export class GameManager extends EventTarget {
         return this.boards![this.opponentId!];
     }
 
+    resetFleet(){
+        this.fleet = [];
+        this.initializeBoards();
+    }
+
     addShipToFleet(shipType: ShipType, location: Coordinate, orientation: Orientation) {
-        if (this.currentGameState != GameState.ShipPlacement)
-            throw new Error('Cannot add ship to fleet in non ship placement state');
+        if (this.currentGameState != GameState.ShipPlacement) {
+            alert('Cannot add ship to fleet in non ship placement state');
+            return;            
+        }
         const shipDefinition = ShipDefinitions[shipType];
-        if (this.fleetValue + shipDefinition.value > this.currentGameSettings!.maxFleetValue)
-            throw new Error('Added ship will exceed max fleet value');
+        if (this.fleetValue + shipDefinition.value > this.currentGameSettings!.maxFleetValue){
+            alert('Added ship will exceed max fleet value');
+            return;
+        }
         location = CoordinateFactory.copyCoordinate(location);
 
         this.getPlayerBoard().addShip(shipDefinition, location, orientation);
@@ -121,7 +130,13 @@ export class GameManager extends EventTarget {
     }
 
     submitFleet() {
+        if(this.fleetSubmitted) {
+            alert("Cannot submit fleet twice");
+            return;
+        }
         this.initializeFleet(this.fleet);
+
+        this.fleetSubmitted = true;
     }
 
     fireVolley(
@@ -215,6 +230,7 @@ export class GameManager extends EventTarget {
         this.initializeBoards();
 
         this.initialized = true;
+        this.fleetSubmitted = false;
         this.notifyStateChanged();
     }
 
@@ -224,6 +240,7 @@ export class GameManager extends EventTarget {
         this.initializeBoards();
         this.lastTurnUpdateTimeStamp = null;
         this.fleet = [];
+        this.fleetSubmitted = false;
         this.matchWinner = null;
         this.rematchStatus = {
             [Player.Player1]: false,
@@ -232,7 +249,7 @@ export class GameManager extends EventTarget {
         this.currentTurn = null;
 
         this.matchInProgress = true;
-        
+
         this.notifyStateChanged();
     }
 
@@ -252,6 +269,7 @@ export class GameManager extends EventTarget {
         this.currentTurn = null;
         this.lastTurnUpdateTimeStamp = null;
         this.fleet = [];
+        this.fleetSubmitted = false;
         this.matchWinner = null;
         this.score = null;
         this.rematchStatus = null;

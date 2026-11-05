@@ -121,6 +121,7 @@ export default class Camera {
 
         if (this.gameManager.currentGameState == GameState.ShipPlacement) {
             this.drawFleetPointsRemainingText();
+            this.drawResetControlText();
         }
 
         if (this.gameManager.currentGameState == GameState.Battle) {
@@ -231,6 +232,11 @@ export default class Camera {
                     ? currentOrientationIndex - 1
                     : currentOrientationIndex + 1;
                 this.currentInputOrientation = orientations.at(nextOrientationIndex % 4);
+                break;
+
+            case 'r':
+                keyboardEvent.preventDefault();
+                if(this.gameManager.currentGameState == GameState.ShipPlacement) this.gameManager.resetFleet();
                 break;
         }
     }
@@ -509,6 +515,14 @@ export default class Camera {
         context.font = `${this.textSize}px Arial`;
         context.textAlign = 'left';
         context.fillText(fleetPointsRemainingText, this.boardMargin, this.canvas.height - this.boardMargin);
+    }
+
+    drawResetControlText() {
+        const context = this.canvas.getContext('2d');
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`;
+        context.textAlign = "right";
+        context.fillText("press R to reset", this.canvas.width - this.boardMargin, this.canvas.height - this.boardMargin);
     }
 
     clear() {
