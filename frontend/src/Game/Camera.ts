@@ -22,7 +22,7 @@ export default class Camera {
     canvas: HTMLCanvasElement;
     gameManager: GameManager;
 
-    colors: Record<BoardTileState, string> = {
+    tileColors: Record<BoardTileState, string> = {
             [BoardTileState.Hidden]: "#5093d4",
             [BoardTileState.DamagedTile]: "red",
             [BoardTileState.DestoyedTile]: "darkred",
@@ -31,12 +31,13 @@ export default class Camera {
             [BoardTileState.Ship]: "darkgrey"
         }
     highlightColor: string = "#ffffff55"
+    attackingShipHighlightColor: string = "#ff111155"
 
     strokeColor: string = "black";
     backgroundColor: string = "#5093d4";
     textColor: string = "white";
     textSize: number = 12;
-
+    victoryTextSize: number = 60;
     boardSize: number = 235;
     boardMargin: number = 10;
 
@@ -45,6 +46,8 @@ export default class Camera {
         x: null,
         y: null
     }
+
+    timerTextRoundingDecimalPlaces: number = 2;
 
     currentInputOrientation: Orientation = Orientation.Right;
     // for ship placement
@@ -101,14 +104,23 @@ export default class Camera {
         this.clear();
         this.drawBackground();
 
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.initialized) return;
         this.drawBoards();
-        this.drawTurnText();
-        this.drawGameId();
+        this.drawScoreText();
+
+        if(this.gameManager.currentGameState == GameState.Battle){
+            this.drawTimerText();
+            this.drawTurnText();
+        };
+
+        if(this.gameManager.currentGameState == GameState.End){
+            this.drawVictoryText();
+        }
+        
     }
 
     handleMouseClick() {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
         switch (this.gameManager.currentGameState) {
             case GameState.ShipPlacement:
                 if (this.selectedBoard != this.gameManager.playerId) return;
@@ -119,7 +131,7 @@ export default class Camera {
                     const playerBoard = this.gameManager.getPlayerBoard();
                     const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
 
-                    if (selectedTile.shipId == null) {
+                    if (selectedTile.shipId == null || selectedTile.health <= 0) {
                         this.attackingShip = null;
                     } else {
                         this.attackingShip = {
@@ -135,7 +147,7 @@ export default class Camera {
     }
 
     handleMouseMove(mouseEvent: MouseEvent) {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
 
         const mouseX = mouseEvent.offsetX;
         const mouseY = mouseEvent.offsetY;
@@ -175,7 +187,7 @@ export default class Camera {
     }
 
     handleKeyPress(keyboardEvent: KeyboardEvent) {
-        if (!this.gameManager.active) return;
+        if (!this.gameManager.matchInProgress) return;
 
         switch (keyboardEvent.key) {
             case "Tab":
@@ -195,6 +207,11 @@ export default class Camera {
         context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    drawBoards() {
+        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board", BoardHighlightMode.Player);
+        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
+    }
+
     drawBoard(board: GameBoard, x: number, y: number, size: number, label: string, highlightMode: BoardHighlightMode) {
         let currentX = x;
         let currentY = y;
@@ -207,11 +224,30 @@ export default class Camera {
         for (let i = 0; i < boardSize; i++) {
             for (let j = 0; j < boardSize; j++) {
                 const tile = board.getTile(i, j);
-                const color = this.colors[tile.state]
+                const color = this.tileColors[tile.state]
 
                 context.fillStyle = color;
                 context.fillRect(currentX, currentY, deltaX, deltaY);
-                context.strokeRect(currentX, currentY, deltaX, deltaY)
+                context.strokeRect(currentX, currentY, deltaX, deltaY);
+
+                if(tile.health != null){        
+                    context.fillStyle = this.textColor;
+                    context.font = `${deltaX / 2}px Arial`;
+                    context.textAlign = "center";
+                    context.textBaseline = "middle";
+                    context.fillText(tile.health.toString(), currentX + deltaX/2, currentY + deltaY/2);
+                    context.textBaseline = "bottom";
+                }
+
+                if(this.attackingShip != null && tile.shipId == this.attackingShip.shipId && highlightMode == BoardHighlightMode.Player){
+                    if(tile.state == BoardTileState.DestroyedShip){
+                        //kinda a bad place to put this logic but time is running low
+                        this.attackingShip = null;
+                    } else {
+                        context.fillStyle = this.attackingShipHighlightColor;
+                        context.fillRect(currentX, currentY, deltaX, deltaY);
+                    }
+                }
 
                 if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
                     context.fillStyle = this.highlightColor;
@@ -225,6 +261,7 @@ export default class Camera {
         }
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`
+        context.textAlign = "left";
         context.fillText(label, x, y + size + this.textSize);
         context.strokeText(label, x, y + size + this.textSize);
     }
@@ -267,15 +304,13 @@ export default class Camera {
             //highlight the selected ship in battle mode
             case GameState.Battle:
                 const currentTile = playerBoard.getTile(x, y);
-                if (this.attackingShip == null) {
-                    if (this.selectedBoard != playerId) return false;
-                    const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (this.selectedBoard != playerId) return false;
 
-                    if (selectedTile.shipId == null) return false;
-                    return selectedTile.shipId == currentTile.shipId;
-                } else {
-                    return currentTile.shipId == this.attackingShip.shipId;
-                }
+                const selectedTile = playerBoard.getTile(this.selectedBoardCoordinates.x, this.selectedBoardCoordinates.y);
+                if (selectedTile.shipId == null) return false;
+
+                return selectedTile.shipId == currentTile.shipId;
+
         }
 
         return highlight
@@ -307,29 +342,51 @@ export default class Camera {
         return highlight;
     }
 
-    drawBoards() {
-        this.drawBoard(this.gameManager.getPlayerBoard(), this.boardMargin, (this.canvas.height-this.boardSize)/2, this.boardSize, "Player's Board", BoardHighlightMode.Player);
-        this.drawBoard(this.gameManager.getOpponentBoard(), this.canvas.width - this.boardMargin - this.boardSize, (this.canvas.height-this.boardSize)/2, this.boardSize, "Opponent's Board", BoardHighlightMode.Opponent);
+    drawTimerText() {
+        const timeSinceLastUpdate = (Date.now() - this.gameManager.lastTurnUpdateTimeStamp) / 1000;
+        const remainingTime = Math.max(0, this.gameManager.currentGameSettings.timeLimitPerTurn - timeSinceLastUpdate);
+
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`;
+        context.textAlign = "center";
+        context.fillText(`${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`, this.canvas.width / 2, this.textSize * 2);
     }
 
     drawTurnText() {
-        // if(this.game.playersTurn == null || this.game.state != GameStates.Fighting) return;
-        // const turnText = this.game.playersTurn? "Your Turn" : "Opponent's Turn"
+        const turnText = this.gameManager.isPlayersTurn? "Your Turn" : "Opponent's Turn"
 
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.textColor;
-        // context.font = `${this.textSize}px Arial`
-        // context.fillText(turnText, 0, this.canvas.height - this.textSize);
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(turnText, this.canvas.width / 2, this.canvas.height - this.textSize);
     }
 
-    drawGameId() {
-        // if(this.game.gameId == null) return;
+    drawVictoryText() {
+        const victoryText = this.gameManager.matchWinner == this.gameManager.playerId ? "You Win" : "You Lose";
+        
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.victoryTextSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(victoryText, this.canvas.width / 2, (this.canvas.height / 2));
+        context.strokeText(victoryText, this.canvas.width / 2,(this.canvas.height / 2));
 
-        // const context = this.canvas.getContext("2d");
-        // context.fillStyle = this.textColor;
-        // context.font = `${this.textSize}px Arial`
-        // context.fillText("game id: " + this.game.gameId, 0, this.textSize);
-        // if(this.game.opponentName != null) context.fillText("opponent name: " + this.game.opponentName, 0, 2 *this.textSize);
+        if(!this.gameManager.rematchReqeuested) return;
+        const rematchText = this.gameManager.rematchStatus[this.gameManager.opponentId] ? "Opponent is requesting a rematch" : "Requesting a rematch";
+        context.font = `${this.textSize}px Arial`
+        context.fillText(rematchText, this.canvas.width / 2, (this.canvas.height / 2) + this.textSize);
+    }
+
+    drawScoreText(){
+        const scoreText = `${this.gameManager.playerScore} - ${this.gameManager.opponentScore}`;
+
+        const context = this.canvas.getContext("2d");
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`
+        context.textAlign = "center";
+        context.fillText(scoreText, this.canvas.width / 2, this.textSize);
     }
 
     clear() {

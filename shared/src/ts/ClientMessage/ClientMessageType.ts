@@ -16,4 +16,6 @@ export enum ClientMessageType{
     UseAbilityAction = "useAbilityAction",
     Login = "login",
     Register = "register"
+    RequestRematchAction = "requestRematchAction",
+    ExitLobby = "exitLobby"
 }

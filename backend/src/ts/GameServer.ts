@@ -127,9 +127,13 @@ export default class GameServer {
             case ClientMessageType.RequestPublicLobbies:
                 response = this.handleRequestPublicLobbiesMessage(message);
             break;
+            case ClientMessageType.ExitLobby:
+                response = this.handleExitLobbyMessage(message, user);
+            break;
             case ClientMessageType.FireVolleyAction:
             case ClientMessageType.InitializeFleetAction:
             case ClientMessageType.UseAbilityAction:
+            case ClientMessageType.RequestRematchAction:
                 response = this.handleClientActionMessage(message, user);
             break;
             case ClientMessageType.Login:
@@ -360,40 +364,44 @@ export default class GameServer {
         return user.toUserInfoMessage();
     }
   
-    async handleLoginMessage(
-        message: LoginMessage,
-        user: User
-    ): Promise<ServerMessage> {
-        if (user.accountId !== null) {
-            return new ServerErrorMessageBuilder()
-                .setError("already authenticated");
-        }
+  async handleLoginMessage(
+    message: LoginMessage,
+    user: User
+  ): Promise<ServerMessage> {
+    if (user.accountId !== null) {
+      return new ServerErrorMessageBuilder()
+        .setError("already authenticated");
+    }
     
-        const username = message.username?.trim();
-        const password = message.password;
+    const username = message.username?.trim();
+    const password = message.password;
     
-        if (
-            typeof username !== "string" ||
-            typeof password !== "string" ||
-            password.length > 1024
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid credentials");
-        }
+    if (
+      typeof username !== "string" ||
+      typeof password !== "string" ||
+      password.length > 1024
+    ) {
+      return new ServerErrorMessageBuilder()
+        .setError("invalid credentials");
+    }
     
-        const account = await this.userDatabase.getUserFromName(username);
-        if (
-            account === null ||
-            !(await this.authManager.verifyPassword(
-                password,
-                account.password
-            ))
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid username or password");
-        }
+    const account = await this.userDatabase.getUserFromName(username);
+    if (
+      account === null ||
+      !(await this.authManager.verifyPassword(
+        password,
+        account.password
+      ))
+    ) {
+      return new ServerErrorMessageBuilder()
+        .setError("invalid username or password");
+    }
     
         user.setAccount(account.id, account.username);
         return user.toUserInfoMessage();
+    }
+    handleExitLobbyMessage(message: ExitLobbyMessage, user: User): ServerMessage | null {
+        this.gameLobbyManager.leaveLobby(user);
+        return null;
     }
 }

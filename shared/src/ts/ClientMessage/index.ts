@@ -15,6 +15,8 @@ import { InitializeFleetActionMessage } from "./Game/InitializeFleetActionMessag
 import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
 import { LoginMessage } from "./Auth/LoginMessage.js";
 import { RegisterMessage } from "./Auth/RegisterMessage.js";
+import { RequestRematchActionMessage } from "./Game/RequestRematchActionMessage.js";
+import { ExitLobbyMessage } from "./Game/Lobby/ExitLobbyMessage.js";
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
@@ -34,6 +36,8 @@ export * from "./Game/InitializeFleetActionMessage.js";
 export * from "./Game/UseAbilityActionMessage.js";
 export * from "./Auth/LoginMessage.js"
 export * from "./Auth/RegisterMessage.js"
+export * from "./Game/RequestRematchActionMessage.js";
+export * from "./Game/Lobby/ExitLobbyMessage.js";
 
 export type ClientMessage = PingMessage |
 RequestUserInfoMessage |
@@ -56,3 +60,10 @@ RegisterMessage;
 export type ClientActionMessage = FireVolleyActionMessage |
 InitializeFleetActionMessage |
 UseAbilityActionMessage;
+RequestRematchActionMessage |
+ExitLobbyMessage;
+
+export type ClientActionMessage = FireVolleyActionMessage |
+InitializeFleetActionMessage |
+UseAbilityActionMessage |
+RequestRematchActionMessage;

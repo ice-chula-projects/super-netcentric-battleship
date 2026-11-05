@@ -9,6 +9,10 @@ import { LobbyInfoNotificationMessage } from "./Game/Lobby/LobbyInfoNotification
 import { PublicLobbiesInfoMessage } from "./Game/Lobby/PublicLobbiesInfoMessage.js";
 import { GameStartNotificationMessage } from "./Game/Lobby/GameStartNotificationMessage.js";
 import { GameEndNotificationMessage } from "./Game/Lobby/GameEndNotificationMessage.js";
+import { MatchCompleteNotificationMessage } from "./Game/MatchCompleteNotificationMessage.js";
+import { RematchStatusNotificationMessage } from "./Game/RematchStatusNotificationMessage.js";
+import { MatchStartNotificationMessage } from "./Game/MatchStartNotificationMessage.js";
+import { LobbyExitNotificationMessage } from "./Game/Lobby/LobbyExitNotificationMessage.js";
 
 export * from "./ServerMessageType.js";
 export * from "./PongMessage.js";
@@ -22,6 +26,10 @@ export * from "./Game/Lobby/LobbyInfoNotificationMessage.js";
 export * from "./Game/Lobby/PublicLobbiesInfoMessage.js"
 export * from "./Game/Lobby/GameStartNotificationMessage.js";
 export * from "./Game/Lobby/GameEndNotificationMessage.js";
+export * from "./Game/MatchCompleteNotificationMessage.js";
+export * from "./Game/RematchStatusNotificationMessage.js";
+export * from "./Game/MatchStartNotificationMessage.js";
+export * from "./Game/Lobby/LobbyExitNotificationMessage.js";
 
 export type ServerMessage = PongMessage |
 UserInfoMessage |
@@ -33,4 +41,8 @@ CurrentTurnNotificationMessage |
 LobbyInfoNotificationMessage | 
 PublicLobbiesInfoMessage |
 GameStartNotificationMessage |
-GameEndNotificationMessage;
+GameEndNotificationMessage |
+MatchCompleteNotificationMessage |
+RematchStatusNotificationMessage |
+MatchStartNotificationMessage |
+LobbyExitNotificationMessage;
