@@ -68,7 +68,6 @@ function requestLobbies(): void {
     }
 
     lobbies.clear();
-    renderLobbies();
 
     lobbiesList.textContent = 'Loading lobbies...';
 
@@ -107,61 +106,43 @@ function resetLobby(lobbyCode: string): void {
     requestLobbies();
 }
 
-function renderLobbies(): void {
+function renderLobbies(publicLobbies: ServerMessage.PublicLobbyInformation[]): void {
     lobbiesList.replaceChildren();
 
-    if (lobbies.size === 0) {
+    if (publicLobbies.length === 0) {
         const emptyMessage = document.createElement('p');
         emptyMessage.textContent = 'No lobbies found.';
         lobbiesList.appendChild(emptyMessage);
         return;
     }
 
-    for (const lobby of lobbies.values()) {
+    for (const lobby of publicLobbies) {
         const lobbyElement = document.createElement('article');
-        lobbyElement.className = 'admin-lobby';
-
-        const info = document.createElement('div');
-        info.className = 'admin-lobby-info';
+        lobbyElement.className = 'public-lobby';
 
         const name = document.createElement('h3');
         name.textContent = lobby.name || 'Unnamed Lobby';
 
-        const code = document.createElement('p');
-        code.textContent = `Code: ${lobby.lobbyCode}`;
-
         const description = document.createElement('p');
         description.textContent = lobby.description || 'No description';
 
-        const visibility = document.createElement('p');
-        visibility.textContent = lobby.isPublic ? 'Public' : 'Private';
+        const code = document.createElement('p');
+        code.textContent = `Code: ${lobby.lobbyCode}`;
 
-        const players = document.createElement('p');
-        players.textContent = `Players: ${lobby.connectedUsers.length}`;
-
-        const playerList = document.createElement('p');
-        playerList.textContent =
-            lobby.connectedUsers
-                .map((player) => {
-                    const host = player.isHost ? ' (Host)' : '';
-                    const ready = player.ready ? ' (Ready)' : '';
-
-                    return `${player.username}${host}${ready}`;
-                })
-                .join(', ') || 'No connected players';
-
+        const members = document.createElement('p');
+        members.textContent = `Players: ${lobby.memberCount}`;
         const resetButton = document.createElement('button');
-        resetButton.type = 'button';
+        resetButton.className = 'reset-lobby-btn';
         resetButton.textContent = 'Reset Lobby';
-        resetButton.className = 'admin-lobby-reset';
-
+        
         resetButton.addEventListener('click', () => {
-            resetLobby(lobby.lobbyCode);
+            const message = new ClientMessage.ResetGameLobbyMessageBuilder()
+                .setLobbyCode(lobby.lobbyCode);
+        
+            webSocket.send(message.toJsonString())
         });
-
-        info.append(name, code, description, visibility, players, playerList);
-
-        lobbyElement.append(info, resetButton);
+        
+        lobbyElement.append(name, description, code, members, resetButton);
         lobbiesList.appendChild(lobbyElement);
     }
 }
@@ -307,19 +288,8 @@ webSocket.addEventListener('message', (event: MessageEvent) => {
             break;
         }
 
-        case ServerMessage.ServerMessageType.LobbyInfoNotification: {
-            const lobby: AdminLobby = {
-                lobbyCode: serverMessage.lobbyCode,
-                name: serverMessage.name,
-                description: serverMessage.description,
-                isPublic: serverMessage.isPublic,
-                gameSettings: serverMessage.gameSettings,
-                chatChannelId: serverMessage.chatChannelId,
-                connectedUsers: serverMessage.connectedUsers,
-            };
-
-            lobbies.set(lobby.lobbyCode, lobby);
-            renderLobbies();
+        case ServerMessage.ServerMessageType.PublicLobbiesInfo: {
+            renderLobbies(serverMessage.lobbies);
             break;
         }
 

@@ -18,6 +18,6 @@ export enum ClientMessageType{
     Register = "register",
     RequestRematchAction = "requestRematchAction",
     ExitLobby = "exitLobby",
-    RequestAllGameLobbiesMessage = "requestAllGameLobbies",
-    ResetGameLobbyMessage = "resetGameLobbyMessage"
+    RequestAllGameLobbies = "requestAllGameLobbies",
+    ResetGameLobby = "resetGameLobbyMessage"
 }

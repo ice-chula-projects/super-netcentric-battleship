@@ -33,9 +33,9 @@ import UserManager from './User/UserManager.js';
 import ChatManager from './Chat/ChatManager.js';
 import ActiveUser from './User/ActiveUser.js';
 import { v4 as uuidv4 } from 'uuid';
-import GameLobbyManager from "./Game/GameLobbyManager.js";
-import Database from "./Database/Database.js";
-import { JsonDatabase } from "./Database/JsonDatabase.js";
+import GameLobbyManager from './Game/GameLobbyManager.js';
+import Database from './Database/Database.js';
+import { JsonDatabase } from './Database/JsonDatabase.js';
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
@@ -93,7 +93,6 @@ export default class GameServer {
         let response: ServerMessage | null = null;
         try {
             const user = this.userManager.getUserFromWebSocketId(webSocketId);
-
             switch (message.type) {
                 case ClientMessageType.Ping:
                     response = this.handlePingMessage(message);
@@ -130,6 +129,12 @@ export default class GameServer {
                     break;
                 case ClientMessageType.RequestPublicLobbies:
                     response = this.handleRequestPublicLobbiesMessage(message);
+                    break;
+                case ClientMessageType.RequestAllGameLobbies:
+                    response = this.handleRequestAllGameLobbiesMessage(message, user);
+                    break;
+                case ClientMessageType.ResetGameLobby:
+                    response = this.handleResetGameLobbyMessage(message, user);
                     break;
                 case ClientMessageType.ExitLobby:
                     response = this.handleExitLobbyMessage(message, user);
@@ -388,30 +393,44 @@ export default class GameServer {
         return this.userManager.login(webSocket, webSocketId, message.username, message.password);
     }
 
-    handleRequestAllGameLobbiesMessage(message: RequestAllGameLobbiesMessage, user: ActiveUser): ServerMessage | null{
-        if(!user.isAdmin) return new ServerErrorMessageBuilder().setError("Only admin accounts can request all game lobbies");
+    handleRequestAllGameLobbiesMessage(
+        message: RequestAllGameLobbiesMessage,
+        user: ActiveUser,
+    ): ServerMessage | null {
+        if (!user.isAdmin)
+            return new ServerErrorMessageBuilder().setError(
+                'Only admin accounts can request all game lobbies',
+            );
         const lobbies = this.gameLobbyManager.getLobbies();
         const totalPublicLobbies = lobbies.length;
         const paginatedLobbies = this.paginate(lobbies, message.page, message.lobbiesPerPage);
 
         return new PublicLobbiesInfoMessageBuilder()
-        .setLobbies(paginatedLobbies.pagninatedMembers.map(x=>{
-            return {
-                lobbyCode: x.id,
-                name: x.name,
-                description: x.description,
-                memberCount: x.members.length
-            }
-        }))
-        .setPage(paginatedLobbies.page)
-        .setTotalLobbies(totalPublicLobbies)
-        .setlobbiesPerPage(paginatedLobbies.membersPerPage);
+            .setLobbies(
+                paginatedLobbies.pagninatedMembers.map((x) => {
+                    return {
+                        lobbyCode: x.id,
+                        name: x.name,
+                        description: x.description,
+                        memberCount: x.members.length,
+                    };
+                }),
+            )
+            .setPage(paginatedLobbies.page)
+            .setTotalLobbies(totalPublicLobbies)
+            .setlobbiesPerPage(paginatedLobbies.membersPerPage);
     }
 
-    handleResetGameLobbyMessage(message: ResetGameLobbyMessage, user: ActiveUser): ServerMessage | null{
-        if(!user.isAdmin) return new ServerErrorMessageBuilder().setError("Only admin accounts can reset game lobbies");
+    handleResetGameLobbyMessage(
+        message: ResetGameLobbyMessage,
+        user: ActiveUser,
+    ): ServerMessage | null {
+        if (!user.isAdmin)
+            return new ServerErrorMessageBuilder().setError(
+                'Only admin accounts can reset game lobbies',
+            );
         const lobby = this.gameLobbyManager.getLobby(message.lobbyCode);
-        if(lobby.gameInProgress) lobby.stopGame("an admin has reset the game");
+        if (lobby.gameInProgress) lobby.stopGame('an admin has reset the game');
         return null;
     }
 }
