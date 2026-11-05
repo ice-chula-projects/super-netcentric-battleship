@@ -130,6 +130,10 @@ export class GameManager extends EventTarget {
     }
 
     submitFleet() {
+        if(this.fleet.length == 0){
+            alert("Cannot submit fleet with no ships");
+            return;
+        }
         if(this.fleetSubmitted) {
             alert("Cannot submit fleet twice");
             return;
