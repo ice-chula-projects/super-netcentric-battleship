@@ -235,6 +235,11 @@ export class GameManager extends EventTarget {
 
         this.initialized = true;
         this.fleetSubmitted = false;
+        this.dispatchEvent(
+            new CustomEvent('allowed-ship-types-change', {
+                detail: this.currentGameSettings.allowedShipTypes,
+            }),
+        );
         this.notifyStateChanged();
     }
 
