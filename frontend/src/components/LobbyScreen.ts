@@ -412,11 +412,8 @@ export default class LobbyScreen extends HTMLElement {
         // Play vs Bot handler
         shadow.querySelector('#bot-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
-            if ('startBotGame' in this.lobbyManager && typeof (this.lobbyManager as any).startBotGame === 'function') {
-                (this.lobbyManager as any).startBotGame();
-            } else {
-                this.lobbyManager.startGame();
-            }
+            this.lobbyManager.startAIGame();
+            
         });
 
         shadow.querySelector('#leave-button')!.addEventListener('click', () => {
