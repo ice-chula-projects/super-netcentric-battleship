@@ -266,10 +266,15 @@ aside ul {
 /* Main layout */
 .dashboard {
     display: grid;
+    padding: 2rem;
     grid-template-columns: 38% 62%;
     min-height: calc(100vh - var(--header-height));
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: linear-gradient(to bottom, #655561 0%, #9a89a9 100%);
+    overflow-x: clip;
 }
-
 
 .games-panel {
     width: 100vw;
@@ -437,4 +442,120 @@ aside ul {
         grid-template-columns: 1fr 1fr auto;
         padding: 9px;
     }
+}
+
+/* Admin Panel */
+
+/* Lobbies Panel */
+.lobbies-panel {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    margin-top: calc(var(--header-height));
+    background-image: linear-gradient(
+        to bottom,
+        var(--color-satellite-base),
+        var(--color-satellite-glow)
+    );
+    border: 1px solid #374151;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+
+/* Inner Container */
+.lobbies-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Header */
+.lobbies-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #374151;
+}
+
+/* Section Title */
+.section-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f9fafb;
+    letter-spacing: 0.5px;
+}
+
+/* Refresh Button */
+#refresh-lobbies {
+    padding: 10px 20px;
+    background: #6366f1;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#refresh-lobbies:hover {
+    background: var(--color-satellite-base);
+    transform: translateY(-2px);
+}
+
+#refresh-lobbies:active {
+    transform: translateY(0);
+}
+
+#refresh-lobbies:focus-visible {
+    outline: 3px solid var(--color-satellite-base);
+    outline-offset: 3px;
+}
+
+/* Lobbies List */
+.lobbies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100px;
+}
+
+/* Empty State */
+.lobbies-list p {
+    margin: 0;
+    padding: 30px 16px;
+    color: var(--color-satellite-foreground-text);
+    text-align: center;
+    font-size: 0.95rem;
+    background: var(--color-satellite-foreground);
+    border: 1px dashed var(--color-satellite-foreground-border);
+    border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .dashboard {
+        padding: 16px;
+    }
+
+    .lobbies-panel {
+        padding: 18px;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+
+    #refresh-lobbies {
+        padding: 9px 14px;
+    }
+}
+
+.dashboard[hidden] {
+    display: none !important;
 }

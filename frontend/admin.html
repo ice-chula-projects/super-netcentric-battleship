@@ -19,23 +19,21 @@
     <game-header variant="admin"></game-header>
     <user-sidebar></user-sidebar>
     <main class="dashboard">
-      <section class="games-panel">
-        <div class="games-inner">
-          <h2 class="section-title">
-            <span class="games-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="1.7">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M8 9h6M11 6v6M16 15h.01M18 17h.01"/>
-              </svg>
-            </span>
-            Games
-          </h2>
-          <div class="games-scroll">
-            <div id="games-list" class="games-list"></div>
-          </div>
-        </div>
-      </section>
+        <section class="lobbies-panel">
+            <div class="lobbies-inner">
+                <div class="lobbies-header">
+                    <h2 class="section-title">Lobbies</h2>
+
+                    <button type="button" id="refresh-lobbies">
+                        Refresh
+                    </button>
+                </div>
+
+                <div id="lobbies-list" class="lobbies-list">
+                    <p>Press refresh to load lobbies.</p>
+                </div>
+            </div>
+        </section>
     </main>
   <script type="module" src="/src/admin.ts"></script>
 </body>

@@ -15,7 +15,8 @@ import {
     RequestPublicLobbiesMessage,
     RequestUserInfoMessage,
     SendToChatMessage,
-    StartGameMessage,
+    ResetGameLobbyMessage,
+    RequestAllGameLobbiesMessage,
     UpdateChatChannelSubscriptionMessage,
     UpdateReadyStateMessage,
     UpdateUserInfoMessage,
@@ -35,8 +36,6 @@ import { v4 as uuidv4 } from 'uuid';
 import GameLobbyManager from "./Game/GameLobbyManager.js";
 import Database from "./Database/Database.js";
 import { JsonDatabase } from "./Database/JsonDatabase.js";
-import { RequestAllGameLobbiesMessage } from "../../../shared/src/ts/ClientMessage/Admin/RequestAllGameLobbiesMessage.js";
-import { ResetGameLobbyMessage } from "../../../shared/src/ts/ClientMessage/Admin/ResetGameLobbyMessage.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;

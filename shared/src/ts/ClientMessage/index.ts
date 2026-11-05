@@ -1,24 +1,24 @@
-import { PingMessage } from "./PingMessage.js";
-import { RequestActiveUsersMessage } from "./User/RequestActiveUsersMessage.js";
-import { RequestUserInfoMessage } from "./User/RequestUserInfoMessage.js";
-import { SendToChatMessage } from "./Chat/SendToChatMessage.js";
-import { UpdateChatChannelSubscriptionMessage } from "./Chat/UpdateChatChannelSubscriptionMessage.js";
-import { UpdateUserInfoMessage } from "./User/UpdateUserInfoMessage.js";
-import { CreateLobbyMessage } from "./Game/Lobby/CreateLobbyMessage.js";
-import { JoinLobbyMessage } from "./Game/Lobby/JoinLobbyMessage.js";
-import { ModifyGameSettingsMessage } from "./Game/Lobby/ModifyGameSettingsMessage.js";
-import { StartGameMessage } from "./Game/Lobby/StartGameMessage.js";
-import { UpdateReadyStateMessage } from "./Game/Lobby/UpdateReadyStateMessage.js";
-import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMessage.js";
-import { FireVolleyActionMessage } from "./Game/FireVolleyActionMessage.js";
-import { InitializeFleetActionMessage } from "./Game/InitializeFleetActionMessage.js";
-import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
-import { RequestRematchActionMessage } from "./Game/RequestRematchActionMessage.js";
-import { ExitLobbyMessage } from "./Game/Lobby/ExitLobbyMessage.js";
-import { LoginMessage } from "./User/LoginMessage.js";
-import { RegisterMessage } from "./User/RegisterMessage.js";
-import { RequestAllGameLobbiesMessage } from "./Admin/RequestAllGameLobbiesMessage.js";
-import { ResetGameLobbyMessage } from "./Admin/ResetGameLobbyMessage.js";
+import { PingMessage } from './PingMessage.js';
+import { RequestActiveUsersMessage } from './User/RequestActiveUsersMessage.js';
+import { RequestUserInfoMessage } from './User/RequestUserInfoMessage.js';
+import { SendToChatMessage } from './Chat/SendToChatMessage.js';
+import { UpdateChatChannelSubscriptionMessage } from './Chat/UpdateChatChannelSubscriptionMessage.js';
+import { UpdateUserInfoMessage } from './User/UpdateUserInfoMessage.js';
+import { CreateLobbyMessage } from './Game/Lobby/CreateLobbyMessage.js';
+import { JoinLobbyMessage } from './Game/Lobby/JoinLobbyMessage.js';
+import { ModifyGameSettingsMessage } from './Game/Lobby/ModifyGameSettingsMessage.js';
+import { StartGameMessage } from './Game/Lobby/StartGameMessage.js';
+import { UpdateReadyStateMessage } from './Game/Lobby/UpdateReadyStateMessage.js';
+import { RequestPublicLobbiesMessage } from './Game/Lobby/RequestPublicLobbiesMessage.js';
+import { FireVolleyActionMessage } from './Game/FireVolleyActionMessage.js';
+import { InitializeFleetActionMessage } from './Game/InitializeFleetActionMessage.js';
+import { UseAbilityActionMessage } from './Game/UseAbilityActionMessage.js';
+import { RequestRematchActionMessage } from './Game/RequestRematchActionMessage.js';
+import { ExitLobbyMessage } from './Game/Lobby/ExitLobbyMessage.js';
+import { LoginMessage } from './User/LoginMessage.js';
+import { RegisterMessage } from './User/RegisterMessage.js';
+import { RequestAllGameLobbiesMessage } from './Admin/RequestAllGameLobbiesMessage.js';
+import { ResetGameLobbyMessage } from './Admin/ResetGameLobbyMessage.js';
 
 export * from './ClientMessageType.js';
 export * from './PingMessage.js';
@@ -40,28 +40,31 @@ export * from './Game/InitializeFleetActionMessage.js';
 export * from './Game/UseAbilityActionMessage.js';
 export * from './Game/RequestRematchActionMessage.js';
 export * from './Game/Lobby/ExitLobbyMessage.js';
+export * from './Admin/RequestAllGameLobbiesMessage.js';
+export * from './Admin/ResetGameLobbyMessage.js';
 
-export type ClientMessage = PingMessage |
-RequestUserInfoMessage |
-UpdateUserInfoMessage |
-RequestActiveUsersMessage |
-UpdateChatChannelSubscriptionMessage |
-SendToChatMessage |
-CreateLobbyMessage |
-JoinLobbyMessage |
-ModifyGameSettingsMessage |
-StartGameMessage |
-UpdateReadyStateMessage |
-RequestPublicLobbiesMessage |
-FireVolleyActionMessage |
-InitializeFleetActionMessage |
-UseAbilityActionMessage |
-RequestRematchActionMessage |
-ExitLobbyMessage |
-LoginMessage |
-RegisterMessage |
-RequestAllGameLobbiesMessage |
-ResetGameLobbyMessage;
+export type ClientMessage =
+    | PingMessage
+    | RequestUserInfoMessage
+    | UpdateUserInfoMessage
+    | RequestActiveUsersMessage
+    | UpdateChatChannelSubscriptionMessage
+    | SendToChatMessage
+    | CreateLobbyMessage
+    | JoinLobbyMessage
+    | ModifyGameSettingsMessage
+    | StartGameMessage
+    | UpdateReadyStateMessage
+    | RequestPublicLobbiesMessage
+    | FireVolleyActionMessage
+    | InitializeFleetActionMessage
+    | UseAbilityActionMessage
+    | RequestRematchActionMessage
+    | ExitLobbyMessage
+    | LoginMessage
+    | RegisterMessage
+    | RequestAllGameLobbiesMessage
+    | ResetGameLobbyMessage;
 
 export type ClientActionMessage =
     | FireVolleyActionMessage
