@@ -348,7 +348,10 @@ export default class LobbyScreen extends HTMLElement {
         // Refresh lobbies event handler
         this.refreshLobbiesBtn.addEventListener('click', () => {
             if (this.lobbyManager) {
-                this.lobbyManager.requestPublicLobbies(this.lobbyManager.currentPublicLobbyPage ?? 0, 4);
+                this.lobbyManager.requestPublicLobbies(
+                    this.lobbyManager.currentPublicLobbyPage ?? 0,
+                    4,
+                );
             }
         });
 
@@ -543,7 +546,6 @@ export default class LobbyScreen extends HTMLElement {
             playerList.appendChild(element);
         }
 
-        const hostPlayer = players.find((player) => player.isHost);
         const readyButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#ready-button');
         const startButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#start-button');
         const botButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#bot-button');
@@ -554,7 +556,12 @@ export default class LobbyScreen extends HTMLElement {
         }
 
         if (startButton) {
-            startButton.classList.toggle('hidden', !isLocalPlayerHost || players.length != 2);
+            startButton.classList.toggle(
+                'hidden',
+                !isLocalPlayerHost ||
+                    players.length != 2 ||
+                    !this.lobbyManager.currentLobbyInfo.isReady,
+            );
         }
 
         if (botButton) {
