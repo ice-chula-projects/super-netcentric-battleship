@@ -134,14 +134,9 @@ function renderLobbies(publicLobbies: ServerMessage.PublicLobbyInformation[]): v
         const resetButton = document.createElement('button');
         resetButton.className = 'reset-lobby-btn';
         resetButton.textContent = 'Reset Lobby';
-        
-        resetButton.addEventListener('click', () => {
-            const message = new ClientMessage.ResetGameLobbyMessageBuilder()
-                .setLobbyCode(lobby.lobbyCode);
-        
-            webSocket.send(message.toJsonString())
-        });
-        
+
+        resetButton.addEventListener('click', () => resetLobby(lobby.lobbyCode));
+
         lobbyElement.append(name, description, code, members, resetButton);
         lobbiesList.appendChild(lobbyElement);
     }

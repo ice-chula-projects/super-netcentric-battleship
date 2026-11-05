@@ -1,4 +1,4 @@
-import GameBoard, { BoardTile } from './Board';
+import GameBoard from './Board';
 import { BoardTileState } from '@super-netcentric-battleship/shared/Game/BoardTileState.js';
 import { GameManager } from './GameManager';
 import { Player } from '@super-netcentric-battleship/shared/Game/Player.js';
@@ -393,7 +393,7 @@ export default class Camera {
         let highlight = false;
 
         const opponentId = this.gameManager.opponentId;
-        const opponentBoard = this.gameManager.getOpponentBoard();
+        // const opponentBoard = this.gameManager.getOpponentBoard();
 
         switch (this.gameManager.currentGameState) {
             case GameState.ShipPlacement:

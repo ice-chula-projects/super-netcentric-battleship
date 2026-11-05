@@ -1,12 +1,8 @@
 import * as ServerMessage from "@super-netcentric-battleship/shared/ServerMessage.js";
 import * as ClientMessage from "@super-netcentric-battleship/shared/ClientMessage.js";
-import { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
-import { CoordinateFactory } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
-import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
 import { LobbyManager } from "./Game/LobbyManager";
 import { GameManager } from "./Game/GameManager";
 import Camera from "./Game/Camera";
-import { GameSettingsPresetNames, GameSettingsPresets } from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 
 //TODO: config
 const PORT = 17040;
