@@ -32,7 +32,7 @@ export default class UserManager{
     }
   
     private async loadDatabase(){
-        this.userDatabase = await this.database.exists("userDatabase") ? await this.database.get("userDatabase") : {users:{}};
+        this.userDatabase = await this.database.exists("userDatabase") ? (await this.database.get("userDatabase") as UserDatabase) : {users:{}};
     } 
 
     private async saveDatabase(){
@@ -179,6 +179,7 @@ export default class UserManager{
         .setId(databaseUser.id)
         .setSubscribedChatChannelIds(null)
         .setUsername(databaseUser.username)
-        .setIsAdmin(databaseUser.isAdmin);
+        .setIsAdmin(databaseUser.isAdmin)
+        .setIsGuest(false);
     }
 }
