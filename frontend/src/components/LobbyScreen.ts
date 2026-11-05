@@ -157,7 +157,7 @@ export default class LobbyScreen extends HTMLElement {
                 }
 
                 .hidden {
-                    display: none;
+                    display: none !important;
                 }
 
                 form .checkbox-wrapper {
@@ -184,22 +184,6 @@ export default class LobbyScreen extends HTMLElement {
                 .mode-buttons {
                     display: flex;
                     gap: 0.5rem;
-                }
-
-                .mode-button {
-                    flex: 1;
-                    padding: 0.65rem;
-                    background: var(--color-satellite-foreground);
-                    border: 2px solid var(--color-satellite-foreground-border);
-                    color: #263a3a;
-                    font-weight: bold;
-                    transition: all 0.2s ease-in-out;
-                }
-
-                .mode-button.active {
-                    background: var(--color-satellite-accent);
-                    color: var(--color-satellite-foreground);
-                    border-color: var(--color-satellite-accent);
                 }
 
                 /* Section Header with Inline Refresh Button */
@@ -248,6 +232,10 @@ export default class LobbyScreen extends HTMLElement {
                         padding: 1rem;
                     }
                 }
+
+                [hidden] {
+                    display: none !important
+                }
             </style>
 
             <main class="screen">
@@ -272,8 +260,8 @@ export default class LobbyScreen extends HTMLElement {
                                 <div class="mode-selector-wrapper">
                                     <label>Game Mode</label>
                                     <div class="mode-buttons">
-                                        <button type="button" id="classic-mode-btn" class="mode-button active">Classic</button>
-                                        <button type="button" id="extra-mode-btn" class="mode-button">Extra</button>
+                                        <button type="button" id="classic-mode-btn" class="mode-selector" aria-pressed="true">Classic</button>
+                                        <button type="button" id="extra-mode-btn" class="mode-selector" aria-pressed="false">Extra</button>
                                     </div>
                                 </div>
 
@@ -425,8 +413,8 @@ export default class LobbyScreen extends HTMLElement {
 
     private setGameMode(mode: 'classic' | 'extra') {
         this.gameMode = mode;
-        this.classicModeBtn.classList.toggle('active', mode === 'classic');
-        this.extraModeBtn.classList.toggle('active', mode === 'extra');
+        this.classicModeBtn.setAttribute('aria-pressed', String(mode === 'classic'));
+        this.extraModeBtn.setAttribute('aria-pressed', String(mode === 'extra'));
     }
 
     set manager(manager: LobbyManager) {
