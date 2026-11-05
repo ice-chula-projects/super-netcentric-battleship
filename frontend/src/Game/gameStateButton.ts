@@ -8,18 +8,32 @@ export function updateGameStateButton(gameManager: GameManager) {
 
     switch (state) {
         case GameState.ShipPlacement:
-            gameStateButton.textContent = 'Submit Fleet';
+            if (gameStateButton.textContent !== 'Fleet Submitted') {
+                gameStateButton.ariaDisabled = 'false';
+                gameStateButton.toggleAttribute('disabled', false);
+                gameStateButton.textContent = 'Submit Fleet';
+            }
             gameStateButton.hidden = false;
             gameStateButton.onclick = () => {
                 gameManager.submitFleet();
+                gameStateButton.ariaDisabled = 'true';
+                gameStateButton.toggleAttribute('disabled', true);
+                gameStateButton.textContent = 'Fleet Submitted';
             };
             break;
 
         case GameState.End:
-            gameStateButton.textContent = 'Rematch';
+            if (gameStateButton.textContent !== 'Rematch Requested') {
+                gameStateButton.ariaDisabled = 'false';
+                gameStateButton.toggleAttribute('disabled', false);
+                gameStateButton.textContent = 'Rematch';
+            }
             gameStateButton.hidden = false;
             gameStateButton.onclick = () => {
-                gameManager.requestRematch()
+                gameManager.requestRematch();
+                gameStateButton.ariaDisabled = 'true';
+                gameStateButton.toggleAttribute('disabled', true);
+                gameStateButton.textContent = 'Rematch Requested';
             };
             break;
 

@@ -45,6 +45,11 @@ button:hover {
     background-color: var(--color-satellite-foreground-focus);
 }
 
+button[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 button.secondary {
     background-color: var(--color-satellite-foreground);
     border: 2px solid var(--color-satellite-foreground-border);
