@@ -43,7 +43,7 @@ export default class UserManager{
         return this.database.getUserFromUuid(accountId);
     }
 
-    async getAccountFromName(username: string): Promise<AuthUser> {
+    async getAccountFromName(username: string): Promise<AuthUser | null> {
         return this.database.getUserFromName(username);
     }
 }

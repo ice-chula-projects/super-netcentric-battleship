@@ -1,39 +1,46 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import {
+  ClientActionMessage,
+  ClientMessage,
+  ClientMessageType,
+  CreateLobbyMessage,
+  JoinLobbyMessage,
+  ModifyGameSettingsMessage,
+  PingMessage,
+  RequestActiveUsersMessage,
+  RequestPublicLobbiesMessage,
+  RequestUserInfoMessage,
+  SendToChatMessage,
+  StartGameMessage,
+  UpdateChatChannelSubscriptionMessage,
+  UpdateReadyStateMessage,
+  UpdateUserInfoMessage,
+  LoginMessage,
+  RegisterMessage
+} from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
-<<<<<<< HEAD
-import GameManager from "./Game/GameManager.js";
-import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
 import crypto from "crypto";
 import AuthManager from "./Authentication/AuthenticationManager.js";
 import { UserDatabase } from "./Database/UserDatabase.js";
 import { AuthUser } from "./Authentication/types.js";
-import { RegisterMessage } from "../../../shared/src/ts/ClientMessage/RegisterMessage.js";
-import { LoginMessage } from "../../../shared/src/ts/ClientMessage/LoginMessage.js";
-=======
 import { v4 as uuidv4 } from 'uuid';
 import GameLobbyManager from "./Game/GameLobbyManager.js";
->>>>>>> game-engine
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
-<<<<<<< HEAD
-    readonly gameManager: GameManager;
     readonly authManager: AuthManager;
-    readonly database: UserDatabase;
-=======
+    readonly userDatabase: UserDatabase;
     readonly gameLobbyManager: GameLobbyManager;
->>>>>>> game-engine
 
     constructor(port: number) {
         this.authManager = new AuthManager();
-        this.database = new UserDatabase("./data/users.json");
+        this.userDatabase = new UserDatabase("./data/users.json");
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
@@ -42,7 +49,7 @@ export default class GameServer {
             console.log("server online");
         })
 
-        this.userManager = new UserManager(this.database);
+        this.userManager = new UserManager(this.userDatabase);
         this.chatManager = new ChatManager();
         this.gameLobbyManager = new GameLobbyManager(this);
 
@@ -51,11 +58,7 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-<<<<<<< HEAD
-        const userId = crypto.randomUUID();
-=======
         const userId = uuidv4();
->>>>>>> game-engine
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
@@ -199,7 +202,7 @@ export default class GameServer {
                     .setError("invalid username");
             }
             if (user.accountId !== null) {
-                await this.database.setUsername(
+                await this.userDatabase.setUsername(
                     user.accountId,
                     username
                 );
@@ -340,7 +343,7 @@ export default class GameServer {
         };
     
         try {
-            await this.database.createUser(account);
+            await this.userDatabase.createUser(account);
         } catch (error) {
             if (
                 error instanceof Error &&
@@ -378,7 +381,7 @@ export default class GameServer {
                 .setError("invalid credentials");
         }
     
-        const account = await this.database.getUserFromName(username);
+        const account = await this.userDatabase.getUserFromName(username);
         if (
             account === null ||
             !(await this.authManager.verifyPassword(

@@ -129,7 +129,7 @@ export class LobbyManager extends EventTarget {
         this.notifyStateChanged();
     }
 
-    handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
+  handleGameEndNotificationMessage(_gameEndNotificationMessage: GameEndNotificationMessage) {
         this.gameManager.stopGame();
         this.notifyStateChanged();
     }

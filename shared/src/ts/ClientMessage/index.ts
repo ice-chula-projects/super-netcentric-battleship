@@ -13,6 +13,8 @@ import { RequestPublicLobbiesMessage } from "./Game/Lobby/RequestPublicLobbiesMe
 import { FireVolleyActionMessage } from "./Game/FireVolleyActionMessage.js";
 import { InitializeFleetActionMessage } from "./Game/InitializeFleetActionMessage.js";
 import { UseAbilityActionMessage } from "./Game/UseAbilityActionMessage.js";
+import { LoginMessage } from "./Auth/LoginMessage.js";
+import { RegisterMessage } from "./Auth/RegisterMessage.js";
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
@@ -30,6 +32,8 @@ export * from "./Game/Lobby/RequestPublicLobbiesMessage.js";
 export * from "./Game/FireVolleyActionMessage.js";
 export * from "./Game/InitializeFleetActionMessage.js";
 export * from "./Game/UseAbilityActionMessage.js";
+export * from "./Auth/LoginMessage.js"
+export * from "./Auth/RegisterMessage.js"
 
 export type ClientMessage = PingMessage |
 RequestUserInfoMessage |
@@ -45,7 +49,9 @@ UpdateReadyStateMessage |
 RequestPublicLobbiesMessage |
 FireVolleyActionMessage |
 InitializeFleetActionMessage |
-UseAbilityActionMessage;
+UseAbilityActionMessage |
+LoginMessage |
+RegisterMessage;
 
 export type ClientActionMessage = FireVolleyActionMessage |
 InitializeFleetActionMessage |

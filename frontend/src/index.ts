@@ -9,7 +9,6 @@ import "./components/ChatMessage";
 import "./components/LobbyScreen";
 import type ChatSidebar from "./components/ChatSidebar";
 import GameHeader from "./components/GameHeader";
-import type LobbyScreen from "./components/LobbyScreen";
 
 console.log("index.ts loaded");
 //TODO: config
@@ -126,10 +125,6 @@ header?.addEventListener("change-username", (event) => {
   );
 });
 
-header?.addEventListener("join-game", (event) => {
-  const { gameId } = (event as CustomEvent<{ gameId: string }>).detail;
-  // game.joinGame(gameId);
-});
 
 document.querySelector("#refresh-active-users-button")?.addEventListener("click", () => {
   webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString())

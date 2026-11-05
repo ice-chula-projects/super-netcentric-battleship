@@ -17,12 +17,13 @@ export class UserDatabase {
     try {
       const data = await fs.readFile(this.filename, "utf8")
       return JSON.parse(data) as DatabaseState
-    } catch (err) {
+    } catch (err: any) {
       if (err.code === "ENOENT") {
         const initialState = { users: [] }
         await this.saveDatabase(initialState)
         return initialState as DatabaseState
       }
+      throw err
     }
   }
 

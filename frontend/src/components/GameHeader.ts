@@ -66,8 +66,8 @@ export default class GameHeader extends HTMLElement {
               id="current-game-id"
               class="space-grotesk-medium secondary"
             >
-              <span class="full-text">Join Game</span>
-              <span class="mobile-text">Join</span>
+              <span class="full-text">Game Lobby</span>
+              <span class="mobile-text">Lobby</span>
             </button>
             <lobby-screen id="lobby-form" popover></lobby-screen>
           </div>
@@ -84,6 +84,7 @@ export default class GameHeader extends HTMLElement {
                 type="text"
                 id="new-username"
                 placeholder="Ex. Alice"
+                required
               >
               <button type="submit" id="change-username-button" class="secondary">
                 Change Username
@@ -104,7 +105,6 @@ export default class GameHeader extends HTMLElement {
       </header>
     `;
     const usernameForm = shadow.querySelector<HTMLElement>("#username-form")!;
-    const gameForm = shadow.querySelector<HTMLElement>("#lobby-form")!;
     const sidebarToggle = shadow.querySelector("#sidebar-toggle")!;
     
     this.usernameButton = shadow.querySelector("#current-username")!;
@@ -117,16 +117,6 @@ export default class GameHeader extends HTMLElement {
         bubbles: true
       }));
       usernameForm.hidePopover();
-    });
-
-    gameForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const gameId = shadow.querySelector<HTMLInputElement>("#game-id-input")!.value;
-      this.dispatchEvent(new CustomEvent("join-game", {
-        detail: { gameId },
-        bubbles: true
-      }));
-      gameForm.hidePopover();
     });
 
     sidebarToggle.addEventListener("click", () => {
