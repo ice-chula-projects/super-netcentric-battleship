@@ -15,6 +15,8 @@ import { BoardTileState } from "@super-netcentric-battleship/shared/Game/BoardTi
 export default class PutoGameAI implements GameAI{
     worldState: AIWorldState;
     gameSettings: GameSettings;
+    maxIterations: number = 2000;
+    maxPlateauIterations: number = 500;
 
     constructor(gameSettings: GameSettings, playerBoard: Board, artificialIntelligenceBoard: Board){
         this.gameSettings = gameSettings;
@@ -79,13 +81,11 @@ export default class PutoGameAI implements GameAI{
         const validShips = this.worldState.artificialIntelligenceBoard.ships.filter(x=> x.alive);
 
         if(validShips.length <= 0) return null;
-        const maxIterations = 1000;
-        const maxPlateauIterations = 50;
         let plateauCounter = 0;
         let bestShot = null;
         let bestShotScore = -Infinity;
         let i = 0;
-        while(i < maxIterations && plateauCounter < maxPlateauIterations){
+        while(i < this.maxIterations && plateauCounter < this.maxPlateauIterations){
             const ship = Random.randomElementFromArray(validShips);
             const shipId = this.worldState.artificialIntelligenceBoard.ships.indexOf(ship);
             const location = this.generateRandomPosition();
@@ -116,13 +116,12 @@ export default class PutoGameAI implements GameAI{
     generateExplorationShot(){
         const validShips = this.worldState.artificialIntelligenceBoard.ships.filter(x=> x.alive);
         if(validShips.length <= 0) return null;
-        const maxIterations = 1000;
-        const maxPlateauIterations = 50;
+
         let plateauCounter = 0;
         let bestShot = null;
         let bestShotScore = -Infinity;
         let i = 0;
-        while(i < maxIterations && plateauCounter < maxPlateauIterations){
+        while(i < this.maxIterations && plateauCounter < this.maxPlateauIterations){
             const ship = Random.randomElementFromArray(validShips);
             const shipId = this.worldState.artificialIntelligenceBoard.ships.indexOf(ship);
             const location = this.generateRandomPosition();
