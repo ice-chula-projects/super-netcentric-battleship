@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
 import UserAvatar from './UserAvatar';
+=======
+import { appStyles } from "../styles";
+import LobbyScreen from "./LobbyScreen";
+>>>>>>> 0d1f8ef (Connected Lobby System)
 
 export default class GameHeader extends HTMLElement {
     private avatarIcon!: UserAvatar;
@@ -48,6 +53,7 @@ export default class GameHeader extends HTMLElement {
                     display: none;
                 }
 
+<<<<<<< HEAD
                 .avatar-button {
                     display: inline-flex;
                     align-items: center;
@@ -60,6 +66,26 @@ export default class GameHeader extends HTMLElement {
                     outline: 1.5px solid var(--color-satellite-foreground-border);
                     line-height: 0;
                 }
+=======
+        <div class="right">
+          <div>
+            <button
+              popovertarget="lobby-form"
+              id="current-game-id"
+              class="space-grotesk-medium secondary"
+            >
+              <span class="full-text">Join Game</span>
+              <span class="mobile-text">Join</span>
+            </button>
+            <lobby-screen id="lobby-form" popover></lobby-screen>
+          </div>
+          <div>
+            <button
+              popovertarget="username-form"
+              id="current-username"
+              class="space-grotesk-medium secondary"
+            ></button>
+>>>>>>> 0d1f8ef (Connected Lobby System)
 
                 .avatar-button:hover {
                     outline: 2px solid var(--color-satellite-glow);
@@ -70,6 +96,7 @@ export default class GameHeader extends HTMLElement {
                     display: flex;
                 }
 
+<<<<<<< HEAD
                 @media (max-width: 639px) {
                     .full-text {
                         display: none;
@@ -192,6 +219,44 @@ export default class GameHeader extends HTMLElement {
     get lobbyScreen(): LobbyScreen | null {
         return this.shadowRoot?.querySelector('lobby-screen') ?? null;
     }
+=======
+    sidebarToggle.addEventListener("click", () => {
+      this.dispatchEvent(new CustomEvent("sidebar-toggle", {
+        bubbles: true
+      }));
+    });
+    
+    document.addEventListener("sidebar-state-change", (event) => {
+      const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
+      sidebarToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+    
+    const header = shadow.querySelector("header")!;
+    
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      const height = entry.borderBoxSize[0].blockSize;
+    
+      document.documentElement.style.setProperty(
+        "--header-height",
+        `${height}px`
+      );
+    });
+    
+    resizeObserver.observe(header);
+  }
+  
+  get username(): string {
+    return this.usernameButton.textContent ?? "";
+  }
+  
+  set username(value: string) {
+    this.usernameButton.textContent = value;
+  }
+
+  get lobbyScreen(): LobbyScreen | null {
+    return this.shadowRoot?.querySelector("lobby-screen") ?? null;
+  }
+>>>>>>> 0d1f8ef (Connected Lobby System)
 }
 
 customElements.define('game-header', GameHeader);

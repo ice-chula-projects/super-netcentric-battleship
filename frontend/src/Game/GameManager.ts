@@ -25,9 +25,15 @@ import ShipDefinitions, {
     ShipType,
 } from '@super-netcentric-battleship/shared/Game/ShipDefinitions.js';
 
+<<<<<<< HEAD
 export class GameManager extends EventTarget {
     initialized: boolean = false;
     matchInProgress: boolean = false;
+=======
+
+export class GameManager extends EventTarget {
+    active: boolean = false;
+>>>>>>> 0d1f8ef (Connected Lobby System)
     webSocket: WebSocket;
     boards: {
         [Player.Player1]: GameBoard;
@@ -88,12 +94,17 @@ export class GameManager extends EventTarget {
     }
 
     constructor(webSocket: WebSocket) {
+<<<<<<< HEAD
         super();
+=======
+        super()
+>>>>>>> 0d1f8ef (Connected Lobby System)
         this.webSocket = webSocket;
 
         this.webSocket.addEventListener('message', this.handleServerMessage.bind(this));
     }
 
+<<<<<<< HEAD
     getPlayerBoard(): GameBoard {
         if (!this.initialized) throw new Error('Game is not Initialized');
         return this.boards![this.playerId!];
@@ -101,6 +112,15 @@ export class GameManager extends EventTarget {
 
     getOpponentBoard(): GameBoard {
         if (!this.initialized) throw new Error('Game is not Initialized');
+=======
+    getPlayerBoard(): GameBoard{
+        if(!this.active) throw new Error("Game is not Active");
+        return this.boards![this.playerId!];
+    }
+
+    getOpponentBoard(): GameBoard{
+        if(!this.active) throw new Error("Game is not Active");
+>>>>>>> 0d1f8ef (Connected Lobby System)
         return this.boards![this.opponentId!];
     }
 
@@ -108,16 +128,25 @@ export class GameManager extends EventTarget {
         if (this.currentGameState != GameState.ShipPlacement)
             throw new Error('Cannot add ship to fleet in non ship placement state');
         const shipDefinition = ShipDefinitions[shipType];
+<<<<<<< HEAD
         if (this.fleetValue + shipDefinition.value > this.currentGameSettings!.maxFleetValue)
             throw new Error('Added ship will exceed max fleet value');
+=======
+        if(this.fleetValue + shipDefinition.value > this.currentGameSettings!.maxFleetValue) throw new Error("Added ship will exceed max fleet value");
+>>>>>>> 0d1f8ef (Connected Lobby System)
         location = CoordinateFactory.copyCoordinate(location);
 
         this.getPlayerBoard().addShip(shipDefinition, location, orientation);
         this.fleet.push({
             shipType: shipType,
             location: location,
+<<<<<<< HEAD
             orientation: orientation,
         });
+=======
+            orientation: orientation
+        })
+>>>>>>> 0d1f8ef (Connected Lobby System)
     }
 
     submitFleet() {
@@ -155,7 +184,11 @@ export class GameManager extends EventTarget {
         switch (serverMessage.type) {
             case ServerMessageType.CurrentTurnNotification:
                 this.handleCurrentTurnNotificationMessage(serverMessage);
+<<<<<<< HEAD
                 break;
+=======
+            break;
+>>>>>>> 0d1f8ef (Connected Lobby System)
             case ServerMessageType.UpdateBoardTileStatusesNotification:
                 this.handleUpdateBoardTileStatusesNotificationMessage(serverMessage);
                 break;
@@ -171,6 +204,7 @@ export class GameManager extends EventTarget {
         }
     }
 
+<<<<<<< HEAD
     handleMatchStartNotificationMessage(_message: MatchStartNotificationMessage) {
         this.startNewMatch();
     }
@@ -186,18 +220,29 @@ export class GameManager extends EventTarget {
 
     handleCurrentTurnNotificationMessage(message: CurrentTurnNotificationMessage) {
         if (!this.matchInProgress) return;
+=======
+    handleCurrentTurnNotificationMessage(message: CurrentTurnNotificationMessage){
+        if(!this.active) return;
+>>>>>>> 0d1f8ef (Connected Lobby System)
 
         this.currentTurn = message.currentTurn;
         this.lastTurnUpdateTimeStamp = message.timestamp;
         this.notifyStateChanged();
     }
 
+<<<<<<< HEAD
     handleUpdateBoardTileStatusesNotificationMessage(
         message: UpdateBoardTileStatusesNotificationMessage,
     ) {
         if (!this.matchInProgress) return;
 
         for (const boardTileStatus of message.boardTileStatuses) {
+=======
+    handleUpdateBoardTileStatusesNotificationMessage(message: UpdateBoardTileStatusesNotificationMessage){
+        if(!this.active) return;
+
+        for(const boardTileStatus of message.boardTileStatuses){
+>>>>>>> 0d1f8ef (Connected Lobby System)
             this.boards![boardTileStatus.boardOwner].updateTileState(boardTileStatus);
         }
         this.notifyStateChanged();
@@ -214,7 +259,11 @@ export class GameManager extends EventTarget {
 
         this.initializeBoards();
 
+<<<<<<< HEAD
         this.initialized = true;
+=======
+        this.active = true;
+>>>>>>> 0d1f8ef (Connected Lobby System)
         this.notifyStateChanged();
     }
 
@@ -253,19 +302,32 @@ export class GameManager extends EventTarget {
         this.score = null;
         this.rematchStatus = null;
 
+<<<<<<< HEAD
         this.initialized = false;
         this.matchInProgress = false;
+=======
+        this.active = false;
+>>>>>>> 0d1f8ef (Connected Lobby System)
         this.notifyStateChanged();
     }
 
     initializeBoards() {
         this.boards = {
             [Player.Player1]: new GameBoard(this.currentGameSettings!.boardSize),
+<<<<<<< HEAD
             [Player.Player2]: new GameBoard(this.currentGameSettings!.boardSize),
         };
     }
 
     private notifyStateChanged() {
         this.dispatchEvent(new Event('state-change'));
+=======
+            [Player.Player2]: new GameBoard(this.currentGameSettings!.boardSize)
+        };
+    }
+  
+    private notifyStateChanged() {
+        this.dispatchEvent(new Event("state-change"));
+>>>>>>> 0d1f8ef (Connected Lobby System)
     }
 }
