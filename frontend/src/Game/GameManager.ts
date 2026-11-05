@@ -108,6 +108,10 @@ export class GameManager extends EventTarget {
     }
 
     resetFleet(){
+        if(this.fleetSubmitted) {
+            alert("Cannot reset fleet when fleet is already submitted");
+            return;
+        }
         this.fleet = [];
         this.initializeBoards();
     }
