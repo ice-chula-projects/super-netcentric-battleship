@@ -2,7 +2,7 @@ import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@sup
 import User from "../User/User.js";
 import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
-import { GameStartNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { GameEndNotificationMessageBuilder, GameStartNotificationMessageBuilder, LobbyExitNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
@@ -17,7 +17,7 @@ export default class GameLobby{
     readonly chatManager: ChatManager;
     readonly chatChannelId: string;
     
-    hostId: string;
+    hostUser: User | null = null;
     isPublic: boolean = false;
     name: string = "Untitled Lobby";
     description: string = "";
@@ -48,19 +48,16 @@ export default class GameLobby{
         this.description = description;
     }
 
-    constructor(hostUser: User, id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean){
+    constructor(id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean){
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
         
         this.id = id;
-        this.hostId = hostUser.id;
         this.chatManager = chatManager;
         this.chatChannelId = chatManager.generateNewChannelId();
         this.chatManager.addChannel(this.chatChannelId);
         this.gameSettings = GameSettingsPresets[GameSettingsPresetNames.classic];
-
-        this.addUser(hostUser);
     }
 
     toLobbyInformationMessage(): LobbyInfoNotificationMessage{
@@ -70,7 +67,7 @@ export default class GameLobby{
             connectedUsers.push({
                 userId: member.user.id,
                 username: member.user.username,
-                isHost: member.user.id == this.hostId,
+                isHost: member.user.id == this.hostUser?.id,
                 playerId: this.getPlayerIdFromMember(member),
                 ready: member.ready
             })
@@ -92,6 +89,8 @@ export default class GameLobby{
             user: user,
             ready: false
         });
+        
+        if(this.hostUser == null) this.hostUser = user;
 
         this.chatManager.subscribe(user, this.chatChannelId);
         user.setCurrentLobbyCode(this.id);
@@ -102,23 +101,21 @@ export default class GameLobby{
         if(user.currentLobbyCode != this.id) throw new Error("Attempted to remove a user who is not part of this lobby");
 
         if(this.gameInProgress){
-            this.activeGame;
+            this.stopGame();
         }
 
-        if(this.members.length <= 1){
-            this.deleteLobby();
-        } else {
-            // remove user
-            this.members.splice(this.members.indexOf(this.getMemberFromUser(user)), 1);   
-            
-            // migrate host if the user was the host
-            if(user.id == this.hostId){
-                this.hostId = this.members[0].user.id;
-            }
+        // remove user
+        this.members.splice(this.members.indexOf(this.getMemberFromUser(user)), 1);   
+        user.setCurrentLobbyCode(null);
 
-            this.notifyLobbyInformation();
+        user.socket.send(new LobbyExitNotificationMessageBuilder().toJsonString());
+
+        // migrate host if the user was the host
+        if(user == this.hostUser){
+            this.hostUser = this.members.length == 0? null : this.members[0].user;
         }
-             
+
+        this.notifyLobbyInformation();
     }
 
     updateReadyStatus(user: User, ready: boolean){
@@ -134,6 +131,9 @@ export default class GameLobby{
     }
 
     deleteLobby(){
+
+        if(this.activeGame) this.stopGame();
+
         for(const member of this.members){
             member.user.setCurrentLobbyCode(null);
         }
@@ -150,7 +150,7 @@ export default class GameLobby{
     }
 
     requestUpdateGameSettings(requester: User, gameSettings: Partial<GameSettings>){
-        if(requester.id != this.hostId) throw new Error("Only the host can modify game settings");
+        if(requester != this.hostUser) throw new Error("Only the host can modify game settings");
         this.updateGameSettings(gameSettings);
     }
 
@@ -161,7 +161,7 @@ export default class GameLobby{
     }
 
     requestGameStart(requester: User){
-        if(requester.id != this.hostId) throw new Error("Only the host can start the game");
+        if(requester != this.hostUser) throw new Error("Only the host can start the game");
         if(!this.isReady) throw new Error("Cannot start game lobby when all players arent ready");
 
         this.startGame();
@@ -208,7 +208,11 @@ export default class GameLobby{
     stopGame(){
         if(!this.gameInProgress) throw new Error("Cannot stop game when none is in progress");
 
-
+        const message = new GameEndNotificationMessageBuilder();
+        const jsonString = message.toJsonString();
+        for(const members of this.members){
+            members.user.socket.send(jsonString);
+        }
         this.activeGame = null;
     }
 }

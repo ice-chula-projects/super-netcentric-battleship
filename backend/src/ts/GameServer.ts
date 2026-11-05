@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { IncomingMessage } from "http";
-import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessage, ExitLobbyMessage, JoinLobbyMessage, ModifyGameSettingsMessage, PingMessage, RequestActiveUsersMessage, RequestPublicLobbiesMessage, RequestUserInfoMessage, SendToChatMessage, StartGameMessage, UpdateChatChannelSubscriptionMessage, UpdateReadyStateMessage, UpdateUserInfoMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
@@ -89,6 +89,9 @@ export default class GameServer {
             break;
             case ClientMessageType.RequestPublicLobbies:
                 response = this.handleRequestPublicLobbiesMessage(message);
+            break;
+            case ClientMessageType.ExitLobby:
+                response = this.handleExitLobbyMessage(message, user);
             break;
             case ClientMessageType.FireVolleyAction:
             case ClientMessageType.InitializeFleetAction:
@@ -244,6 +247,11 @@ export default class GameServer {
 
     handleClientActionMessage(clientActionMessage: ClientActionMessage, user: User): ServerMessage | null {
         this.gameLobbyManager.notifyClientActionMessage(clientActionMessage, user);
+        return null;
+    }
+
+    handleExitLobbyMessage(message: ExitLobbyMessage, user: User): ServerMessage | null {
+        this.gameLobbyManager.leaveLobby(user);
         return null;
     }
 }

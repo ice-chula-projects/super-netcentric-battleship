@@ -14,5 +14,6 @@ export enum ClientMessageType{
     FireVolleyAction = "fireVolleyAction",
     InitializeFleetAction = "InitializeFleetAction",
     UseAbilityAction = "useAbilityAction",
-    RequestRematchAction = "requestRematchAction"
+    RequestRematchAction = "requestRematchAction",
+    ExitLobby = "exitLobby"
 }
