@@ -303,6 +303,7 @@ export default class GameServer {
             createLobbyMessage.name,
             createLobbyMessage.description,
             createLobbyMessage.isPublic,
+            createLobbyMessage.gameSettingsPreset
         );
 
         return null;

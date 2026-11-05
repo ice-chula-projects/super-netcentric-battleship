@@ -1,6 +1,7 @@
 import { LobbyManager } from '../Game/LobbyManager';
 import { Player } from '@super-netcentric-battleship/shared/Game/Player.js';
 import { appStyles } from '../styles';
+import { GameSettingsPresetNames } from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 
 export default class LobbyScreen extends HTMLElement {
     private lobbyManager!: LobbyManager;
@@ -370,6 +371,7 @@ export default class LobbyScreen extends HTMLElement {
                 this.nameInput.value.trim(),
                 this.descriptionInput.value.trim(),
                 this.publicCheckbox.checked,
+                this.gameMode == "classic" ? GameSettingsPresetNames.Classic : GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray
             );
         });
 
@@ -410,11 +412,8 @@ export default class LobbyScreen extends HTMLElement {
         // Play vs Bot handler
         shadow.querySelector('#bot-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
-            if ('startBotGame' in this.lobbyManager && typeof (this.lobbyManager as any).startBotGame === 'function') {
-                (this.lobbyManager as any).startBotGame();
-            } else {
-                this.lobbyManager.startGame();
-            }
+            this.lobbyManager.startAIGame();
+            
         });
 
         shadow.querySelector('#leave-button')!.addEventListener('click', () => {
