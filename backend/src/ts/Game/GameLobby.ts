@@ -1,5 +1,5 @@
 import GameSettings, { GameSettingsPresetNames, GameSettingsPresets } from "@super-netcentric-battleship/shared/Game/GameSettings.js";
-import User from "../User/User.js";
+import ActiveUser from "../User/ActiveUser.js";
 import ChatManager from "../Chat/ChatManager.js";
 import Game from "./Game.js";
 import { GameEndNotificationMessageBuilder, GameStartNotificationMessageBuilder, LobbyExitNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
@@ -7,7 +7,7 @@ import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 
 export interface LobbyMember{
-    user: User,
+    user: ActiveUser,
     ready: boolean
 }
 
@@ -17,7 +17,7 @@ export default class GameLobby{
     readonly chatManager: ChatManager;
     readonly chatChannelId: string;
     
-    hostUser: User | null = null;
+    hostUser: ActiveUser | null = null;
     isPublic: boolean = false;
     name: string = "Untitled Lobby";
     description: string = "";
@@ -83,7 +83,7 @@ export default class GameLobby{
         .setConnectedUsers(connectedUsers);
     }
 
-    addUser(user: User){
+    addUser(user: ActiveUser){
         if(this.isFull) throw new Error("Attempted to add a user to a full lobby");
         this.members.push({
             user: user,
@@ -93,12 +93,12 @@ export default class GameLobby{
         if(this.hostUser == null) this.hostUser = user;
 
         this.chatManager.subscribe(user, this.chatChannelId);
-        user.setCurrentLobbyCode(this.id);
+        user.setCurrentLobby(this);
         this.notifyLobbyInformation();
     }
 
-    removeUser(user: User){
-        if(user.currentLobbyCode != this.id) throw new Error("Attempted to remove a user who is not part of this lobby");
+    removeUser(user: ActiveUser){
+        if(user.currentLobby != this) throw new Error("Attempted to remove a user who is not part of this lobby");
 
         if(this.gameInProgress){
             this.stopGame("a participating player left the lobby");
@@ -107,7 +107,7 @@ export default class GameLobby{
         // remove user
         this.members.splice(this.members.indexOf(this.getMemberFromUser(user)), 1);   
         this.chatManager.unsubscribe(user, this.chatChannelId);
-        user.setCurrentLobbyCode(null);
+        user.setCurrentLobby(null);
 
         user.socket.send(new LobbyExitNotificationMessageBuilder().toJsonString());
 
@@ -119,7 +119,7 @@ export default class GameLobby{
         this.notifyLobbyInformation();
     }
 
-    updateReadyStatus(user: User, ready: boolean){
+    updateReadyStatus(user: ActiveUser, ready: boolean){
         for(const member of this.members){
             if(member.user == user){
                 member.ready = ready;
@@ -136,7 +136,7 @@ export default class GameLobby{
         if(this.activeGame) this.stopGame("Lobby deleted");
 
         for(const member of this.members){
-            member.user.setCurrentLobbyCode(null);
+            member.user.setCurrentLobby(null);
         }
 
         this.chatManager.removeChannel(this.chatChannelId);
@@ -150,7 +150,7 @@ export default class GameLobby{
         }
     }
 
-    requestUpdateGameSettings(requester: User, gameSettings: Partial<GameSettings>){
+    requestUpdateGameSettings(requester: ActiveUser, gameSettings: Partial<GameSettings>){
         if(requester != this.hostUser) throw new Error("Only the host can modify game settings");
         this.updateGameSettings(gameSettings);
     }
@@ -161,19 +161,19 @@ export default class GameLobby{
         this.notifyLobbyInformation();
     }
 
-    requestGameStart(requester: User){
+    requestGameStart(requester: ActiveUser){
         if(requester != this.hostUser) throw new Error("Only the host can start the game");
         if(!this.isReady) throw new Error("Cannot start game lobby when all players arent ready");
 
         this.startGame();
     }
 
-    notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: User){
+    notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: ActiveUser){
         if(!this.gameInProgress) throw new Error("Cannot take actions while game is not in progress");
         this.activeGame?.takeAction(clientActionMessage, this.getPlayerIdFromUser(actingUser))
     }
 
-    getMemberFromUser(user: User): LobbyMember{
+    getMemberFromUser(user: ActiveUser): LobbyMember{
         for(const member of this.members){
             if(member.user == user) return member;
         }
@@ -181,7 +181,7 @@ export default class GameLobby{
         throw new Error("User not in lobby");
     }
 
-    getPlayerIdFromUser(user: User): Player{
+    getPlayerIdFromUser(user: ActiveUser): Player{
         return this.getPlayerIdFromMember(this.getMemberFromUser(user));
     }
 
