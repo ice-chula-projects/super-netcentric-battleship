@@ -1,7 +1,8 @@
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
 import AuthenticationPopover from './AuthenticationPopover';
-
+import './ShipModes';
+import shipModesCSS from './ShipModes.css?inline';
 export default class GameHeader extends HTMLElement {
     private authenticationPopover!: AuthenticationPopover;
     constructor() {
@@ -11,6 +12,7 @@ export default class GameHeader extends HTMLElement {
         shadow.adoptedStyleSheets = [appStyles];
         shadow.innerHTML = /* html */ `
             <style>
+                ${shipModesCSS}
                 :host {
                     display: block;
                 }
@@ -113,6 +115,9 @@ export default class GameHeader extends HTMLElement {
                 </section>
 
                 <section class="row">
+                    <div class="invisible-as-admin">
+                        <ship-modes></ship-modes>
+                    </div>
                     <div class="invisible-as-admin">
                         <button
                             popovertarget="lobby-form"
