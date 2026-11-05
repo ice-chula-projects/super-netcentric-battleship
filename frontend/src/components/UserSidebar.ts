@@ -3,7 +3,7 @@ import UserAvatar from './UserAvatar';
 import './UserAvatar';
 
 export default class UserSidebar extends HTMLElement {
-    private activeUsersElement!: HTMLDivElement; 
+    private activeUsersElement!: HTMLDivElement;
     private usersListElement!: HTMLDivElement;
 
     private _activeUsers: string[] = [];
@@ -109,6 +109,8 @@ export default class UserSidebar extends HTMLElement {
                     gap: 0.75rem;
                 }
 
+                
+
                 .user-item {
                     display: flex;
                     align-items: center;
@@ -183,14 +185,40 @@ export default class UserSidebar extends HTMLElement {
                 <div class="sidebar-inner">
                     <section>
                         <div class="section-heading">
-                            <h3 class="space-mono-bold">Active Users</h3>
-
+                            <h2 class="section-title">
+                                <span class="users-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                    >
+                                        <path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                        <path d="M22 20v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                                    </svg>
+                                </span>
+                                Active Users
+                            </h2>
                             <button
                                 type="button"
                                 id="refresh-active-users-button"
-                                class="secondary"
+                                class="icon"
+                                aria-label="Refresh active users"
+                                title="Refresh active users"
                             >
-                                Refresh
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
+                                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+                                </svg>
                             </button>
                         </div>
 
@@ -268,14 +296,10 @@ export default class UserSidebar extends HTMLElement {
 
     // Active users go away when they leave, but stay in the users panel
     set activeUsers(value: string[]) {
-        this._activeUsers = Array.isArray(value)
-            ? [...new Set(value)]
-            : [];
-        
-        this._users = [
-            ...new Set([...this._users, ...this._activeUsers]),
-        ];
-    
+        this._activeUsers = Array.isArray(value) ? [...new Set(value)] : [];
+
+        this._users = [...new Set([...this._users, ...this._activeUsers])];
+
         this.renderActiveUsers();
         this.renderUsers();
     }

@@ -271,10 +271,6 @@ aside ul {
     min-height: calc(100vh - 54px);
 }
 
-.users-panel {
-    padding: 27px 28px;
-    background: #bfd2d5;
-}
 
 .games-panel {
     padding: 10px 10px 10px 10px;
@@ -291,15 +287,6 @@ aside ul {
     flex-direction: column;
 }
 
-.section-title {
-    margin: 0 0 17px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 23px;
-    font-weight: 800;
-    line-height: 1.2;
-}
 
 .section-title svg {
     display: block;

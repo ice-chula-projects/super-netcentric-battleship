@@ -11,17 +11,17 @@ process.on("SIGINT", async () => {
     process.exit(0);
 })
 process.on("SIGTERM", async () => {
-    await gameServer.userDatabase.save();
+    await gameServer.database.save();
     gameServer.webSocketServer.close();
     process.exit(0);
 })
 process.on("uncaughtException", async () => {
-    await gameServer.userDatabase.save();
+    await gameServer.database.save();
     gameServer.webSocketServer.close();
     process.exit(1);
 })
 process.on("unhandledRejection", async () => {
-    await gameServer.userDatabase.save();
+    await gameServer.database.save();
     gameServer.webSocketServer.close();
     process.exit(1);
 })
