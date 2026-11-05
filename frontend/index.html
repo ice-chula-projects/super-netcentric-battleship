@@ -20,13 +20,15 @@
             <chat-sidebar></chat-sidebar>
             <user-sidebar></user-sidebar>
             <main style="padding-top: var(--header-height); gap: 2rem">
-                <canvas
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; flex-direction: column;">
+                    <canvas
                     width="750"
                     height="750"
-                    style="width: 500px; height: 500px; margin: 3px"
+                    style="width: 750px; height: 750px; margin: 3px"
                     id="canvas"
                 ></canvas>
-                <button id="game-manager-state" hidden><button>
+                <button style="padding: 10px; margin: 10px; font-size: 40px;" id="game-manager-state" hidden></button>
+                </div>
             </main>
         </div>
     </body>
