@@ -17,5 +17,7 @@ export enum ClientMessageType{
     RequestRematchAction = "requestRematchAction",
     ExitLobby = "exitLobby",
     Login = "login",
-    Register = "register"
+    Register = "register",
+    RequestAllGameLobbiesMessage = "requestAllGameLobbies",
+    ResetGameLobbyMessage = "resetGameLobbyMessage"
 }

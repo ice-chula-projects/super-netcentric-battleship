@@ -17,6 +17,8 @@ import { RequestRematchActionMessage } from "./Game/RequestRematchActionMessage.
 import { ExitLobbyMessage } from "./Game/Lobby/ExitLobbyMessage.js";
 import { LoginMessage } from "./User/LoginMessage.js";
 import { RegisterMessage } from "./User/RegisterMessage.js";
+import { RequestAllGameLobbiesMessage } from "./Admin/RequestAllGameLobbiesMessage.js";
+import { ResetGameLobbyMessage } from "./Admin/ResetGameLobbyMessage.js";
 
 export * from "./ClientMessageType.js";
 export * from "./PingMessage.js";
@@ -57,7 +59,9 @@ UseAbilityActionMessage |
 RequestRematchActionMessage |
 ExitLobbyMessage |
 LoginMessage |
-RegisterMessage;
+RegisterMessage |
+RequestAllGameLobbiesMessage |
+ResetGameLobbyMessage;
 
 export type ClientActionMessage = FireVolleyActionMessage |
 InitializeFleetActionMessage |
