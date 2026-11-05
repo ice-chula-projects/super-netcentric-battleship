@@ -21,15 +21,6 @@ type AdminLobby = {
     name: string;
     description: string;
     isPublic: boolean;
-    gameSettings: unknown;
-    chatChannelId: string;
-    connectedUsers: {
-        userId: string;
-        username: string;
-        isHost: boolean;
-        playerId: unknown;
-        ready: boolean;
-    }[];
 };
 
 // ============================================================
@@ -86,9 +77,7 @@ function resetLobby(lobbyCode: string): void {
 
     const lobby = lobbies.get(lobbyCode);
 
-    if (!lobby) {
-        return;
-    }
+    console.log(2);
 
     const confirmed = window.confirm(
         `Are you sure you want to reset lobby "${lobby.name}" (${lobbyCode})?`,
@@ -97,6 +86,7 @@ function resetLobby(lobbyCode: string): void {
     if (!confirmed) {
         return;
     }
+    console.log(3);
 
     const message = new ClientMessage.ResetGameLobbyMessageBuilder().setLobbyCode(lobbyCode);
 
@@ -127,7 +117,7 @@ function renderLobbies(publicLobbies: ServerMessage.PublicLobbyInformation[]): v
         description.textContent = lobby.description || 'No description';
 
         const code = document.createElement('p');
-        code.textContent = `Code: ${lobby.lobbyCode}`;
+        code.textContent = `Code: ${lobby.lobbyCode} ${lobby.isPublic? "🔓" : "🔒"}`;
 
         const members = document.createElement('p');
         members.textContent = `Players: ${lobby.memberCount}`;
@@ -139,6 +129,7 @@ function renderLobbies(publicLobbies: ServerMessage.PublicLobbyInformation[]): v
 
         lobbyElement.append(name, description, code, members, resetButton);
         lobbiesList.appendChild(lobbyElement);
+        lobbies.set(lobby.lobbyCode, {lobbyCode: lobby.lobbyCode, name: lobby.name, description: lobby.description, isPublic: lobby.isPublic})
     }
 }
 
