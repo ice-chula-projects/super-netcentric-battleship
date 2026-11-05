@@ -14,6 +14,7 @@ import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
 import UserSidebar from './components/UserSidebar';
 import LoginManager from './Game/LoginManager';
+import { updateGameStateButton } from "./Game/gameStateButton"
 
 console.log('index.ts loaded');
 //TODO: config
@@ -135,3 +136,5 @@ header?.addEventListener('change-username', (event) => {
 document.addEventListener('refresh-active-users', () => {
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
 });
+
+gameManager.addEventListener("state-change", () => updateGameStateButton(gameManager))

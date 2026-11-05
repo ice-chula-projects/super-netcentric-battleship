@@ -238,6 +238,7 @@ export class GameManager extends EventTarget {
         if (!this.matchInProgress) throw new Error('cannot end match when no match is in progress');
         this.matchWinner = winner;
         this.matchInProgress = false;
+        this.notifyStateChanged()
     }
 
     unInitializeGame() {
