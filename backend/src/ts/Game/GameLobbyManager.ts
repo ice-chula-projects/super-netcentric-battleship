@@ -42,7 +42,7 @@ export default class GameLobbyManager{
     }
 
     leaveLobby(user: User){
-        if(user.currentlyInGameLobby) throw new Error("Attempted to leave a lobby while user is not in lobby");
+        if(!user.currentlyInGameLobby) throw new Error("Attempted to leave a lobby while user is not in lobby");
         const lobby = this.getLobby(user.currentLobbyCode!);
         lobby.removeUser(user);
         if(lobby.members.length == 0) this.removeLobby(lobby.id);
