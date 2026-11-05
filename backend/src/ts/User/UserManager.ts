@@ -88,7 +88,7 @@ export default class UserManager{
     async login(websocket: WebSocket, webSocketId: string, username: string, password: string): Promise<ServerMessage>{
         const user = await this.getDatabaseUserFromUsername(username);
 
-        if(!this.authenticationManager.verifyPassword(password, user.password)) throw new Error("Incorrect password");
+        if(!(await this.authenticationManager.verifyPassword(password, user.password))) throw new Error("Incorrect password");
 
         const activeUser = ActiveUser.fromDatabaseUser(websocket, webSocketId, user)
         this.updateWebSocketUser(webSocketId, activeUser);

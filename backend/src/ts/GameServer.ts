@@ -7,8 +7,6 @@ import ChatManager from "./Chat/ChatManager.js";
 import ActiveUser from "./User/ActiveUser.js";
 import { v4 as uuidv4 } from 'uuid';
 import GameLobbyManager from "./Game/GameLobbyManager.js";
-import crypto from "crypto";
-import { AuthUser } from "./Authentication/types.js";
 import Database from "./Database/Database.js";
 import { JsonDatabase } from "./Database/JsonDatabase.js";
 
@@ -21,7 +19,7 @@ export default class GameServer {
     readonly activeWebSockets: Record<string, WebSocket> = {};
 
     constructor(port: number) {
-        this.database = new JsonDatabase();
+        this.database = new JsonDatabase("./data/database.json");
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
