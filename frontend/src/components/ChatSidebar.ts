@@ -263,7 +263,7 @@ export default class ChatSidebar extends HTMLElement {
     }
 
     connectedCallback() {
-        document.addEventListener('sidebar-toggle', this.handleToggle);
+        document.addEventListener('chat-toggle', this.handleToggle);
         this.layoutQuery.addEventListener('change', this.handleLayoutChange);
 
         if (window.matchMedia('(max-width: 800px)').matches) {
@@ -272,7 +272,7 @@ export default class ChatSidebar extends HTMLElement {
     }
 
     disconnectedCallback() {
-        document.removeEventListener('sidebar-toggle', this.handleToggle);
+        document.removeEventListener('chat-toggle', this.handleToggle);
         this.layoutQuery.removeEventListener('change', this.handleLayoutChange);
 
         if (this.layoutResetFrame) {

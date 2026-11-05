@@ -101,9 +101,9 @@ export default class GameHeader extends HTMLElement {
                     </div>
                     <button
                         class="icon"
-                        id="sidebar-toggle"
+                        id="chat-toggle"
                         type="button"
-                        aria-label="Toggle sidebar"
+                        aria-label="Toggle chat"
                         aria-controls="sidebar"
                         aria-expanded="true"
                     >
@@ -141,7 +141,7 @@ export default class GameHeader extends HTMLElement {
             </header>
         `;
         const usernameForm = shadow.querySelector<HTMLElement>('#username-form')!;
-        const sidebarToggle = shadow.querySelector('#sidebar-toggle')!;
+        const chatToggle = shadow.querySelector('#chat-toggle')!;
 
         this.avatarIcon = shadow.querySelector('user-avatar')!;
 
@@ -157,9 +157,9 @@ export default class GameHeader extends HTMLElement {
             usernameForm.hidePopover();
         });
 
-        sidebarToggle.addEventListener('click', () => {
+        chatToggle.addEventListener('click', () => {
             this.dispatchEvent(
-                new CustomEvent('sidebar-toggle', {
+                new CustomEvent('chat-toggle', {
                     bubbles: true,
                 }),
             );
@@ -167,7 +167,7 @@ export default class GameHeader extends HTMLElement {
 
         document.addEventListener('sidebar-state-change', (event) => {
             const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
-            sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+            chatToggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         const header = shadow.querySelector('header')!;
