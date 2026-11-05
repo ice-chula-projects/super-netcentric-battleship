@@ -20,6 +20,7 @@ export interface LobbyInfoNotificationMessage extends GameMessage{
     isPublic: boolean;
     gameSettings: GameSettings;
     isHost: boolean;
+    isReady: boolean;
 
     chatChannelId: string;
 
@@ -37,6 +38,7 @@ export class LobbyInfoNotificationMessageBuilder implements LobbyInfoNotificatio
     isPublic: boolean = true;
     gameSettings: GameSettings = GameSettingsPresets[GameSettingsPresetNames.Classic];
     isHost: boolean = false;
+    isReady : boolean = false;
     
     chatChannelId: string = "";
     connectedUsers: LobbyPlayerInformation[] = [];
@@ -73,6 +75,11 @@ export class LobbyInfoNotificationMessageBuilder implements LobbyInfoNotificatio
 
     setIsHost(isHost:boolean){
         this.isHost = isHost;
+        return this;
+    }
+
+    setIsReady(isReady: boolean){
+        this.isReady = isReady;
         return this;
     }
 
