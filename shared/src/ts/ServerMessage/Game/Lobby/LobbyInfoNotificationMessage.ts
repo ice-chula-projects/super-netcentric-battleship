@@ -34,7 +34,7 @@ export class LobbyInfoNotificationMessageBuilder implements LobbyInfoNotificatio
     name: string = "";
     description: string = "";
     isPublic: boolean = true;
-    gameSettings: GameSettings = GameSettingsPresets[GameSettingsPresetNames.classic];
+    gameSettings: GameSettings = GameSettingsPresets[GameSettingsPresetNames.Classic];
     
     chatChannelId: string = "";
     connectedUsers: LobbyPlayerInformation[] = [];
