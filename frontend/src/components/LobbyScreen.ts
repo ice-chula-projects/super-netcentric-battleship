@@ -17,6 +17,9 @@ export default class LobbyScreen extends HTMLElement {
     private extraModeBtn!: HTMLButtonElement;
     private refreshLobbiesBtn!: HTMLButtonElement;
 
+    // Track local player's ready state
+    private isLocalPlayerReady: boolean = false;
+
     constructor() {
         super();
 
@@ -269,7 +272,7 @@ export default class LobbyScreen extends HTMLElement {
                                     <label>Game Mode</label>
                                     <div class="mode-buttons">
                                         <button type="button" id="classic-mode-btn" class="mode-button active">Classic</button>
-                                        <button type="button" id="extra-mode-btn" class="mode-button">Super Netcentric Battleship hooray 67 👌</button>
+                                        <button type="button" id="extra-mode-btn" class="mode-button">Extra</button>
                                     </div>
                                 </div>
 
@@ -362,8 +365,6 @@ export default class LobbyScreen extends HTMLElement {
             event.preventDefault();
 
             if (!this.lobbyManager) return;
-
-            // Note: If your createLobby implementation accepts game mode, pass this.gameMode as an additional parameter
             this.lobbyManager.createLobby(
                 this.nameInput.value.trim(),
                 this.descriptionInput.value.trim(),
@@ -393,9 +394,11 @@ export default class LobbyScreen extends HTMLElement {
             }
         });
 
+        // Dynamic toggle handler for Ready / Unready
         shadow.querySelector('#ready-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
-            this.lobbyManager.updateReadyState(true);
+            this.isLocalPlayerReady = !this.isLocalPlayerReady;
+            this.lobbyManager.updateReadyState(this.isLocalPlayerReady);
         });
 
         shadow.querySelector('#start-button')!.addEventListener('click', () => {
@@ -405,6 +408,7 @@ export default class LobbyScreen extends HTMLElement {
 
         shadow.querySelector('#leave-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
+            this.isLocalPlayerReady = false;
             this.lobbyManager.exitLobby();
         });
     }
@@ -435,6 +439,7 @@ export default class LobbyScreen extends HTMLElement {
         this.lobbyDetails.classList.toggle('hidden', lobby === null);
 
         if (lobby === null) {
+            this.isLocalPlayerReady = false;
             this.renderPublicLobbies();
             return;
         }
@@ -537,12 +542,17 @@ export default class LobbyScreen extends HTMLElement {
             playerList.appendChild(element);
         }
 
-        const currentPlayer = players.find((player) => player.isHost);
+        const hostPlayer = players.find((player) => player.isHost);
         const readyButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#ready-button');
         const startButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#start-button');
 
-        if (readyButton) readyButton.textContent = 'Toggle Ready';
-        if (startButton) startButton.classList.toggle('hidden', !currentPlayer);
+        if (readyButton) {
+            readyButton.textContent = this.isLocalPlayerReady ? 'Unready' : 'Ready';
+        }
+
+        if (startButton) {
+            startButton.classList.toggle('hidden', !hostPlayer);
+        }
     }
 
     disconnectedCallback() {
