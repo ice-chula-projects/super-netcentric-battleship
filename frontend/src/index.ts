@@ -10,11 +10,15 @@ import './components/LobbyScreen';
 import './components/UserAvatar';
 import './components/UserSidebar';
 import './components/AuthenticationPopover';
+import './components/ShipModes';
 import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
 import UserSidebar from './components/UserSidebar';
 import LoginManager from './Game/LoginManager';
+
 import { updateGameStateButton } from './Game/gameStateButton';
+
+import { ShipType } from '@super-netcentric-battleship/shared/Game/ShipDefinitions.js';
 
 console.log('index.ts loaded');
 //TODO: config
@@ -131,6 +135,22 @@ header?.addEventListener('change-username', (event) => {
     webSocket.send(
         new ClientMessage.UpdateUserInfoMessageBuilder().setUsername(username).toJsonString(),
     );
+});
+
+header.addEventListener('ship-mode-change', (event: Event) => {
+    const customEvent = event as CustomEvent<{
+        modeId: ShipType;
+        name: string;
+        description: string;
+    }>;
+
+    camera.currentlySelectedShipPlaceType = customEvent.detail.modeId;
+});
+
+lobbyManager.addEventListener('allowed-ship-types-change', (event: Event) => {
+    const allowedShipTypes = (event as CustomEvent<ShipType[]>).detail;
+
+    header.notifyAllowedShipTypesChanged(allowedShipTypes);
 });
 
 document.addEventListener('refresh-active-users', () => {

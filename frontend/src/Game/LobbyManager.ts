@@ -98,13 +98,13 @@ export class LobbyManager extends EventTarget {
         this.webSocket.send(message.toJsonString());
     }
 
-    startGame(){
+    startGame() {
         const message = new StartGameMessageBuilder();
-        
+
         this.webSocket.send(message.toJsonString());
     }
 
-    startAIGame(){
+    startAIGame() {
         const message = new StartAIGameMessageBuilder();
 
         this.webSocket.send(message.toJsonString());
@@ -143,6 +143,12 @@ export class LobbyManager extends EventTarget {
             chatChannelId: lobbyInfoNotificationMessage.chatChannelId,
             connectedUsers: lobbyInfoNotificationMessage.connectedUsers,
         };
+
+        this.dispatchEvent(
+            new CustomEvent('allowed-ship-types-change', {
+                detail: this.currentLobbyInfo.gameSettings.allowedShipTypes,
+            }),
+        );
         this.notifyStateChanged();
     }
 
@@ -172,6 +178,7 @@ export class LobbyManager extends EventTarget {
     }
 
     private notifyStateChanged() {
+        this.dispatchEvent(new Event('state-change'));
         this.dispatchEvent(new Event('state-change'));
     }
 }
