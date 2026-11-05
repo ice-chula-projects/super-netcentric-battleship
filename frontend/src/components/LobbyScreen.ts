@@ -346,7 +346,7 @@ export default class LobbyScreen extends HTMLElement {
         // Refresh lobbies event handler
         this.refreshLobbiesBtn.addEventListener('click', () => {
             if (this.lobbyManager) {
-                this.lobbyManager.requestPublicLobbies(this.lobbyManager.currentPublicLobbyPage ?? 0);
+                this.lobbyManager.requestPublicLobbies(this.lobbyManager.currentPublicLobbyPage ?? 0, 4);
             }
         });
 
@@ -373,7 +373,7 @@ export default class LobbyScreen extends HTMLElement {
             if (!this.lobbyManager) return;
             const page = this.lobbyManager.currentPublicLobbyPage;
             if (page > 0) {
-                this.lobbyManager.requestPublicLobbies(page - 1);
+                this.lobbyManager.requestPublicLobbies(page - 1, 4);
             }
         });
 
@@ -381,7 +381,7 @@ export default class LobbyScreen extends HTMLElement {
             if (!this.lobbyManager) return;
             const page = this.lobbyManager.currentPublicLobbyPage;
             if (page + 1 < this.lobbyManager.totalPages) {
-                this.lobbyManager.requestPublicLobbies(page + 1);
+                this.lobbyManager.requestPublicLobbies(page + 1, 4);
             }
         });
 
