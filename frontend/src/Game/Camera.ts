@@ -27,20 +27,21 @@ export default class Camera {
     gameManager: GameManager;
 
     tileColors: Record<BoardTileState, string> = {
-            [BoardTileState.Hidden]: "#ffffff50",
-            [BoardTileState.DamagedTile]: "red",
-            [BoardTileState.DestoyedTile]: "darkred",
-            [BoardTileState.DestroyedShip]: "#333355",
-            [BoardTileState.Empty]: "lightgrey",
-            [BoardTileState.Ship]: "darkgrey"
-        }
+        [BoardTileState.Hidden]: "#ffffff50",
+        [BoardTileState.DamagedTile]: "red",
+        [BoardTileState.DestoyedTile]: "darkred",
+        [BoardTileState.DestroyedShip]: "#333355",
+        [BoardTileState.Empty]: "lightgrey",
+        [BoardTileState.Ship]: "darkgrey"
+    }
     highlightColor: string = "#ffffff55";
     attackingShipHighlightColor: string = "#67676755";
-    backgroundImage: HTMLImageElement;  
+    backgroundImage: HTMLImageElement;
 
     strokeColor: string = 'white';
     backgroundColor: string = '#5093d4';
     textColor: string = 'white';
+    damageTextColor: string = 'red';
     textSize: number = 30;
     victoryTextSize: number = 60;
     boardSize: number = 330;
@@ -118,7 +119,7 @@ export default class Camera {
         this.drawBoards();
         this.drawScoreText();
 
-        if (this.gameManager.currentGameState == GameState.ShipPlacement){
+        if (this.gameManager.currentGameState == GameState.ShipPlacement) {
             this.drawFleetPointsRemainingText();
         }
 
@@ -315,9 +316,24 @@ export default class Camera {
                     }
                 }
 
-                if (this.determineIfTileIsHighlighted(i, j, highlightMode)) {
+                const highlight = this.determineIfTileIsHighlighted(i, j, highlightMode);
+                if (highlight.highlight) {
                     context.fillStyle = this.highlightColor;
                     context.fillRect(currentX, currentY, deltaX, deltaY);
+
+                    if (highlight.number != null) {
+                        context.fillStyle = this.damageTextColor;
+                        context.font = `${deltaX / 2}px Arial`;
+                        context.textAlign = 'center';
+                        context.textBaseline = 'middle';
+                        context.fillText(
+                            highlight.number.toString(),
+                            currentX + 3 * deltaX / 4,
+                            currentY + 3 * deltaY / 4,
+                        );
+                        context.textBaseline = 'bottom';
+
+                    }
                 }
 
                 currentY += deltaY;
@@ -332,18 +348,21 @@ export default class Camera {
         context.strokeText(label, x, y + size + this.textSize);
     }
 
-    determineIfTileIsHighlighted(x: number, y: number, highlightMode: BoardHighlightMode): boolean {
+    determineIfTileIsHighlighted(x: number, y: number, highlightMode: BoardHighlightMode): { highlight: boolean, number: number | null } {
         let highlight: boolean;
+        let number: number | null = null;
         switch (highlightMode) {
             case BoardHighlightMode.Player:
                 highlight = this.determineIfPlayerTileIsHighlighted(x, y);
                 break;
             case BoardHighlightMode.Opponent:
-                highlight = this.determineIfOpponentTileIsHighlighted(x, y);
+                const result = this.determineIfOpponentTileIsHighlighted(x, y);
+                highlight = result.highlight;
+                number = result.number
                 break;
         }
 
-        return highlight;
+        return {highlight: highlight, number: number};
     }
 
     determineIfPlayerTileIsHighlighted(x: number, y: number): boolean {
@@ -387,7 +406,7 @@ export default class Camera {
         return highlight;
     }
 
-    determineIfOpponentTileIsHighlighted(x: number, y: number): boolean {
+    determineIfOpponentTileIsHighlighted(x: number, y: number): { highlight: boolean, number: number | null } {
         let highlight = false;
 
         const opponentId = this.gameManager.opponentId;
@@ -395,7 +414,7 @@ export default class Camera {
 
         switch (this.gameManager.currentGameState) {
             case GameState.ShipPlacement:
-                return false;
+                return { highlight: false, number: null };
                 break;
             //highlight attacked squares in battle mode if it's the player's turn
             case GameState.Battle:
@@ -404,7 +423,7 @@ export default class Camera {
                     !this.gameManager.isPlayersTurn ||
                     this.selectedBoard != opponentId
                 )
-                    return false;
+                    return { highlight: false, number: null };
                 const shipDefinition = ShipDefinitions[this.attackingShip.shipType];
 
                 for (const firingPattern of shipDefinition.firingPattern) {
@@ -413,12 +432,12 @@ export default class Camera {
                         this.selectedBoardCoordinates,
                         this.currentInputOrientation,
                     );
-                    if (absoluteCoordinate.x == x && absoluteCoordinate.y == y) return true;
+                    if (absoluteCoordinate.x == x && absoluteCoordinate.y == y) return { highlight: true, number: firingPattern.damage };;
                 }
                 break;
         }
 
-        return highlight;
+        return { highlight: highlight, number: null };;
     }
 
     drawTimerText() {
@@ -482,14 +501,14 @@ export default class Camera {
         context.fillText(scoreText, this.canvas.width / 2, this.textSize + this.boardMargin);
     }
 
-    drawFleetPointsRemainingText(){
+    drawFleetPointsRemainingText() {
         const fleetPointsRemainingText = `${this.gameManager.currentGameSettings.maxFleetValue - this.gameManager.fleetValue} Points Remaining`;
 
         const context = this.canvas.getContext('2d');
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`;
         context.textAlign = 'left';
-        context.fillText(fleetPointsRemainingText, this.boardMargin, this.canvas.height - this.boardMargin);    
+        context.fillText(fleetPointsRemainingText, this.boardMargin, this.canvas.height - this.boardMargin);
     }
 
     clear() {
