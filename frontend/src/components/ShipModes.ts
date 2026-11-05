@@ -1,38 +1,33 @@
-import ShipDefinitions, { ShipDefinition, ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
-import Camera from "../Game/Camera";
+console.log('ShipModes module loaded');
 
-type ShipMode = {
-    id: number;
-    name: string;
-    description: string;
-};
+import ShipDefinitions, {
+    ShipDefinition,
+    ShipType,
+} from '@super-netcentric-battleship/shared/Game/ShipDefinitions.js';
 
-// Temporary data until your friend's ShipDefinition is ready.
-const ships: ShipDefinition[]  = Object.values(ShipType).filter(x=>typeof x === "number").map(x=>ShipDefinitions[x])
+const ships: ShipDefinition[] = Object.values(ShipType)
+    .filter((x) => typeof x === 'number')
+    .map((x) => ShipDefinitions[x]);
 
 export default class ShipModes extends HTMLElement {
     private outsideClickHandler?: (event: MouseEvent) => void;
-    private _camera: Camera;
-
-    set camera(camera: Camera){
-        this._camera = camera;
-    }
+    private menu: HTMLElement;
 
     connectedCallback() {
-        this.render();
+        this.addEventListener('send-allowed-ship-types', this.handleAllowedShips);
     }
 
     disconnectedCallback() {
+        this.removeEventListener('send-allowed-ship-types', this.handleAllowedShips);
+
         if (this.outsideClickHandler) {
-            document.removeEventListener(
-                'click',
-                this.outsideClickHandler,
-            );
+            document.removeEventListener('click', this.outsideClickHandler);
         }
     }
 
-    private render() {
-        this.innerHTML = `
+    constructor() {
+        super();
+        this.innerHTML = /*html*/ `
             <div class="ship-modes-wrapper">
                 <div class="ship-modes-dropdown">
                     <button
@@ -49,8 +44,8 @@ export default class ShipModes extends HTMLElement {
                     </button>
 
                     <div class="ship-modes-menu">
-                        ${
-                            ships.map(
+                        ${ships
+                            .map(
                                 (mode) => `
                                     <button
                                         type="button"
@@ -85,33 +80,21 @@ export default class ShipModes extends HTMLElement {
     }
 
     private setupEvents() {
-        const trigger = this.querySelector<HTMLButtonElement>(
-            '.ship-modes-trigger',
-        )!;
+        const trigger = this.querySelector<HTMLButtonElement>('.ship-modes-trigger')!;
 
-        const menu = this.querySelector<HTMLElement>(
-            '.ship-modes-menu',
-        )!;
+        this.menu = this.querySelector<HTMLElement>('.ship-modes-menu')!;
 
-        const tooltip = this.querySelector<HTMLElement>(
-            '.ship-modes-tooltip',
-        )!;
+        const tooltip = this.querySelector<HTMLElement>('.ship-modes-tooltip')!;
 
-        const selectedLabel = this.querySelector<HTMLElement>(
-            '.ship-modes-selected',
-        )!;
+        const selectedLabel = this.querySelector<HTMLElement>('.ship-modes-selected')!;
 
-        const title = this.querySelector<HTMLElement>(
-            '.ship-modes-tooltip-title',
-        )!;
+        const title = this.querySelector<HTMLElement>('.ship-modes-tooltip-title')!;
 
-        const description = this.querySelector<HTMLElement>(
-            '.ship-modes-tooltip-description',
-        )!;
+        const description = this.querySelector<HTMLElement>('.ship-modes-tooltip-description')!;
 
         // Close dropdown
         const closeMenu = () => {
-            menu.classList.remove('open');
+            this.menu.classList.remove('open');
             tooltip.classList.remove('visible');
             trigger.setAttribute('aria-expanded', 'false');
         };
@@ -120,12 +103,9 @@ export default class ShipModes extends HTMLElement {
         trigger.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            const isOpen = menu.classList.toggle('open');
+            const isOpen = this.menu.classList.toggle('open');
 
-            trigger.setAttribute(
-                'aria-expanded',
-                String(isOpen),
-            );
+            trigger.setAttribute('aria-expanded', String(isOpen));
 
             if (!isOpen) {
                 tooltip.classList.remove('visible');
@@ -133,9 +113,7 @@ export default class ShipModes extends HTMLElement {
         });
 
         // Individual ship modes
-        this.querySelectorAll<HTMLButtonElement>(
-            '.ship-modes-option',
-        ).forEach((option) => {
+        this.querySelectorAll<HTMLButtonElement>('.ship-modes-option').forEach((option) => {
             const id = Number(option.dataset.mode);
             const mode: ShipDefinition = ShipDefinitions[id];
 
@@ -143,21 +121,15 @@ export default class ShipModes extends HTMLElement {
 
             const showDescription = () => {
                 title.textContent = `${mode.name} (${mode.value})`;
-                description.textContent = mode.description + "\n";
+                description.textContent = mode.description + '\n';
                 tooltip.classList.add('visible');
             };
 
             // Show description on hover
-            option.addEventListener(
-                'mouseenter',
-                showDescription,
-            );
+            option.addEventListener('mouseenter', showDescription);
 
             // Also support keyboard focus
-            option.addEventListener(
-                'focus',
-                showDescription,
-            );
+            option.addEventListener('focus', showDescription);
 
             option.addEventListener('mouseleave', () => {
                 tooltip.classList.remove('visible');
@@ -173,13 +145,8 @@ export default class ShipModes extends HTMLElement {
 
                 selectedLabel.textContent = `${mode.name} (${mode.value})`;
 
-                this.querySelectorAll(
-                    '.ship-modes-option',
-                ).forEach((item) => {
-                    item.setAttribute(
-                        'aria-selected',
-                        String(item === option),
-                    );
+                this.querySelectorAll('.ship-modes-option').forEach((item) => {
+                    item.setAttribute('aria-selected', String(item === option));
                 });
 
                 // Notify the application
@@ -195,8 +162,6 @@ export default class ShipModes extends HTMLElement {
                     }),
                 );
 
-                this._camera.currentlySelectedShipPlaceType = mode.type;
-
                 closeMenu();
             });
         });
@@ -210,10 +175,7 @@ export default class ShipModes extends HTMLElement {
             }
         };
 
-        document.addEventListener(
-            'click',
-            this.outsideClickHandler,
-        );
+        document.addEventListener('click', this.outsideClickHandler);
 
         // Close dropdown with Escape
         this.addEventListener('keydown', (event) => {
@@ -224,6 +186,16 @@ export default class ShipModes extends HTMLElement {
         });
     }
 
+    private handleAllowedShips = (event: Event) => {
+        const customEvent = event as CustomEvent<ShipType[]>;
+        const allowedTypes = new Set(customEvent.detail);
+
+        this.menu.querySelectorAll<HTMLButtonElement>('.ship-modes-option').forEach((option) => {
+            const modeId = Number(option.dataset.mode);
+
+            option.hidden = !allowedTypes.has(modeId);
+        });
+    };
 }
 
 if (!customElements.get('ship-modes')) {

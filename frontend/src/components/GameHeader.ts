@@ -1,17 +1,13 @@
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
 import AuthenticationPopover from './AuthenticationPopover';
-import './ShipModes';
 import shipModesCSS from './ShipModes.css?inline';
-import Camera from '../Game/Camera';
-import ShipModes from './ShipModes';
+import { ShipType } from '@super-netcentric-battleship/shared/Game/ShipDefinitions.js';
+
 export default class GameHeader extends HTMLElement {
+    private shipModeSelect!: HTMLElement;
     private authenticationPopover!: AuthenticationPopover;
-    private shadow: ShadowRoot;
-    set camera(camera: Camera){
-        const shipModeSelect = this.shadow.querySelector<ShipModes>("ship-modes");
-        shipModeSelect.camera = camera;
-    }
+
     constructor() {
         super();
 
@@ -162,10 +158,8 @@ export default class GameHeader extends HTMLElement {
             </header>
         `;
 
-        this.shadow = shadow;
         const chatToggle = shadow.querySelector('#chat-toggle')!;
         const userSidebarToggle = shadow.querySelector<HTMLButtonElement>('#sidebar-toggle')!;
-        
 
         this.authenticationPopover = shadow.querySelector('auth-popover')!;
 
@@ -197,7 +191,7 @@ export default class GameHeader extends HTMLElement {
         });
 
         const header = shadow.querySelector('header')!;
-
+        this.shipModeSelect = shadow.querySelector('ship-modes')
         const resizeObserver = new ResizeObserver(([entry]) => {
             const height = entry.borderBoxSize[0].blockSize;
 
@@ -217,6 +211,15 @@ export default class GameHeader extends HTMLElement {
 
     get lobbyScreen(): LobbyScreen | null {
         return this.shadowRoot?.querySelector('lobby-screen') ?? null;
+    }
+
+    public notifyAllowedShipTypesChanged(allowedShipTypes: ShipType[]) {
+        if (!this.shipModeSelect) throw new Error("ship mode select not defined")
+        this.shipModeSelect?.dispatchEvent(
+            new CustomEvent('send-allowed-ship-types', {
+                detail: allowedShipTypes,
+            }),
+        );
     }
 }
 

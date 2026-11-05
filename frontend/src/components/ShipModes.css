@@ -1,4 +1,3 @@
-
 /* =========================================
    SHIP MODES - MAIN COMPONENT
 ========================================= */
@@ -154,6 +153,10 @@ ship-modes {
     background: #eff6ff;
     color: #1d4ed8;
     font-weight: 700;
+}
+
+.ship-modes-option[hidden] {
+    display: none !important;
 }
 
 /* =========================================
