@@ -73,7 +73,7 @@ button.icon {
     background-color: var(--color-satellite-foreground);
     border: 2px solid var(--color-satellite-foreground-border);
     transition: 0.2s;
-    color: var(--text);
+    color: var(--color-satellite-accent);
     cursor: pointer;
 }
 
