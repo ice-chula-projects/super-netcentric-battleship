@@ -363,6 +363,7 @@ export default class GameServer {
                         name: x.name,
                         description: x.description,
                         memberCount: x.members.length,
+                        isPublic: x.isPublic
                     };
                 }),
             )
@@ -424,6 +425,7 @@ export default class GameServer {
                         name: x.name,
                         description: x.description,
                         memberCount: x.members.length,
+                        isPublic: x.isPublic
                     };
                 }),
             )

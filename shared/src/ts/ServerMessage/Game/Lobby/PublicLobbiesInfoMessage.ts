@@ -6,6 +6,7 @@ export interface PublicLobbyInformation{
     name: string;
     description: string;
     memberCount: number;
+    isPublic: boolean;
 }
 
 export interface PublicLobbiesInfoMessage extends GameMessage{
