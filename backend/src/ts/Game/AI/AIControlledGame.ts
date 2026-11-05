@@ -199,7 +199,7 @@ export default class AIControlledGame {
 
     notifyBoardTileUpdateToPlayerUser(targetUserPlayer: Player, boardOwner: Player, boardTileUpdates: BoardTileUpdate[]) {
         if(targetUserPlayer == Player.Player2) {
-            this.gameAI.notifyBoardTileUpdates(boardTileUpdates);
+            if(boardOwner == Player.Player1) this.gameAI.notifyBoardTileUpdates(boardTileUpdates);
             return;
         }
         
