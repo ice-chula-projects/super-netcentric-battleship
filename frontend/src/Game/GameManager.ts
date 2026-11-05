@@ -232,6 +232,8 @@ export class GameManager extends EventTarget {
         this.currentTurn = null;
 
         this.matchInProgress = true;
+        
+        this.notifyStateChanged();
     }
 
     endMatch(winner: Player) {

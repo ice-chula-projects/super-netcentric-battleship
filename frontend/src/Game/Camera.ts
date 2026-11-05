@@ -115,10 +115,7 @@ export default class Camera {
         this.clear();
         this.drawBackground();
 
-        if (!this.gameManager.initialized) {
-            this.attackingShip = null;
-            return;
-        };
+        if (!this.gameManager.initialized) return;
         this.drawBoards();
         this.drawScoreText();
 
