@@ -86,7 +86,7 @@ export default class Board{
         //check for collisions
         for(const shipTile of ship.shipTiles){
             const absoluteCoordinate = relativeCoordinateToAbsoluteCoordinate(shipTile.relativeCoordinates, coordinates, ship.orientation);
-            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) throw new TileOutOfBoundsError("Ship tile is out of bounds");
+            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x >= this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y >= this.size) throw new TileOutOfBoundsError("Ship tile is out of bounds");
             if(this.board[absoluteCoordinate.x][absoluteCoordinate.y].hasShip) throw new DuplicateShipTileLocationError("Tried to place ship on duplicate location");
         }
 
@@ -109,7 +109,7 @@ export default class Board{
         const updatedBoardTiles: BoardTileUpdate[] = [];
         for(const attackTile of attackTiles){
             const absoluteCoordinate = relativeCoordinateToAbsoluteCoordinate(attackTile.relativeCoordinates, coordinate, orientation);
-            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x > this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y > this.size) continue;
+            if(absoluteCoordinate.x < 0 || absoluteCoordinate.x >= this.size || absoluteCoordinate.y < 0 || absoluteCoordinate.y >= this.size) continue;
             const tile = this.board[absoluteCoordinate.x][absoluteCoordinate.y];
             const shipTile = tile.shipTile;
 

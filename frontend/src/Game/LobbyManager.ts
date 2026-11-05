@@ -88,7 +88,7 @@ export class LobbyManager{
 
     startAIGame(){
         const message = new StartAIGameMessageBuilder();
-        
+
         this.webSocket.send(message.toJsonString());
     }
 

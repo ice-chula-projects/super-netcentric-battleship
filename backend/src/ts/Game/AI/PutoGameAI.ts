@@ -28,7 +28,7 @@ export default class PutoGameAI implements GameAI{
     }
 
     generateFleet(): ShipPlacement[]{
-        const availableShips = Object.values(ShipDefinitions).map(x=>new Ship(x));
+        const availableShips = Object.values(this.gameSettings.allowedShipTypes).map(x=>Ship.fromType(x));
         const fleet: ShipPlacement[] = [];
         const maxIterations = 1000;
         let currentFleetValue = 0;
