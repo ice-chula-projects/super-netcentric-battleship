@@ -4,28 +4,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+  />
   <title>Ship Ship Hooray! | Admin</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <div class="admin-page">
-    <game-header>
+    <game-header variant="admin"></game-header>
+    <user-sidebar></user-sidebar>
     <main class="dashboard">
-      <section class="users-panel">
-        <h1 class="section-title">
-          <span class="users-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.7">
-              <path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M22 20v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </span>
-          Users
-        </h1>
-        <div id="users-list" class="users-list"></div>
-      </section>
-
       <section class="games-panel">
         <div class="games-inner">
           <h2 class="section-title">

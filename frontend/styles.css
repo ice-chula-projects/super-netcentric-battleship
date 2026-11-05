@@ -213,7 +213,6 @@ aside ul {
 
 .brand {
     color: #303f7d;
-    font-family: 'Courier New', monospace;
     font-size: 17px;
     font-weight: 900;
     letter-spacing: 0.5px;
@@ -268,17 +267,18 @@ aside ul {
 .dashboard {
     display: grid;
     grid-template-columns: 38% 62%;
-    min-height: calc(100vh - 54px);
+    min-height: calc(100vh - var(--header-height));
 }
 
 
 .games-panel {
-    padding: 10px 10px 10px 10px;
+    width: 100vw;
+    padding: var(--header-height, 0px) 10px 10px 10px;
     background: #a79bac;
 }
 
 .games-inner {
-    height: calc(100vh - 74px);
+    height: auto;
     min-height: 340px;
     padding: 14px 14px 10px;
     border-radius: 10px;

@@ -1,9 +1,9 @@
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
-import UserAvatar from './UserAvatar';
+import AuthenticationPopover from './AuthenticationPopover';
 
 export default class GameHeader extends HTMLElement {
-    private avatarIcon!: UserAvatar;
+    private authenticationPopover!: AuthenticationPopover;
     constructor() {
         super();
 
@@ -70,6 +70,10 @@ export default class GameHeader extends HTMLElement {
                     display: flex;
                 }
 
+                :host([variant="admin"]) .invisible-as-admin {
+                    display: none;
+                }
+
                 @media (max-width: 639px) {
                     .full-text {
                         display: none;
@@ -109,7 +113,7 @@ export default class GameHeader extends HTMLElement {
                 </section>
 
                 <section class="row">
-                    <div>
+                    <div class="invisible-as-admin">
                         <button
                             popovertarget="lobby-form"
                             id="current-game-id"
@@ -121,7 +125,7 @@ export default class GameHeader extends HTMLElement {
                         <lobby-screen id="lobby-form" popover></lobby-screen>
                     </div>
                     <button
-                        class="icon"
+                        class="icon invisible-as-admin"
                         id="chat-toggle"
                         type="button"
                         aria-label="Toggle chat"
@@ -141,43 +145,13 @@ export default class GameHeader extends HTMLElement {
                             ></path>
                         </svg>
                     </button>
-                    <div>
-                        <button
-                            type="button"
-                            class="avatar-button"
-                            popovertarget="username-form"
-                        >
-                            <user-avatar></user-avatar>
-                        </button>
-
-                        <form id="username-form" popover>
-                            <label for="new-username">Enter new username:</label><br />
-                            <input type="text" id="new-username" placeholder="Ex. Alice" required />
-                            <button type="submit" id="change-username-button" class="secondary">
-                                Change Username
-                            </button>
-                        </form>
-                    </div>
+                    <auth-popover></auth-popover>
                 </section>
             </header>
         `;
-        const usernameForm = shadow.querySelector<HTMLElement>('#username-form')!;
         const chatToggle = shadow.querySelector('#chat-toggle')!;
         const userSidebarToggle = shadow.querySelector<HTMLButtonElement>('#sidebar-toggle')!;
-
-        this.avatarIcon = shadow.querySelector('user-avatar')!;
-
-        usernameForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const username = shadow.querySelector<HTMLInputElement>('#new-username')!.value;
-            this.dispatchEvent(
-                new CustomEvent('change-username', {
-                    detail: { username },
-                    bubbles: true,
-                }),
-            );
-            usernameForm.hidePopover();
-        });
+        this.authenticationPopover = shadow.querySelector('auth-popover')!;
 
         chatToggle.addEventListener('click', () => {
             this.dispatchEvent(
@@ -218,11 +192,11 @@ export default class GameHeader extends HTMLElement {
     }
 
     get username(): string {
-        return this.avatarIcon.username;
+        return this.authenticationPopover.username;
     }
 
     set username(value: string) {
-        this.avatarIcon.username = value;
+        this.authenticationPopover.username = value;
     }
 
     get lobbyScreen(): LobbyScreen | null {

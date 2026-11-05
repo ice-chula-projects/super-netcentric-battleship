@@ -109,7 +109,7 @@ export default class UserSidebar extends HTMLElement {
                     gap: 0.75rem;
                 }
 
-                
+
 
                 .user-item {
                     display: flex;
@@ -273,6 +273,10 @@ export default class UserSidebar extends HTMLElement {
         this.layoutQuery.removeEventListener('change', this.handleLayoutChange);
     }
 
+    private isGuest(username: string): boolean {
+        return /^guest#\d{6}$/i.test(username);
+    }
+
     get isOpen(): boolean {
         return this._isOpen;
     }
@@ -294,11 +298,17 @@ export default class UserSidebar extends HTMLElement {
         return [...this._activeUsers];
     }
 
-    // Active users go away when they leave, but stay in the users panel
+    // Active users go away when they leave, but stay in the users panel if they are authenticated
     set activeUsers(value: string[]) {
         this._activeUsers = Array.isArray(value) ? [...new Set(value)] : [];
 
-        this._users = [...new Set([...this._users, ...this._activeUsers])];
+        // Keep only authenticated users in the persistent roster.
+        this._users = [
+            ...new Set([
+                ...this._users,
+                ...this._activeUsers.filter((username) => !this.isGuest(username)),
+            ]),
+        ].filter((username) => !this.isGuest(username));
 
         this.renderActiveUsers();
         this.renderUsers();
@@ -309,7 +319,10 @@ export default class UserSidebar extends HTMLElement {
     }
 
     set users(value: string[]) {
-        this._users = Array.isArray(value) ? [...value] : [];
+        this._users = Array.isArray(value)
+            ? [...new Set(value.filter((username) => !this.isGuest(username)))]
+            : [];
+
         this.renderUsers();
     }
 

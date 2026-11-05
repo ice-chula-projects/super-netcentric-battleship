@@ -9,9 +9,11 @@ import './components/ChatMessage';
 import './components/LobbyScreen';
 import './components/UserAvatar';
 import './components/UserSidebar';
+import './components/AuthenticationPopover';
 import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
 import UserSidebar from './components/UserSidebar';
+import LoginManager from './Game/LoginManager';
 
 console.log('index.ts loaded');
 //TODO: config
@@ -22,6 +24,7 @@ const url = 'ws://' + window.location.hostname + ':' + PORT;
 const webSocket = new WebSocket(url);
 const gameManager = new GameManager(webSocket);
 const lobbyManager = new LobbyManager(webSocket, gameManager);
+const loginManager = new LoginManager(webSocket);
 const camera = new Camera(document.getElementById('canvas') as HTMLCanvasElement, gameManager);
 
 //TODO: move none setup logic outside of index.ts
@@ -30,7 +33,7 @@ const chatSidebar = document.querySelector('chat-sidebar') as ChatSidebar;
 const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
 const userSidebar = document.querySelector<UserSidebar>('user-sidebar');
 
-let currentUser: { username: string; id: string };
+let currentUser: { username: string; id: string; isAdmin: boolean };
 webSocket.addEventListener('open', () => {
     console.log('connected');
     webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString());
@@ -53,18 +56,27 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
                 serverMessage.author.username === currentUser?.username,
             );
             break;
-        case ServerMessage.ServerMessageType.UserInfo:
-            if (serverMessage.userInfo.username === null || serverMessage.userInfo.id === null) {
-                return;
+        case ServerMessage.ServerMessageType.UserInfo: {
+            const userInfo = serverMessage.userInfo;
+
+            if (userInfo.username === null || userInfo.id === null) {
+                break;
             }
-            currentUser = serverMessage.userInfo as unknown as { username: string; id: string };
-            // game.playerId = serverMessage.userInfo.id;
-            header.username = currentUser.username;
-            if (!/guest\#\d\d\d\d\d\d/.test(currentUser.username)) {
-                alert(`Hello ${currentUser.username}`);
+
+            currentUser = {
+                username: userInfo.username,
+                id: userInfo.id,
+                isAdmin: userInfo.isAdmin
+            };
+
+            loginManager.handleUserInfo(currentUser);
+
+            if (!loginManager.isGuest) {
                 webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
             }
+
             break;
+        }
         case ServerMessage.ServerMessageType.ActiveUsersInfo:
             if (!userSidebar) {
                 break;
@@ -74,6 +86,7 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
             break;
         case ServerMessage.ServerMessageType.Error:
             alert(serverMessage.error);
+            loginManager.handleServerError(serverMessage.error);
             break;
     }
 });
