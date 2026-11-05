@@ -1,3 +1,4 @@
+import { GameSettingsPresetNames } from "../../../Game/GameSettings.js";
 import GameMessage from "../../../GameMessage.js";
 import { ClientMessageType } from "../../ClientMessageType.js";
 
@@ -7,6 +8,7 @@ export interface CreateLobbyMessage extends GameMessage{
     name: string;
     description: string;
     isPublic: boolean;
+    gameSettingsPreset: GameSettingsPresetNames;
 }
 
 export class CreateLobbyMessageBuilder implements CreateLobbyMessage{
@@ -16,6 +18,7 @@ export class CreateLobbyMessageBuilder implements CreateLobbyMessage{
     name: string = "Untitled Lobby";
     description: string = "";
     isPublic: boolean = true;
+    gameSettingsPreset: GameSettingsPresetNames = GameSettingsPresetNames.Classic; 
 
     setName(name: string){
         this.name = name;
@@ -29,6 +32,11 @@ export class CreateLobbyMessageBuilder implements CreateLobbyMessage{
 
     setIsPublic(isPublic: boolean){
         this.isPublic = isPublic;
+        return this;
+    }
+
+    setGameSettingsPreset(gameSettingsPreset: GameSettingsPresetNames){
+        this.gameSettingsPreset = gameSettingsPreset;
         return this;
     }
 

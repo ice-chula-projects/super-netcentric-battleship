@@ -64,7 +64,7 @@ export default class GameLobby{
         this.description = description;
     }
 
-    constructor(id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean){
+    constructor(id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean, gameSettingPreset: GameSettingsPresetNames){
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
@@ -73,7 +73,7 @@ export default class GameLobby{
         this.chatManager = chatManager;
         this.chatChannelId = chatManager.generateNewChannelId();
         this.chatManager.addChannel(this.chatChannelId);
-        this.gameSettings = GameSettingsPresets[GameSettingsPresetNames.Classic];
+        this.gameSettings = GameSettingsPresets[gameSettingPreset];
     }
 
     toLobbyInformationMessage(): LobbyInfoNotificationMessage{
