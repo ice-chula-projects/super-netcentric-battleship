@@ -150,7 +150,7 @@ export class GameManager extends EventTarget {
         }
     }
 
-    handleMatchStartNotificationMessage(message: MatchStartNotificationMessage){
+    handleMatchStartNotificationMessage(_message: MatchStartNotificationMessage){
         this.startNewMatch();
     }
 

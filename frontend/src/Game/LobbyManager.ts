@@ -141,7 +141,7 @@ export class LobbyManager extends EventTarget {
         alert(gameEndNotificationMessage.reason);
     }
 
-    handleLobbyExitNotificationMessage(message: LobbyExitNotificationMessage){
+    handleLobbyExitNotificationMessage(_message: LobbyExitNotificationMessage){
         this.currentLobbyInfo = null;
         this.notifyStateChanged();
     }

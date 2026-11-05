@@ -7,6 +7,7 @@ import "./components/ChatSidebar";
 import "./components/GameHeader";
 import "./components/ChatMessage";
 import "./components/LobbyScreen";
+import "./admin"
 import type ChatSidebar from "./components/ChatSidebar";
 import GameHeader from "./components/GameHeader";
 

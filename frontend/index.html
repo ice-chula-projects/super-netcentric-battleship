@@ -15,7 +15,39 @@
     <div id="app">
         <game-header></game-header>
         <chat-sidebar></chat-sidebar>
-        <main style="padding-top: var(--header-height); gap: 2rem">
+        <main class="dashboard" style="padding-top: var(--header-height); gap: 2rem">
+              <section class="users-panel">
+                <h1 class="section-title">
+                  <span class="users-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.7">
+                      <path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M22 20v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </span>
+                  Users
+                </h1>
+                <div id="users-list" class="users-list"></div>
+              </section>
+
+              <section class="games-panel">
+                <div class="games-inner">
+                  <h2 class="section-title">
+                    <span class="games-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none"
+                           stroke="currentColor" stroke-width="1.7">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M8 9h6M11 6v6M16 15h.01M18 17h.01"/>
+                      </svg>
+                    </span>
+                    Games
+                  </h2>
+                  <div class="games-scroll">
+                    <div id="games-list" class="games-list"></div>
+                  </div>
+                </div>
+              </section>
             <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
         </main>
         <section>
