@@ -27,24 +27,24 @@ export default class Camera {
     gameManager: GameManager;
 
     tileColors: Record<BoardTileState, string> = {
-            [BoardTileState.Hidden]: "#5093d4",
+            [BoardTileState.Hidden]: "#ffffff50",
             [BoardTileState.DamagedTile]: "red",
             [BoardTileState.DestoyedTile]: "darkred",
-            [BoardTileState.DestroyedShip]: "darkblue",
+            [BoardTileState.DestroyedShip]: "#333355",
             [BoardTileState.Empty]: "lightgrey",
             [BoardTileState.Ship]: "darkgrey"
         }
     highlightColor: string = "#ffffff55";
-    attackingShipHighlightColor: string = "#ff111155";
+    attackingShipHighlightColor: string = "#67676755";
     backgroundImage: HTMLImageElement;  
 
-    strokeColor: string = 'black';
+    strokeColor: string = 'white';
     backgroundColor: string = '#5093d4';
     textColor: string = 'white';
-    textSize: number = 12;
+    textSize: number = 30;
     victoryTextSize: number = 60;
-    boardSize: number = 235;
-    boardMargin: number = 10;
+    boardSize: number = 330;
+    boardMargin: number = 30;
 
     selectedBoard: Player | null = null;
     selectedBoardCoordinates: Coordinate = {
@@ -84,12 +84,7 @@ export default class Camera {
         this.backgroundImage = new Image();
         this.backgroundImage.onload = () => console.log("background loaded");
         this.backgroundImage.onerror = () => console.error("background failed to load:", this.backgroundImage.src);
-        this.backgroundImage.src = "/pic/background.png";
-
-        this.backgroundImage = new Image();
-        this.backgroundImage.onload = () => console.log("background loaded");
-        this.backgroundImage.onerror = () => console.error("background failed to load:", this.backgroundImage.src);
-        this.backgroundImage.src = "/pic/background.png";
+        this.backgroundImage.src = "/pic/background.jpg";
 
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
         this.canvas.addEventListener('mousedown', this.handleMouseClick.bind(this));
@@ -284,10 +279,9 @@ export default class Camera {
         for (let i = 0; i < boardSize; i++) {
             for (let j = 0; j < boardSize; j++) {
                 const tile = board.getTile(i, j);
-                if (tile.state != BoardTileState.Hidden && tile.state != BoardTileState.Empty) {
-                    context.fillStyle = this.tileColors[tile.state];
-                    context.fillRect(currentX, currentY, deltaX, deltaY);
-                }
+                context.fillStyle = this.tileColors[tile.state];
+                context.fillRect(currentX, currentY, deltaX, deltaY);
+
                 context.strokeRect(currentX, currentY, deltaX, deltaY);
 
                 if (tile.health != null) {
