@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import GameLobbyManager from "./Game/GameLobbyManager.js";
 import Database from "./Database/Database.js";
 import { JsonDatabase } from "./Database/JsonDatabase.js";
+import { RequestAllGameLobbiesMessage } from "../../../shared/src/ts/ClientMessage/Admin/RequestAllGameLobbiesMessage.js";
+import { ResetGameLobbyMessage } from "../../../shared/src/ts/ClientMessage/Admin/ResetGameLobbyMessage.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
@@ -112,10 +114,16 @@ export default class GameServer {
             case ClientMessageType.Login:
                 response = await this.handleLoginMessage(message, websocket, webSocketId);
             break;
-            
             case ClientMessageType.Register:
                 response = await this.handleRegisterMessage(message, websocket, webSocketId);
             break;
+            case ClientMessageType.RequestAllGameLobbiesMessage:
+                response = this.handleRequestAllGameLobbiesMessage(message, user);
+            break;
+            case ClientMessageType.ResetGameLobbyMessage:
+                response = this.handleResetGameLobbyMessage(message, user);
+            break;
+            
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
         }
@@ -288,5 +296,32 @@ export default class GameServer {
         webSocketId: string
     ): Promise<ServerMessage> {
         return this.userManager.login(webSocket, webSocketId, message.username, message.password);
+    }
+
+    handleRequestAllGameLobbiesMessage(message: RequestAllGameLobbiesMessage, user: ActiveUser): ServerMessage | null{
+        if(!user.isAdmin) return new ServerErrorMessageBuilder().setError("Only admin accounts can request all game lobbies");
+        const lobbies = this.gameLobbyManager.getLobbies();
+        const totalPublicLobbies = lobbies.length;
+        const paginatedLobbies = this.paginate(lobbies, message.page, message.lobbiesPerPage);
+
+        return new PublicLobbiesInfoMessageBuilder()
+        .setLobbies(paginatedLobbies.pagninatedMembers.map(x=>{
+            return {
+                lobbyCode: x.id,
+                name: x.name,
+                description: x.description,
+                memberCount: x.members.length
+            }
+        }))
+        .setPage(paginatedLobbies.page)
+        .setTotalLobbies(totalPublicLobbies)
+        .setlobbiesPerPage(paginatedLobbies.membersPerPage);
+    }
+
+    handleResetGameLobbyMessage(message: ResetGameLobbyMessage, user: ActiveUser): ServerMessage | null{
+        if(!user.isAdmin) return new ServerErrorMessageBuilder().setError("Only admin accounts can reset game lobbies");
+        const lobby = this.gameLobbyManager.getLobby(message.lobbyCode);
+        if(lobby.gameInProgress) lobby.stopGame("an admin has reset the game");
+        return null;
     }
 }
