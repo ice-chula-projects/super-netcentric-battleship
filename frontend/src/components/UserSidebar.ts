@@ -60,6 +60,14 @@ export default class UserSidebar extends HTMLElement {
                     gap: 1rem;
                 }
 
+                .refresh svg {
+                    transition: transform 0.3s ease;
+                }
+
+                .refresh:active svg {
+                    transform: rotate(180deg);
+                }
+
                 .section-heading {
                     display: flex;
                     justify-content: space-between;
@@ -108,8 +116,6 @@ export default class UserSidebar extends HTMLElement {
                     flex-direction: column;
                     gap: 0.75rem;
                 }
-
-
 
                 .user-item {
                     display: flex;
@@ -203,21 +209,14 @@ export default class UserSidebar extends HTMLElement {
                             <button
                                 type="button"
                                 id="refresh-active-users-button"
-                                class="icon"
+                                class="icon refresh"
                                 aria-label="Refresh active users"
                                 title="Refresh active users"
                             >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
-                                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 4v6h-6"></path>
+                                    <path d="M1 20v-6h6"></path>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                                 </svg>
                             </button>
                         </div>

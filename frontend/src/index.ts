@@ -14,7 +14,7 @@ import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
 import UserSidebar from './components/UserSidebar';
 import LoginManager from './Game/LoginManager';
-import { updateGameStateButton } from "./Game/gameStateButton"
+import { updateGameStateButton } from './Game/gameStateButton';
 
 console.log('index.ts loaded');
 //TODO: config
@@ -67,7 +67,7 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
             currentUser = {
                 username: userInfo.username,
                 id: userInfo.id,
-                isAdmin: userInfo.isAdmin
+                isAdmin: userInfo.isAdmin,
             };
 
             loginManager.handleUserInfo(currentUser);
@@ -137,4 +137,4 @@ document.addEventListener('refresh-active-users', () => {
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
 });
 
-gameManager.addEventListener("state-change", () => updateGameStateButton(gameManager))
+gameManager.addEventListener('state-change', () => updateGameStateButton(gameManager));
