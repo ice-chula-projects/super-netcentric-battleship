@@ -100,7 +100,8 @@ export default class GameLobby{
         .setGameSettings(this.gameSettings)
         .setChatChannelId(this.chatChannelId)
         .setConnectedUsers(connectedUsers)
-        .setIsHost(this.hostUser == user);
+        .setIsHost(this.hostUser == user)
+        .setIsReady(this.isReady);
     }
 
     addUser(user: ActiveUser){
