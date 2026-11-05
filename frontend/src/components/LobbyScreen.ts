@@ -271,7 +271,7 @@ export default class LobbyScreen extends HTMLElement {
                                         <input id="public-checkbox" type="checkbox" checked />
                                     </div>
                                     <br />
-                                    <button type="submit">Create Lobby</button>
+                                    <button class="secondary">Create Lobby</button>
                                 </div>
                             </form>
                         </div>
@@ -282,7 +282,7 @@ export default class LobbyScreen extends HTMLElement {
                             <form id="join-lobby-form">
                                 <label for="join-code">Lobby Code</label>
                                 <input id="join-code" required placeholder="Enter lobby code" />
-                                <button type="submit" style="margin-top: 0.5rem">Join Lobby</button>
+                                <button type="submit" class="secondary" style="margin-top: 0.5rem">Join Lobby</button>
                             </form>
                         </div>
                     </div>
@@ -304,9 +304,9 @@ export default class LobbyScreen extends HTMLElement {
                         </div>
 
                         <div class="pagination">
-                            <button id="previous-page" disabled>Previous</button>
+                            <button id="previous-page" class="secondary" disabled>Previous</button>
                             <span id="page-label">Page 0 of 0</span>
-                            <button id="next-page" disabled>Next</button>
+                            <button id="next-page" class="secondary" disabled>Next</button>
                         </div>
                     </section>
                 </section>
@@ -319,10 +319,10 @@ export default class LobbyScreen extends HTMLElement {
                     <h3>Players</h3>
                     <div id="player-list"></div>
 
-                    <button id="ready-button">Ready</button>
-                    <button id="start-button" class="hidden">Start Game</button>
-                    <button id="bot-button" class="hidden">Play vs. Bot</button>
-                    <button id="leave-button">Leave Lobby</button>
+                    <button id="ready-button" class="secondary">Ready</button>
+                    <button id="start-button" class="hidden secondary">Start Game</button>
+                    <button id="bot-button" class="hidden secondary">Play vs. Mallory 🤖</button>
+                    <button id="leave-button" class="secondary">Leave Lobby</button>
                 </section>
             </main>
         `;
@@ -346,7 +346,9 @@ export default class LobbyScreen extends HTMLElement {
         // Refresh lobbies event handler
         this.refreshLobbiesBtn.addEventListener('click', () => {
             if (this.lobbyManager) {
-                this.lobbyManager.requestPublicLobbies(this.lobbyManager.currentPublicLobbyPage ?? 0);
+                this.lobbyManager.requestPublicLobbies(
+                    this.lobbyManager.currentPublicLobbyPage ?? 0,
+                );
             }
         });
 
@@ -359,7 +361,9 @@ export default class LobbyScreen extends HTMLElement {
                 this.nameInput.value.trim(),
                 this.descriptionInput.value.trim(),
                 this.publicCheckbox.checked,
-                this.gameMode == "classic" ? GameSettingsPresetNames.Classic : GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray
+                this.gameMode == 'classic'
+                    ? GameSettingsPresetNames.Classic
+                    : GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray,
             );
         });
 
@@ -401,7 +405,6 @@ export default class LobbyScreen extends HTMLElement {
         shadow.querySelector('#bot-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
             this.lobbyManager.startAIGame();
-            
         });
 
         shadow.querySelector('#leave-button')!.addEventListener('click', () => {

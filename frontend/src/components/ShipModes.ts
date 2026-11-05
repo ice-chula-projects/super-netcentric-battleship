@@ -189,7 +189,7 @@ export default class ShipModes extends HTMLElement {
     private handleAllowedShips = (event: Event) => {
         const customEvent = event as CustomEvent<ShipType[]>;
         const allowedTypes = new Set(customEvent.detail);
-
+        
         this.menu.querySelectorAll<HTMLButtonElement>('.ship-modes-option').forEach((option) => {
             const modeId = Number(option.dataset.mode);
 
