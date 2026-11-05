@@ -134,6 +134,7 @@ export class LobbyManager{
 
     handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
         this.gameManager.unInitializeGame();
+        alert(gameEndNotificationMessage.reason);
     }
 
     handleLobbyExitNotificationMessage(message: LobbyExitNotificationMessage){
