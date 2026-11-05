@@ -118,6 +118,10 @@ export default class Camera {
         this.drawBoards();
         this.drawScoreText();
 
+        if (this.gameManager.currentGameState == GameState.ShipPlacement){
+            this.drawFleetPointsRemainingText();
+        }
+
         if (this.gameManager.currentGameState == GameState.Battle) {
             this.drawTimerText();
             this.drawTurnText();
@@ -431,7 +435,7 @@ export default class Camera {
         context.fillText(
             `${remainingTime.toFixed(this.timerTextRoundingDecimalPlaces)}s`,
             this.canvas.width / 2,
-            this.textSize * 2,
+            this.textSize * 2 + this.boardMargin,
         );
     }
 
@@ -475,7 +479,17 @@ export default class Camera {
         context.fillStyle = this.textColor;
         context.font = `${this.textSize}px Arial`;
         context.textAlign = 'center';
-        context.fillText(scoreText, this.canvas.width / 2, this.textSize);
+        context.fillText(scoreText, this.canvas.width / 2, this.textSize + this.boardMargin);
+    }
+
+    drawFleetPointsRemainingText(){
+        const fleetPointsRemainingText = `${this.gameManager.currentGameSettings.maxFleetValue - this.gameManager.fleetValue} Points Remaining`;
+
+        const context = this.canvas.getContext('2d');
+        context.fillStyle = this.textColor;
+        context.font = `${this.textSize}px Arial`;
+        context.textAlign = 'left';
+        context.fillText(fleetPointsRemainingText, this.boardMargin, this.canvas.height - this.boardMargin);    
     }
 
     clear() {
