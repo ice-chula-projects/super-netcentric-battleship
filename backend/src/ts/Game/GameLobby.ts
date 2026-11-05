@@ -130,7 +130,10 @@ export default class GameLobby{
 
         user.socket.send(new LobbyExitNotificationMessageBuilder().toJsonString());
 
-        if(this.members.length <= 0) this.deleteLobby();
+        if(this.members.length <= 0){
+            this.deleteLobby();
+            return;
+        }
 
         // migrate host if the user was the host
         if(user == this.hostUser){
