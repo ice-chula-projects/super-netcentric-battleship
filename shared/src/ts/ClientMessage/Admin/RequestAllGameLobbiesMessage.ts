@@ -2,13 +2,13 @@ import GameMessage from "../../GameMessage.js";
 import { ClientMessageType } from "../ClientMessageType.js";
 
 export interface RequestAllGameLobbiesMessage extends GameMessage{
-    readonly type: ClientMessageType.RequestAllGameLobbiesMessage;
+    readonly type: ClientMessageType.RequestAllGameLobbies;
     page: number,
     lobbiesPerPage: number | null
 }
 
 export class RequestAllGameLobbiesMessageBuilder implements RequestAllGameLobbiesMessage{
-    readonly type = ClientMessageType.RequestAllGameLobbiesMessage;
+    readonly type = ClientMessageType.RequestAllGameLobbies;
     readonly timestamp: number = Date.now();
     page: number = 0;
     lobbiesPerPage: number | null = null;

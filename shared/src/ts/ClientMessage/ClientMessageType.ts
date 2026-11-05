@@ -18,6 +18,7 @@ export enum ClientMessageType{
     ExitLobby = "exitLobby",
     Login = "login",
     Register = "register",
-    RequestAllGameLobbiesMessage = "requestAllGameLobbies",
-    ResetGameLobbyMessage = "resetGameLobbyMessage"
+    RequestAllGameLobbies = "requestAllGameLobbies",
+    ResetGameLobby = "resetGameLobbyMessage",
+    StartAIGame = "startAIGame"
 }
