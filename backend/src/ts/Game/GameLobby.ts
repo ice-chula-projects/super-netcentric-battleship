@@ -79,7 +79,7 @@ export default class GameLobby{
         this.gameSettings = GameSettingsPresets[gameSettingPreset];
     }
 
-    toLobbyInformationMessage(): LobbyInfoNotificationMessage{
+    toLobbyInformationMessage(user: ActiveUser): LobbyInfoNotificationMessage{
         const connectedUsers: LobbyPlayerInformation[] = []
 
         for(const member of this.members){
@@ -99,7 +99,8 @@ export default class GameLobby{
         .setIsPublic(this.isPublic)
         .setGameSettings(this.gameSettings)
         .setChatChannelId(this.chatChannelId)
-        .setConnectedUsers(connectedUsers);
+        .setConnectedUsers(connectedUsers)
+        .setIsHost(this.hostUser == user);
     }
 
     addUser(user: ActiveUser){
@@ -167,10 +168,9 @@ export default class GameLobby{
     }
 
     notifyLobbyInformation(){
-        const message = this.toLobbyInformationMessage();
-        const jsonString = message.toJsonString();
         for(const member of this.members){
-            member.user.socket.send(jsonString);
+            const message = this.toLobbyInformationMessage(member.user);
+            member.user.socket.send(message.toJsonString());
         }
     }
 
