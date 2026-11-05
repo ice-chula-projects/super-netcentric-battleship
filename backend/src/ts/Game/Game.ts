@@ -105,6 +105,7 @@ export default class Game{
         if(this.gameState != GameState.ShipPlacement) throw new Error("Cannot initialize fleet in non ship placement state");
         if(this.fleetInitialized[player]) throw new Error("Fleet already initialized");
         if(fleet.length <= 0) throw new Error("Cannot initialize empty fleet");
+        if(fleet.some(x => !this.gameSettings.allowedShipTypes.includes(x.shipType))) throw new Error("Fleet contains illegal shiptype")
 
         const fleetValue = fleet.map(x => Ship.fromType(x.shipType).value).reduce((a,b) => a + b);
         if(fleetValue > this.gameSettings.maxFleetValue) throw new Error("Fleet value exceeds maximum fleet value");
