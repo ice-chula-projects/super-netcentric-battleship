@@ -267,8 +267,8 @@ export default class Game{
 
     resetBoards(): void{
         this.boards = {
-            [Player.Player1]: new Board(this, this.gameSettings.boardSize),
-            [Player.Player2]: new Board(this, this.gameSettings.boardSize)
+            [Player.Player1]: new Board(this.gameSettings.boardSize),
+            [Player.Player2]: new Board(this.gameSettings.boardSize)
         };
     }
 

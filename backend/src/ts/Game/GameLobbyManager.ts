@@ -63,6 +63,11 @@ export default class GameLobbyManager{
         lobby.requestGameStart(user);
     }
 
+    requestAIGameStart(user: ActiveUser){
+        const lobby = this.getUsersLobby(user);
+        lobby.requestAIGameStart(user);
+    }
+
     notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: ActiveUser){
         const lobby = this.getUsersLobby(actingUser);
         lobby.notifyClientActionMessage(clientActionMessage, actingUser);

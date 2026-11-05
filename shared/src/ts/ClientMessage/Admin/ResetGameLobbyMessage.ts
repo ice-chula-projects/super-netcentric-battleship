@@ -2,12 +2,12 @@ import GameMessage from "../../GameMessage.js";
 import { ClientMessageType } from "../ClientMessageType.js";
 
 export interface ResetGameLobbyMessage extends GameMessage{
-    readonly type: ClientMessageType.ResetGameLobbyMessage;
+    readonly type: ClientMessageType.ResetGameLobby;
     lobbyCode: string
 }
 
 export class ResetGameLobbyMessageBuilder implements ResetGameLobbyMessage{
-    readonly type = ClientMessageType.ResetGameLobbyMessage;
+    readonly type = ClientMessageType.ResetGameLobby;
     readonly timestamp: number = Date.now();
     lobbyCode: string = "";
 

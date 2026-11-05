@@ -55,7 +55,6 @@ export default class Board{
     readonly size: number;
     readonly board: BoardTile[][];
     readonly ships: Ship[] = [];
-    readonly game: Game;
 
     get alive(): boolean{
         return this.ships.some((ship) => ship.alive);
@@ -65,8 +64,7 @@ export default class Board{
         return this.ships.map(x => x.value).reduce((a,b) => a + b);
     }
 
-    constructor(game: Game, size: number){
-        this.game = game;
+    constructor(size: number){
         this.size = size;
 
         this.board = [];

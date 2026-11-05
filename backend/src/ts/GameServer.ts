@@ -96,6 +96,9 @@ export default class GameServer {
             case ClientMessageType.StartGame:
                 response = this.handleStartGameMessage(user);
             break;
+            case ClientMessageType.StartAIGame:
+                response = this.handleStartAIGameMessage(user);
+            break;
             case ClientMessageType.UpdateReadyState:
                 response = this.handleUpdateReadyStateMessage(message, user);
             break;
@@ -117,10 +120,10 @@ export default class GameServer {
             case ClientMessageType.Register:
                 response = await this.handleRegisterMessage(message, websocket, webSocketId);
             break;
-            case ClientMessageType.RequestAllGameLobbiesMessage:
+            case ClientMessageType.RequestAllGameLobbies:
                 response = this.handleRequestAllGameLobbiesMessage(message, user);
             break;
-            case ClientMessageType.ResetGameLobbyMessage:
+            case ClientMessageType.ResetGameLobby:
                 response = this.handleResetGameLobbyMessage(message, user);
             break;
             
@@ -129,6 +132,7 @@ export default class GameServer {
         }
 
         } catch(error){
+            console.error(error)
             if (error instanceof Error){
                 response = new ServerErrorMessageBuilder().setError(error.message);
             } else {
@@ -246,6 +250,11 @@ export default class GameServer {
     
     handleStartGameMessage(user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.requestGameStart(user);
+        return null;
+    }
+
+    handleStartAIGameMessage(user: ActiveUser): ServerMessage | null{
+        this.gameLobbyManager.requestAIGameStart(user);
         return null;
     }
 

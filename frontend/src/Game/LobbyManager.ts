@@ -1,4 +1,4 @@
-import { CreateLobbyMessageBuilder, ExitLobbyMessageBuilder, JoinLobbyMessageBuilder, ModifyGameSettingsMessageBuilder, RequestPublicLobbiesMessageBuilder, StartGameMessageBuilder, UpdateReadyStateMessageBuilder } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import { CreateLobbyMessageBuilder, ExitLobbyMessageBuilder, JoinLobbyMessageBuilder, ModifyGameSettingsMessageBuilder, RequestPublicLobbiesMessageBuilder, StartAIGameMessageBuilder, StartGameMessageBuilder, UpdateReadyStateMessageBuilder } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
 import { GameEndNotificationMessage, GameStartNotificationMessage, LobbyExitNotificationMessage, LobbyInfoNotificationMessage, PublicLobbiesInfoMessage, PublicLobbyInformation, ServerMessage, ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { GameManager } from "./GameManager";
@@ -81,7 +81,13 @@ export class LobbyManager{
     }
 
     startGame(){
-        const message = new StartGameMessageBuilder()
+        const message = new StartGameMessageBuilder();
+        
+        this.webSocket.send(message.toJsonString());
+    }
+
+    startAIGame(){
+        const message = new StartAIGameMessageBuilder();
         
         this.webSocket.send(message.toJsonString());
     }

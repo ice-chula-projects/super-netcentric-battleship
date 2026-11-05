@@ -5,10 +5,16 @@ import Game from "./Game.js";
 import { GameEndNotificationMessageBuilder, GameStartNotificationMessageBuilder, LobbyExitNotificationMessageBuilder, LobbyInfoNotificationMessage, LobbyInfoNotificationMessageBuilder, LobbyPlayerInformation } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
+import AIControlledGame from "./AI/AIControlledGame.js";
 
 export interface LobbyMember{
     user: ActiveUser,
     ready: boolean
+}
+
+export enum GameType {
+    Multiplayer,
+    AI
 }
 
 export default class GameLobby{
@@ -22,7 +28,7 @@ export default class GameLobby{
     name: string = "Untitled Lobby";
     description: string = "";
     gameSettings: GameSettings;
-    activeGame: Game | null = null;
+    activeGame: Game | AIControlledGame |null = null;
 
     get isFull(): boolean{
         return this.members.length >= 2;
@@ -34,6 +40,16 @@ export default class GameLobby{
 
     get gameInProgress(): boolean{
         return this.activeGame != null;
+    }
+
+    get gameType(): GameType | null{
+        if(!this.gameInProgress) return null;
+        if(this.activeGame instanceof Game) return GameType.Multiplayer
+        else return GameType.AI
+    }
+
+    get isAIGame(): boolean{
+        return this.gameType == GameType.AI;
     }
 
     setPublic(isPublic: boolean){
@@ -168,6 +184,12 @@ export default class GameLobby{
         this.startGame();
     }
 
+    requestAIGameStart(requester: ActiveUser){
+        if(requester != this.hostUser) throw new Error("Only the host can start the game");
+
+        this.startAIGame();
+    }
+
     notifyClientActionMessage(clientActionMessage: ClientActionMessage, actingUser: ActiveUser){
         if(!this.gameInProgress) throw new Error("Cannot take actions while game is not in progress");
         this.activeGame?.takeAction(clientActionMessage, this.getPlayerIdFromUser(actingUser))
@@ -204,6 +226,16 @@ export default class GameLobby{
         player2User.socket.send(new GameStartNotificationMessageBuilder().setPlayerId(Player.Player2).toJsonString());
 
         this.activeGame = new Game(this.gameSettings, player1User, player2User);
+    }
+
+    startAIGame(){
+        if(this.members.length != 1) throw new Error("Cannot start AI game in lobby with more than 1 member");
+        if(this.gameInProgress) throw new Error("Cannot start a new game while game is already in progess");
+
+        const user = this.members[0].user;
+        user.socket.send(new GameStartNotificationMessageBuilder().setPlayerId(Player.Player1).toJsonString());
+        
+        this.activeGame = new AIControlledGame(this.gameSettings, user);
     }
     
     stopGame(reason: string){
