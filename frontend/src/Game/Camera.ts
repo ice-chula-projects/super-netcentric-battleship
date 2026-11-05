@@ -30,8 +30,8 @@ export default class Camera {
             [BoardTileState.Empty]: "lightgrey",
             [BoardTileState.Ship]: "darkgrey"
         }
-    highlightColor: string = "#ffffff55"
-    attackingShipHighlightColor: string = "#ff111155"
+    highlightColor: string = "#ffffff55";
+    attackingShipHighlightColor: string = "#ff111155";
     backgroundImage: HTMLImageElement;  
 
     strokeColor: string = "black";
