@@ -332,6 +332,7 @@ export default class LobbyScreen extends HTMLElement {
 
                     <button id="ready-button">Ready</button>
                     <button id="start-button" class="hidden">Start Game</button>
+                    <button id="bot-button" class="hidden">Play vs. Bot</button>
                     <button id="leave-button">Leave Lobby</button>
                 </section>
             </main>
@@ -404,6 +405,16 @@ export default class LobbyScreen extends HTMLElement {
         shadow.querySelector('#start-button')!.addEventListener('click', () => {
             if (!this.lobbyManager) return;
             this.lobbyManager.startGame();
+        });
+
+        // Play vs Bot handler
+        shadow.querySelector('#bot-button')!.addEventListener('click', () => {
+            if (!this.lobbyManager) return;
+            if ('startBotGame' in this.lobbyManager && typeof (this.lobbyManager as any).startBotGame === 'function') {
+                (this.lobbyManager as any).startBotGame();
+            } else {
+                this.lobbyManager.startGame();
+            }
         });
 
         shadow.querySelector('#leave-button')!.addEventListener('click', () => {
@@ -545,6 +556,7 @@ export default class LobbyScreen extends HTMLElement {
         const hostPlayer = players.find((player) => player.isHost);
         const readyButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#ready-button');
         const startButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#start-button');
+        const botButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#bot-button');
 
         if (readyButton) {
             readyButton.textContent = this.isLocalPlayerReady ? 'Unready' : 'Ready';
@@ -552,6 +564,11 @@ export default class LobbyScreen extends HTMLElement {
 
         if (startButton) {
             startButton.classList.toggle('hidden', !hostPlayer);
+        }
+
+        // Show 'Play vs Bot' only if the current user is host and no other players are in the lobby
+        if (botButton) {
+            botButton.classList.toggle('hidden', !hostPlayer || players.length > 1);
         }
     }
 
