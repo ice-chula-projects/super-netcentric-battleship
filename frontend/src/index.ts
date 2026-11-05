@@ -7,9 +7,11 @@ import './components/ChatSidebar';
 import './components/GameHeader';
 import './components/ChatMessage';
 import './components/LobbyScreen';
-import './components/UserAvatar'
+import './components/UserAvatar';
+import './components/UserSidebar';
 import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
+import UserSidebar from './components/UserSidebar';
 
 console.log('index.ts loaded');
 //TODO: config
@@ -25,12 +27,15 @@ const camera = new Camera(document.getElementById('canvas') as HTMLCanvasElement
 //TODO: move none setup logic outside of index.ts
 const header = document.querySelector('game-header') as GameHeader;
 const chatSidebar = document.querySelector('chat-sidebar') as ChatSidebar;
+const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
+const userSidebar = document.querySelector<UserSidebar>('user-sidebar');
 
 let currentUser: { username: string; id: string };
 webSocket.addEventListener('open', () => {
     console.log('connected');
     webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString());
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
+    lobbyScreen!.manager = lobbyManager;
     lobbyManager.requestPublicLobbies(0);
 });
 webSocket.addEventListener('close', () => {
@@ -41,14 +46,12 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
     console.log(serverMessage);
     switch (serverMessage.type) {
         case ServerMessage.ServerMessageType.ChatMessageNotification:
-        case ServerMessage.ServerMessageType.ChatMessageNotification:
             chatSidebar.addMessage(
                 serverMessage.author,
                 new Date(serverMessage.timestamp),
                 serverMessage.message,
                 serverMessage.author.username === currentUser?.username,
             );
-            break;
             break;
         case ServerMessage.ServerMessageType.UserInfo:
             if (serverMessage.userInfo.username === null || serverMessage.userInfo.id === null) {
@@ -63,16 +66,11 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
             }
             break;
         case ServerMessage.ServerMessageType.ActiveUsersInfo:
-            const activeUsers = document.querySelector('#active-users');
-            if (activeUsers === null) {
+            if (!userSidebar) {
                 break;
             }
-            activeUsers.innerHTML = '';
-            for (const user of serverMessage.activeUsers) {
-                const userElement = document.createElement('li');
-                userElement.innerHTML = user.username;
-                activeUsers.appendChild(userElement);
-            }
+
+            userSidebar.activeUsers = serverMessage.activeUsers.map((user) => user.username);
             break;
         case ServerMessage.ServerMessageType.Error:
             alert(serverMessage.error);
@@ -121,9 +119,6 @@ header?.addEventListener('change-username', (event) => {
     );
 });
 
-document.querySelector('#refresh-active-users-button')?.addEventListener('click', () => {
+document.addEventListener('refresh-active-users', () => {
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
 });
-
-const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
-lobbyScreen!.manager = lobbyManager;

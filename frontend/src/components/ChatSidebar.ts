@@ -187,7 +187,7 @@ export default class ChatSidebar extends HTMLElement {
                 }
             </style>
 
-            <aside>
+            <aside id="chat-sidebar">
                 <div class="chat-header">
                     <h2 class="space-mono-bold">Global Chat</h2>
                 </div>

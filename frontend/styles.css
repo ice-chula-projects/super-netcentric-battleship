@@ -342,14 +342,6 @@ aside ul {
     font-weight: 700;
 }
 
-.user-name {
-    font-family: 'Courier New', monospace;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    overflow-wrap: anywhere;
-}
-
 .user-id {
     margin-top: 1px;
     color: #7b7c88;

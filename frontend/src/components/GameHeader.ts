@@ -38,7 +38,7 @@ export default class GameHeader extends HTMLElement {
                     box-sizing: border-box;
                 }
 
-                .right {
+                .row {
                     display: flex;
                     align-items: center;
                     gap: 1rem;
@@ -82,12 +82,33 @@ export default class GameHeader extends HTMLElement {
             </style>
 
             <header class="flex-space">
-                <h1>
-                    <span class="full-text space-mono-bold">Ship Ship Hooray!</span>
-                    <span class="mobile-text space-mono-bold">SSH!</span>
-                </h1>
+                <section class="row">
+                    <button
+                        class="icon"
+                        id="sidebar-toggle"
+                        type="button"
+                        aria-label="Toggle user sidebar"
+                        aria-controls="user-sidebar"
+                        aria-expanded="true"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                    </button>
+                    <h1>
+                        <span class="full-text space-mono-bold">Ship Ship Hooray!</span>
+                        <span class="mobile-text space-mono-bold">SSH!</span>
+                    </h1>
+                </section>
 
-                <div class="right">
+                <section class="row">
                     <div>
                         <button
                             popovertarget="lobby-form"
@@ -104,7 +125,7 @@ export default class GameHeader extends HTMLElement {
                         id="chat-toggle"
                         type="button"
                         aria-label="Toggle chat"
-                        aria-controls="sidebar"
+                        aria-controls="chat-sidebar"
                         aria-expanded="true"
                     >
                         <svg
@@ -137,11 +158,12 @@ export default class GameHeader extends HTMLElement {
                             </button>
                         </form>
                     </div>
-                </div>
+                </section>
             </header>
         `;
         const usernameForm = shadow.querySelector<HTMLElement>('#username-form')!;
         const chatToggle = shadow.querySelector('#chat-toggle')!;
+        const userSidebarToggle = shadow.querySelector<HTMLButtonElement>('#sidebar-toggle')!;
 
         this.avatarIcon = shadow.querySelector('user-avatar')!;
 
@@ -165,9 +187,23 @@ export default class GameHeader extends HTMLElement {
             );
         });
 
+        userSidebarToggle.addEventListener('click', () => {
+            this.dispatchEvent(
+                new CustomEvent('user-sidebar-toggle', {
+                    bubbles: true,
+                }),
+            );
+        });
+
         document.addEventListener('sidebar-state-change', (event) => {
             const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
             chatToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        document.addEventListener('user-sidebar-state-change', (event) => {
+            const { isOpen } = (event as CustomEvent<{ isOpen: boolean }>).detail;
+
+            userSidebarToggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         const header = shadow.querySelector('header')!;
