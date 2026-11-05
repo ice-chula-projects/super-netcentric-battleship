@@ -1,0 +1,251 @@
+/* =========================================
+   SHIP MODES - MAIN COMPONENT
+========================================= */
+
+ship-modes {
+    display: block;
+    position: relative;
+    z-index: 100;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.ship-modes-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.ship-modes-dropdown {
+    position: relative;
+    z-index: 100;
+}
+
+/* =========================================
+   DROPDOWN BUTTON
+========================================= */
+
+.ship-modes-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    width: 150px;
+    min-width: 0;
+    height: 32px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #94a3b8;
+    border-radius: 7px;
+
+    color: #1e293b;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ship-modes-trigger:hover {
+    border-color: #2563eb;
+    background: #f8fafc;
+}
+
+.ship-modes-trigger:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.ship-modes-trigger[aria-expanded='true'] {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+.ship-modes-selected {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.ship-modes-arrow {
+    flex-shrink: 0;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.ship-modes-trigger[aria-expanded='true'] .ship-modes-arrow {
+    transform: rotate(180deg);
+}
+
+/* =========================================
+   DROPDOWN MENU
+========================================= */
+
+.ship-modes-menu {
+    display: none;
+    position: absolute;
+
+    top: calc(100% + 6px);
+    right: 0;
+    left: auto;
+
+    width: 190px;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.ship-modes-menu.open {
+    display: block;
+}
+
+/* =========================================
+   SHIP MODE OPTIONS
+========================================= */
+
+.ship-modes-option {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+
+    text-align: left;
+    color: #1e293b;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.ship-modes-option:last-child {
+    border-bottom: none;
+}
+
+.ship-modes-option:hover,
+.ship-modes-option:focus-visible {
+    background: #dbeafe;
+    color: #1d4ed8;
+    outline: none;
+}
+
+.ship-modes-option[aria-selected='true'] {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.ship-modes-option[hidden] {
+    display: none !important;
+}
+
+/* =========================================
+   HOVER DESCRIPTION POPUP
+========================================= */
+
+.ship-modes-tooltip {
+    display: none;
+    position: absolute;
+
+    top: calc(100% + 12px);
+    right: 202px;
+    left: auto;
+
+    width: 230px;
+    padding: 14px;
+    box-sizing: border-box;
+
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    border-radius: 9px;
+
+    color: #1e293b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.ship-modes-tooltip.visible {
+    display: block;
+}
+
+.ship-modes-tooltip-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e40af;
+}
+
+.ship-modes-tooltip-description {
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 8px 0 0;
+    color: #334155;
+    overflow-wrap: break-word;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+    .ship-modes-trigger {
+        width: 150px;
+        min-width: 0;
+        height: 32px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .ship-modes-menu {
+        width: 190px;
+    }
+
+    .ship-modes-tooltip {
+        right: 202px;
+        width: 200px;
+    }
+}
+
+@media (max-width: 639px) {
+    .ship-modes-trigger {
+        width: 150px;
+        min-width: 0;
+        height: 32px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .ship-modes-menu {
+        width: 190px;
+        max-height: 240px;
+    }
+
+    .ship-modes-tooltip {
+        top: calc(100% + 12px);
+        right: 0;
+        left: auto;
+        width: min(230px, 80vw);
+    }
+}

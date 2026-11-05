@@ -1,9 +1,13 @@
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
 import AuthenticationPopover from './AuthenticationPopover';
+import shipModesCSS from './ShipModes.css?inline';
+import { ShipType } from '@super-netcentric-battleship/shared/Game/ShipDefinitions.js';
 
 export default class GameHeader extends HTMLElement {
+    private shipModeSelect!: HTMLElement;
     private authenticationPopover!: AuthenticationPopover;
+
     constructor() {
         super();
 
@@ -11,6 +15,7 @@ export default class GameHeader extends HTMLElement {
         shadow.adoptedStyleSheets = [appStyles];
         shadow.innerHTML = /* html */ `
             <style>
+                ${shipModesCSS}
                 :host {
                     display: block;
                 }
@@ -114,6 +119,9 @@ export default class GameHeader extends HTMLElement {
 
                 <section class="row">
                     <div class="invisible-as-admin">
+                        <ship-modes></ship-modes>
+                    </div>
+                    <div class="invisible-as-admin">
                         <button
                             popovertarget="lobby-form"
                             id="current-game-id"
@@ -149,8 +157,10 @@ export default class GameHeader extends HTMLElement {
                 </section>
             </header>
         `;
+
         const chatToggle = shadow.querySelector('#chat-toggle')!;
         const userSidebarToggle = shadow.querySelector<HTMLButtonElement>('#sidebar-toggle')!;
+
         this.authenticationPopover = shadow.querySelector('auth-popover')!;
 
         chatToggle.addEventListener('click', () => {
@@ -181,7 +191,7 @@ export default class GameHeader extends HTMLElement {
         });
 
         const header = shadow.querySelector('header')!;
-
+        this.shipModeSelect = shadow.querySelector('ship-modes')
         const resizeObserver = new ResizeObserver(([entry]) => {
             const height = entry.borderBoxSize[0].blockSize;
 
@@ -201,6 +211,15 @@ export default class GameHeader extends HTMLElement {
 
     get lobbyScreen(): LobbyScreen | null {
         return this.shadowRoot?.querySelector('lobby-screen') ?? null;
+    }
+
+    public notifyAllowedShipTypesChanged(allowedShipTypes: ShipType[]) {
+        if (!this.shipModeSelect) throw new Error("ship mode select not defined")
+        this.shipModeSelect?.dispatchEvent(
+            new CustomEvent('send-allowed-ship-types', {
+                detail: allowedShipTypes,
+            }),
+        );
     }
 }
 
