@@ -7,6 +7,7 @@ import './components/ChatSidebar';
 import './components/GameHeader';
 import './components/ChatMessage';
 import './components/LobbyScreen';
+import './components/UserAvatar';
 import './admin';
 import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
@@ -25,6 +26,7 @@ const camera = new Camera(document.getElementById('canvas') as HTMLCanvasElement
 //TODO: move none setup logic outside of index.ts
 const header = document.querySelector('game-header') as GameHeader;
 const chatSidebar = document.querySelector('chat-sidebar') as ChatSidebar;
+const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
 
 let currentUser: { username: string; id: string };
 webSocket.addEventListener('open', () => {
@@ -32,6 +34,7 @@ webSocket.addEventListener('open', () => {
     webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString());
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
     lobbyManager.requestPublicLobbies(0);
+    lobbyScreen!.manager = lobbyManager;
 });
 webSocket.addEventListener('close', () => {
     (console.log('disconnected'), alert('Server probably crashed, pls tell me about it'));
@@ -41,14 +44,12 @@ webSocket.addEventListener('message', (message: MessageEvent) => {
     console.log(serverMessage);
     switch (serverMessage.type) {
         case ServerMessage.ServerMessageType.ChatMessageNotification:
-        case ServerMessage.ServerMessageType.ChatMessageNotification:
             chatSidebar.addMessage(
                 serverMessage.author,
                 new Date(serverMessage.timestamp),
                 serverMessage.message,
                 serverMessage.author.username === currentUser?.username,
             );
-            break;
             break;
         case ServerMessage.ServerMessageType.UserInfo:
             if (serverMessage.userInfo.username === null || serverMessage.userInfo.id === null) {
@@ -127,6 +128,3 @@ header?.addEventListener('change-username', (event) => {
 document.querySelector('#refresh-active-users-button')?.addEventListener('click', () => {
     webSocket.send(new ClientMessage.RequestActiveUsersMessageBuilder().toJsonString());
 });
-
-const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
-lobbyScreen!.manager = lobbyManager;

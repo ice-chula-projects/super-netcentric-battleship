@@ -1,4 +1,5 @@
 import { appStyles } from '../styles';
+import UserAvatar from './UserAvatar';
 
 type ChatAuthor = {
     username: string;
@@ -6,7 +7,7 @@ type ChatAuthor = {
 
 export default class ChatMessage extends HTMLElement {
     private authorElement: HTMLElement;
-    private avatarElement: HTMLElement;
+    private avatarElement: UserAvatar;
     private timestampElement: HTMLTimeElement;
     private messageElement: HTMLElement;
 
@@ -27,7 +28,7 @@ export default class ChatMessage extends HTMLElement {
                     margin: 0.5rem 0;
                     font-family: inherit;
                 }
-            
+
                 article {
                     display: flex;
                     gap: 0.75rem;
@@ -39,26 +40,12 @@ export default class ChatMessage extends HTMLElement {
                         background 150ms ease,
                         border-color 150ms ease;
                 }
-            
-                .avatar {
-                    flex: 0 0 34px;
-                    width: 34px;
-                    height: 34px;
-                    display: grid;
-                    place-items: center;
-                    border-radius: 50%;
-                    background: var(--color-satellite-base, #baccd0);
-                    color: var(--color-satellite-foreground, #f3fffb);
-                    font-size: 0.9rem;
-                    font-weight: bold;
-                    text-transform: uppercase;
-                }
-            
+
                 .content {
                     flex: 1;
                     min-width: 0;
                 }
-            
+
                 .metadata {
                     display: flex;
                     align-items: baseline;
@@ -66,18 +53,18 @@ export default class ChatMessage extends HTMLElement {
                     gap: 0.5rem;
                     margin-bottom: 0.35rem;
                 }
-            
+
                 .author {
                     font-weight: bold;
                     font-size: 0.9rem;
                     color: var(--color-satellite-foreground-border, #526b6b);
                 }
-            
+
                 time {
                     color: #849393;
                     font-size: 0.7rem;
                 }
-            
+
                 .message {
                     margin: 0;
                     color: #263a3a;
@@ -88,8 +75,7 @@ export default class ChatMessage extends HTMLElement {
                 }
             </style>
             <article>
-                <div class="avatar" aria-hidden="true"></div>
-            
+                <user-avatar></user-avatar>
                 <div class="content">
                     <div class="metadata">
                         <span class="author"></span>
@@ -101,7 +87,7 @@ export default class ChatMessage extends HTMLElement {
         `;
 
         this.authorElement = shadow.querySelector('.author')!;
-        this.avatarElement = shadow.querySelector('.avatar')!;
+        this.avatarElement = shadow.querySelector<UserAvatar>('user-avatar')!;
         this.timestampElement = shadow.querySelector('time')!;
         this.messageElement = shadow.querySelector('.message')!;
         this.render();
@@ -142,7 +128,7 @@ export default class ChatMessage extends HTMLElement {
         const username = this._author.username || 'Unknown';
 
         this.authorElement.textContent = username;
-        this.avatarElement.textContent = username.charAt(0);
+        this.avatarElement.username = username;
         this.messageElement.textContent = this._messageText;
 
         if (this._timestamp instanceof Date && !isNaN(this._timestamp.getTime())) {

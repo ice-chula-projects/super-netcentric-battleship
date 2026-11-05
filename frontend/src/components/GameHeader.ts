@@ -1,8 +1,9 @@
 import { appStyles } from '../styles';
 import LobbyScreen from './LobbyScreen';
+import UserAvatar from './UserAvatar';
 
 export default class GameHeader extends HTMLElement {
-    private usernameButton!: HTMLButtonElement;
+    private avatarIcon!: UserAvatar;
     constructor() {
         super();
 
@@ -34,6 +35,7 @@ export default class GameHeader extends HTMLElement {
                     border-bottom: 2px solid var(--color-satellite-glow);
                     box-shadow: 0 5px 4px 6px #00000025;
                     z-index: 20;
+                    box-sizing: border-box;
                 }
 
                 .right {
@@ -44,6 +46,28 @@ export default class GameHeader extends HTMLElement {
 
                 .mobile-text {
                     display: none;
+                }
+
+                .avatar-button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    border-radius: 50%;
+                    outline: 1.5px solid var(--color-satellite-foreground-border);
+                    line-height: 0;
+                }
+
+                .avatar-button:hover {
+                    outline: 2px solid var(--color-satellite-glow);
+                    outline-offset: 3px;
+                }
+
+                .avatar-button user-avatar {
+                    display: flex;
                 }
 
                 @media (max-width: 639px) {
@@ -75,21 +99,6 @@ export default class GameHeader extends HTMLElement {
                         </button>
                         <lobby-screen id="lobby-form" popover></lobby-screen>
                     </div>
-                    <div>
-                        <button
-                            popovertarget="username-form"
-                            id="current-username"
-                            class="space-grotesk-medium secondary"
-                        ></button>
-
-                        <form id="username-form" popover>
-                            <label for="new-username">Enter new username:</label><br />
-                            <input type="text" id="new-username" placeholder="Ex. Alice" required />
-                            <button type="submit" id="change-username-button" class="secondary">
-                                Change Username
-                            </button>
-                        </form>
-                    </div>
                     <button
                         class="icon"
                         id="sidebar-toggle"
@@ -111,13 +120,30 @@ export default class GameHeader extends HTMLElement {
                             ></path>
                         </svg>
                     </button>
+                    <div>
+                        <button
+                            type="button"
+                            class="avatar-button"
+                            popovertarget="username-form"
+                        >
+                            <user-avatar></user-avatar>
+                        </button>
+
+                        <form id="username-form" popover>
+                            <label for="new-username">Enter new username:</label><br />
+                            <input type="text" id="new-username" placeholder="Ex. Alice" required />
+                            <button type="submit" id="change-username-button" class="secondary">
+                                Change Username
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </header>
         `;
         const usernameForm = shadow.querySelector<HTMLElement>('#username-form')!;
         const sidebarToggle = shadow.querySelector('#sidebar-toggle')!;
 
-        this.usernameButton = shadow.querySelector('#current-username')!;
+        this.avatarIcon = shadow.querySelector('user-avatar')!;
 
         usernameForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -156,11 +182,11 @@ export default class GameHeader extends HTMLElement {
     }
 
     get username(): string {
-        return this.usernameButton.textContent ?? '';
+        return this.avatarIcon.username;
     }
 
     set username(value: string) {
-        this.usernameButton.textContent = value;
+        this.avatarIcon.username = value;
     }
 
     get lobbyScreen(): LobbyScreen | null {
