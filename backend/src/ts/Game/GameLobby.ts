@@ -54,6 +54,10 @@ export default class GameLobby{
         return this.gameType == GameType.AI;
     }
 
+    get joinable(): boolean{
+        return !this.isFull && !this.activeGame;
+    }
+
     setPublic(isPublic: boolean){
         this.isPublic = isPublic;
     }
