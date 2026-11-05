@@ -2,6 +2,7 @@ import { getOppositePlayer, Player } from '@super-netcentric-battleship/shared/G
 import GameBoard from './Board';
 import GameSettings from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 import {
+    BoardTileStatus,
     CurrentTurnNotificationMessage,
     MatchCompleteNotificationMessage,
     MatchStartNotificationMessage,
@@ -48,6 +49,8 @@ export class GameManager extends EventTarget {
         [Player.Player1]: boolean;
         [Player.Player2]: boolean;
     } | null = null;
+
+    lastTileUpdates: BoardTileStatus[] | null = null;
 
     get rematchReqeuested(): boolean | null {
         if (this.rematchStatus == null) return null;
@@ -219,6 +222,8 @@ export class GameManager extends EventTarget {
         for (const boardTileStatus of message.boardTileStatuses) {
             this.boards![boardTileStatus.boardOwner].updateTileState(boardTileStatus);
         }
+
+        this.lastTileUpdates = message.boardTileStatuses;
         this.notifyStateChanged();
     }
 
@@ -235,6 +240,7 @@ export class GameManager extends EventTarget {
 
         this.initialized = true;
         this.fleetSubmitted = false;
+        this.lastTileUpdates = null;
         this.dispatchEvent(
             new CustomEvent('allowed-ship-types-change', {
                 detail: this.currentGameSettings.allowedShipTypes,
@@ -251,6 +257,7 @@ export class GameManager extends EventTarget {
         this.fleet = [];
         this.fleetSubmitted = false;
         this.matchWinner = null;
+        this.lastTileUpdates = null;
         this.rematchStatus = {
             [Player.Player1]: false,
             [Player.Player2]: false,

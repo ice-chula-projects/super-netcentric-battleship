@@ -36,6 +36,7 @@ export default class Camera {
     }
     highlightColor: string = "#ffffff55";
     attackingShipHighlightColor: string = "#67676755";
+    lastAttackedTilesHighlightColor: string = "#99222255"
     backgroundImage: HTMLImageElement;
 
     strokeColor: string = 'white';
@@ -318,6 +319,13 @@ export default class Camera {
                         this.attackingShip = null;
                     } else {
                         context.fillStyle = this.attackingShipHighlightColor;
+                        context.fillRect(currentX, currentY, deltaX, deltaY);
+                    }
+                }
+
+                if(this.gameManager.lastTileUpdates != null){
+                    if(this.gameManager.lastTileUpdates.filter(x => x.boardOwner == (highlightMode == BoardHighlightMode.Player ? this.gameManager.playerId : this.gameManager.opponentId)).some(x=>x.coordinate.x == i && x.coordinate.y == j)){
+                        context.fillStyle = this.lastAttackedTilesHighlightColor;
                         context.fillRect(currentX, currentY, deltaX, deltaY);
                     }
                 }
