@@ -8,7 +8,7 @@ import {
     StartGameMessageBuilder,
     UpdateReadyStateMessageBuilder,
 } from '@super-netcentric-battleship/shared/ClientMessage.js';
-import GameSettings from '@super-netcentric-battleship/shared/Game/GameSettings.js';
+import GameSettings, { GameSettingsPresetNames } from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 import {
     GameEndNotificationMessage,
     GameStartNotificationMessage,
@@ -57,11 +57,12 @@ export class LobbyManager extends EventTarget {
         this.webSocket.addEventListener('message', this.handleServerMessage.bind(this));
     }
 
-    createLobby(name: string, description: string, isPublic: boolean = true) {
+    createLobby(name: string, description: string, isPublic: boolean = true, gameSettingPreset: GameSettingsPresetNames = GameSettingsPresetNames.Classic) {
         const message = new CreateLobbyMessageBuilder()
             .setName(name)
             .setDescription(description)
-            .setIsPublic(isPublic);
+            .setIsPublic(isPublic)
+            .setGameSettingsPreset(gameSettingPreset);
 
         this.webSocket.send(message.toJsonString());
     }

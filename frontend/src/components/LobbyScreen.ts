@@ -1,6 +1,7 @@
 import { LobbyManager } from '../Game/LobbyManager';
 import { Player } from '@super-netcentric-battleship/shared/Game/Player.js';
 import { appStyles } from '../styles';
+import { GameSettingsPresetNames } from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 
 export default class LobbyScreen extends HTMLElement {
     private lobbyManager!: LobbyManager;
@@ -370,6 +371,7 @@ export default class LobbyScreen extends HTMLElement {
                 this.nameInput.value.trim(),
                 this.descriptionInput.value.trim(),
                 this.publicCheckbox.checked,
+                this.gameMode == "classic" ? GameSettingsPresetNames.Classic : GameSettingsPresetNames.SuperNetcentricBattleShipShipHooray
             );
         });
 
