@@ -42,7 +42,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--color-satellite-base);
+    background-color: var(--color-satellite-foreground-focus);
 }
 
 button.secondary {
@@ -88,6 +88,22 @@ button.icon svg {
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+}
+
+button.mode-selector {
+    flex: 1;
+    padding: 0.65rem;
+    background: var(--color-satellite-foreground);
+    border: 2px solid var(--color-satellite-foreground-border);
+    color: #263a3a;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
+button.mode-selector[aria-pressed='true'] {
+    background: var(--color-satellite-accent);
+    color: var(--color-satellite-foreground);
+    border-color: var(--color-satellite-accent);
 }
 
 h1 {

@@ -146,7 +146,7 @@ export default class AuthenticationPopover extends HTMLElement {
                     <button
                         type="button"
                         id="login-tab"
-                        class="secondary"
+                        class="mode-selector"
                         aria-pressed="true"
                     >
                         Login
@@ -155,13 +155,12 @@ export default class AuthenticationPopover extends HTMLElement {
                     <button
                         type="button"
                         id="register-tab"
-                        class="secondary"
+                        class="mode-selector"
                         aria-pressed="false"
                     >
                         Register
                     </button>
                 </div>
-
                 <p
                     id="auth-error"
                     class="auth-error"
