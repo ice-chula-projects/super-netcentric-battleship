@@ -34,6 +34,7 @@ export class LobbyManager extends EventTarget {
         gameSettings: GameSettings;
         chatChannelId: string;
         connectedUsers: LobbyPlayerInformation[];
+        isHost: boolean
     } | null = null;
 
     publicLobbies: PublicLobbyInformation[] = [];
@@ -142,6 +143,7 @@ export class LobbyManager extends EventTarget {
             gameSettings: lobbyInfoNotificationMessage.gameSettings,
             chatChannelId: lobbyInfoNotificationMessage.chatChannelId,
             connectedUsers: lobbyInfoNotificationMessage.connectedUsers,
+            isHost: lobbyInfoNotificationMessage.isHost
         };
         this.notifyStateChanged();
     }

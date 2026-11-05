@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "scripts": {
         "dev": "echo hello from the shared workspace",
-        "tsc": "tsc -w"
+        "tsc": "tsc -w",
+        "build": "npx tsc"
     },
     "type": "module",
     "exports": {

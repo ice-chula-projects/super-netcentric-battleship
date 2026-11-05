@@ -4,7 +4,8 @@
     "main": "./src/js/index.js",
     "scripts": {
         "dev": "echo hello from the backend",
-        "tsc": "tsc -w"
+        "tsc": "tsc -w",
+        "build": "npx tsc"
     },
     "type": "module",
     "dependencies": {

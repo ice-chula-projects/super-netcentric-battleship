@@ -189,12 +189,28 @@ export default class ShipModes extends HTMLElement {
     private handleAllowedShips = (event: Event) => {
         const customEvent = event as CustomEvent<ShipType[]>;
         const allowedTypes = new Set(customEvent.detail);
-        
         this.menu.querySelectorAll<HTMLButtonElement>('.ship-modes-option').forEach((option) => {
             const modeId = Number(option.dataset.mode);
-
+            
             option.hidden = !allowedTypes.has(modeId);
         });
+        
+        const defaultShip = ShipDefinitions[customEvent.detail[0]];
+        this.dispatchEvent(
+                    new CustomEvent('ship-mode-change', {
+                        detail: {
+                            modeId: defaultShip.type,
+                            name: defaultShip.name,
+                            description: defaultShip.description,
+                        },
+                        bubbles: true,
+                        composed: true,
+                    }),
+                );
+
+        const selectedLabel = this.querySelector<HTMLElement>('.ship-modes-selected')!;
+        selectedLabel.textContent = `${defaultShip.name} (${defaultShip.value})`;
+        
     };
 }
 
