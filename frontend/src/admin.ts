@@ -246,6 +246,8 @@ webSocket.addEventListener('message', (event: MessageEvent) => {
         return;
     }
 
+    console.log(serverMessage);
+
     switch (serverMessage.type) {
         // ----------------------------------------------------
         // USER INFORMATION
