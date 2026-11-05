@@ -106,6 +106,7 @@ export default class GameLobby{
 
         // remove user
         this.members.splice(this.members.indexOf(this.getMemberFromUser(user)), 1);   
+        this.chatManager.unsubscribe(user, this.chatChannelId);
         user.setCurrentLobbyCode(null);
 
         user.socket.send(new LobbyExitNotificationMessageBuilder().toJsonString());
