@@ -8,7 +8,7 @@ export function updateGameStateButton(gameManager: GameManager) {
 
     switch (state) {
         case GameState.ShipPlacement:
-            if (gameStateButton.textContent !== 'Fleet Submitted') {
+            if (gameManager.fleetSubmitted) {
                 gameStateButton.ariaDisabled = 'false';
                 gameStateButton.toggleAttribute('disabled', false);
                 gameStateButton.textContent = 'Submit Fleet';
@@ -23,7 +23,7 @@ export function updateGameStateButton(gameManager: GameManager) {
             break;
 
         case GameState.End:
-            if (gameStateButton.textContent !== 'Rematch Requested') {
+            if (gameManager.rematchStatus[gameManager.playerId]) {
                 gameStateButton.ariaDisabled = 'false';
                 gameStateButton.toggleAttribute('disabled', false);
                 gameStateButton.textContent = 'Rematch';

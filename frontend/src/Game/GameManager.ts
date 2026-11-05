@@ -167,7 +167,7 @@ export class GameManager extends EventTarget {
 
     requestRematch() {
         const message = new RequestRematchActionMessageBuilder();
-
+        
         this.webSocket.send(message.toJsonString());
     }
 
