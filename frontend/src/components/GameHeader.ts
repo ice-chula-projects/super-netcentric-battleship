@@ -79,7 +79,7 @@ export default class GameHeader extends HTMLElement {
                     display: none;
                 }
 
-                @media (max-width: 639px) {
+                @media (max-width: 790px) {
                     .full-text {
                         display: none;
                     }

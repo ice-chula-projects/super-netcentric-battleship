@@ -147,7 +147,7 @@ header.addEventListener('ship-mode-change', (event: Event) => {
     camera.currentlySelectedShipPlaceType = customEvent.detail.modeId;
 });
 
-lobbyManager.addEventListener('allowed-ship-types-change', (event: Event) => {
+gameManager.addEventListener('allowed-ship-types-change', (event: Event) => {
     const allowedShipTypes = (event as CustomEvent<ShipType[]>).detail;
 
     header.notifyAllowedShipTypesChanged(allowedShipTypes);

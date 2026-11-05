@@ -143,12 +143,6 @@ export class LobbyManager extends EventTarget {
             chatChannelId: lobbyInfoNotificationMessage.chatChannelId,
             connectedUsers: lobbyInfoNotificationMessage.connectedUsers,
         };
-
-        this.dispatchEvent(
-            new CustomEvent('allowed-ship-types-change', {
-                detail: this.currentLobbyInfo.gameSettings.allowedShipTypes,
-            }),
-        );
         this.notifyStateChanged();
     }
 
