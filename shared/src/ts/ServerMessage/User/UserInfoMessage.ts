@@ -7,6 +7,7 @@ export interface UserInfo {
     //will be null when requesting a user from the database;
     subscribedChatChannelIds: string[] | null;
     isAdmin: boolean;
+    isGuest: boolean;
 }
 
 export interface UserInfoMessage extends GameMessage {
@@ -22,7 +23,8 @@ export class UserInfoMessageBuilder implements UserInfoMessage {
         id: "",
         username: "",
         subscribedChatChannelIds: [],
-        isAdmin: false
+        isAdmin: false,
+        isGuest: false
     };
 
     setId(id: string) {
@@ -42,6 +44,11 @@ export class UserInfoMessageBuilder implements UserInfoMessage {
 
     setIsAdmin(isAdmin: boolean) {
         this.userInfo.isAdmin = isAdmin;
+        return this;
+    }
+
+    setIsGuest(isGuest: boolean) {
+        this.userInfo.isGuest = isGuest;
         return this;
     }
 

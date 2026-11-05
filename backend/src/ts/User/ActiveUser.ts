@@ -42,7 +42,8 @@ export default class ActiveUser{
         .setUsername(user.username)
         .setId(user.id)
         .setSubscribedChatChannelIds(user.subscribedChatChannels.map(x=>x.channelId))
-        .setIsAdmin(user.isAdmin);
+        .setIsAdmin(user.isAdmin)
+        .setIsGuest(user.isGuest);
 
         return userInfoMessage;
     }
