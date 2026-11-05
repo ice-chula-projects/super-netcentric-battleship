@@ -290,7 +290,7 @@ export default class LobbyScreen extends HTMLElement {
                     <section class="panel" style="margin-top: 1.5rem">
                         <div class="section-header-inline">
                             <h2 class="space-grotesk-medium">Public Lobbies</h2>
-                            <button id="refresh-lobbies-btn" class="icon-button" title="Refresh Lobbies" aria-label="Refresh Lobbies">
+                            <button id="refresh-lobbies-btn" class="icon" title="Refresh Lobbies" aria-label="Refresh Lobbies">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M23 4v6h-6"></path>
                                     <path d="M1 20v-6h6"></path>
@@ -311,7 +311,7 @@ export default class LobbyScreen extends HTMLElement {
                     </section>
                 </section>
 
-                <section id="lobby-details" class="panel hidden">
+                <section id="lobby-details" class="panel hidden" style="min-width:500px;">
                     <h2 id="current-lobby-name"></h2>
                     <p id="current-lobby-description" class="muted"></p>
                     <p>Lobby code: <strong id="current-lobby-code"></strong></p>
@@ -319,10 +319,12 @@ export default class LobbyScreen extends HTMLElement {
                     <h3>Players</h3>
                     <div id="player-list"></div>
 
-                    <button id="ready-button" class="secondary">Ready</button>
-                    <button id="start-button" class="hidden secondary">Start Game</button>
-                    <button id="bot-button" class="hidden secondary">Play vs. Mallory 🤖</button>
-                    <button id="leave-button" class="secondary">Leave Lobby</button>
+                    <span style="display:flex; justify-content:space-between">
+                        <button id="ready-button" class="secondary">Ready</button>
+                        <button id="start-button" class="secondary">Start Game</button>
+                        <button id="bot-button" class="secondary">Play vs. Mallory 🤖</button>
+                        <button id="leave-button" class="secondary">Leave Lobby</button>
+                    </span>
                 </section>
             </main>
         `;
@@ -547,18 +549,18 @@ export default class LobbyScreen extends HTMLElement {
         const readyButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#ready-button');
         const startButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#start-button');
         const botButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#bot-button');
+        const isLocalPlayerHost = this.lobbyManager.currentLobbyInfo.isHost;
 
         if (readyButton) {
             readyButton.textContent = this.isLocalPlayerReady ? 'Unready' : 'Ready';
         }
 
         if (startButton) {
-            startButton.classList.toggle('hidden', !hostPlayer);
+            startButton.classList.toggle('hidden', !isLocalPlayerHost || players.length != 2);
         }
 
-        // Show 'Play vs Bot' only if the current user is host and no other players are in the lobby
         if (botButton) {
-            botButton.classList.toggle('hidden', !hostPlayer || players.length > 1);
+            botButton.classList.toggle('hidden', !isLocalPlayerHost || players.length != 1);
         }
     }
 
