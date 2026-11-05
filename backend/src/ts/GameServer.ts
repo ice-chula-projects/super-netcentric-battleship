@@ -24,20 +24,20 @@ import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicL
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
+import { v4 as uuidv4 } from 'uuid';
+import GameLobbyManager from "./Game/GameLobbyManager.js";
 import crypto from "crypto";
 import AuthManager from "./Authentication/AuthenticationManager.js";
 import { UserDatabase } from "./Database/UserDatabase.js";
 import { AuthUser } from "./Authentication/types.js";
-import { v4 as uuidv4 } from 'uuid';
-import GameLobbyManager from "./Game/GameLobbyManager.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
+    readonly gameLobbyManager: GameLobbyManager;
     readonly authManager: AuthManager;
     readonly userDatabase: UserDatabase;
-    readonly gameLobbyManager: GameLobbyManager;
 
     constructor(port: number) {
         this.authManager = new AuthManager();
@@ -59,7 +59,7 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = uuidv4();
+        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");

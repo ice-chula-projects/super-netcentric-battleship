@@ -23,6 +23,8 @@ export * from "./PingMessage.js";
 export * from "./User/RequestUserInfoMessage.js";
 export * from "./User/UpdateUserInfoMessage.js";
 export * from "./User/RequestActiveUsersMessage.js";
+export * from "./User/LoginMessage.js"
+export * from "./User/RegisterMessage.js"
 export * from "./Chat/UpdateChatChannelSubscriptionMessage.js";
 export * from "./Chat/SendToChatMessage.js";
 export * from "./Game/Lobby/CreateLobbyMessage.js";
@@ -56,6 +58,8 @@ RequestPublicLobbiesMessage |
 FireVolleyActionMessage |
 InitializeFleetActionMessage |
 UseAbilityActionMessage |
+RequestRematchActionMessage |
+ExitLobbyMessage |
 LoginMessage |
 RegisterMessage;
 
