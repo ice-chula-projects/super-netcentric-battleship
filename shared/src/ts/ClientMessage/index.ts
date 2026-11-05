@@ -68,7 +68,9 @@ RequestAllGameLobbiesMessage |
 ResetGameLobbyMessage | 
 StartAIGameMessage;
 
-export type ClientActionMessage = FireVolleyActionMessage |
-InitializeFleetActionMessage |
-UseAbilityActionMessage |
-RequestRematchActionMessage;
+export type ClientActionMessage =
+    | FireVolleyActionMessage
+    | InitializeFleetActionMessage
+    | UseAbilityActionMessage
+    | RequestRematchActionMessage
+    | ExitLobbyMessage;

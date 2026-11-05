@@ -1,39 +1,32 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>super netcentric battleship</title>
-  </head>
-  <body style="background-color: aliceblue;">
-    <div id="app">
-        <header>
-            <p style="font-weight: bold;" id="current-username"></p>
-            <input type="text" id="new-username">
-            <button id="change-username-button">Change Username</button>
-        </header>
-        <div style="display: flex; gap: 2rem">
-            <canvas width="500" height="500" style="border: 1px red solid; width: 500px; height: 500px; margin:3px;" id="canvas"></canvas>
-            <div>
-                <h1>Global Chat</h1>
-                <ul id="global-chat"></ul>
-                <input type="text" id="current-message">
-                <button id="send-to-global-chat-button">Send</button>
-            </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+        <script type="module" src="/src/index.ts"></script>
+        <title>Ship Ship Hooray!</title>
+    </head>
+    <body>
+        <div id="app">
+            <game-header></game-header>
+            <chat-sidebar></chat-sidebar>
+            <user-sidebar></user-sidebar>
+            <main class="dashboard" style="padding-top: var(--header-height); gap: 2rem">
+                <canvas
+                    width="500"
+                    height="500"
+                    style="border: 1px red solid; width: 500px; height: 500px; margin: 3px"
+                    id="canvas"
+                ></canvas>
+            </main>
         </div>
-        <div>
-            <h1>Active Users</h1>
-            <button id="refresh-active-users-button">Refresh</button>
-            <ul id="active-users"></ul>
-        </div>
-        <div>
-            <h3>Join Game</h3>
-                <p>Id:</p>
-                <input type="text" id="current-game-id">
-                <button id="join-game">Join</button>
-
-        </div>
-    </div>
-    <script type="module" src="/src/index.ts"></script>
-  </body>
+    </body>
 </html>

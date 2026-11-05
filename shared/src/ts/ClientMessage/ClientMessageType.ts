@@ -14,10 +14,10 @@ export enum ClientMessageType{
     FireVolleyAction = "fireVolleyAction",
     InitializeFleetAction = "InitializeFleetAction",
     UseAbilityAction = "useAbilityAction",
-    RequestRematchAction = "requestRematchAction",
-    ExitLobby = "exitLobby",
     Login = "login",
     Register = "register",
+    RequestRematchAction = "requestRematchAction",
+    ExitLobby = "exitLobby",
     RequestAllGameLobbies = "requestAllGameLobbies",
     ResetGameLobby = "resetGameLobbyMessage",
     StartAIGame = "startAIGame"
