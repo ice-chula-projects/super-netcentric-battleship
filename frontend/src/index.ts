@@ -29,6 +29,8 @@ const camera = new Camera(document.getElementById('canvas') as HTMLCanvasElement
 
 //TODO: move none setup logic outside of index.ts
 const header = document.querySelector('game-header') as GameHeader;
+header.camera = camera;
+
 const chatSidebar = document.querySelector('chat-sidebar') as ChatSidebar;
 const lobbyScreen = document.querySelector<GameHeader>('game-header')!.lobbyScreen;
 const userSidebar = document.querySelector<UserSidebar>('user-sidebar');

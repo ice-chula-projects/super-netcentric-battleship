@@ -3,8 +3,15 @@ import LobbyScreen from './LobbyScreen';
 import AuthenticationPopover from './AuthenticationPopover';
 import './ShipModes';
 import shipModesCSS from './ShipModes.css?inline';
+import Camera from '../Game/Camera';
+import ShipModes from './ShipModes';
 export default class GameHeader extends HTMLElement {
     private authenticationPopover!: AuthenticationPopover;
+    private shadow: ShadowRoot;
+    set camera(camera: Camera){
+        const shipModeSelect = this.shadow.querySelector<ShipModes>("ship-modes");
+        shipModeSelect.camera = camera;
+    }
     constructor() {
         super();
 
@@ -154,8 +161,12 @@ export default class GameHeader extends HTMLElement {
                 </section>
             </header>
         `;
+
+        this.shadow = shadow;
         const chatToggle = shadow.querySelector('#chat-toggle')!;
         const userSidebarToggle = shadow.querySelector<HTMLButtonElement>('#sidebar-toggle')!;
+        
+
         this.authenticationPopover = shadow.querySelector('auth-popover')!;
 
         chatToggle.addEventListener('click', () => {

@@ -142,6 +142,8 @@ export class LobbyManager extends EventTarget {
             chatChannelId: lobbyInfoNotificationMessage.chatChannelId,
             connectedUsers: lobbyInfoNotificationMessage.connectedUsers,
         };
+        
+        lobbyInfoNotificationMessage.gameSettings.allowedShipTypes
         this.notifyStateChanged();
     }
 
@@ -171,6 +173,7 @@ export class LobbyManager extends EventTarget {
     }
 
     private notifyStateChanged() {
+        this.dispatchEvent(new Event('state-change'));
         this.dispatchEvent(new Event('state-change'));
     }
 }

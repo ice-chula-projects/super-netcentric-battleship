@@ -1,3 +1,5 @@
+import ShipDefinitions, { ShipDefinition, ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
+import Camera from "../Game/Camera";
 
 type ShipMode = {
     id: number;
@@ -6,17 +8,15 @@ type ShipMode = {
 };
 
 // Temporary data until your friend's ShipDefinition is ready.
-const shipModes: ShipMode[] = Array.from(
-    { length: 36 },
-    (_, id) => ({
-        id,
-        name: `Mode ${id}`,
-        description: `Description for Ship Mode ${id}.`,
-    }),
-);
+const ships: ShipDefinition[]  = Object.values(ShipType).filter(x=>typeof x === "number").map(x=>ShipDefinitions[x])
 
 export default class ShipModes extends HTMLElement {
     private outsideClickHandler?: (event: MouseEvent) => void;
+    private _camera: Camera;
+
+    set camera(camera: Camera){
+        this._camera = camera;
+    }
 
     connectedCallback() {
         this.render();
@@ -49,16 +49,16 @@ export default class ShipModes extends HTMLElement {
                     </button>
 
                     <div class="ship-modes-menu">
-                        ${shipModes
-                            .map(
+                        ${
+                            ships.map(
                                 (mode) => `
                                     <button
                                         type="button"
                                         class="ship-modes-option"
-                                        data-mode="${mode.id}"
+                                        data-mode="${mode.type}"
                                         aria-selected="false"
                                     >
-                                        ${mode.name}
+                                        ${mode.name} (${mode.value})
                                     </button>
                                 `,
                             )
@@ -137,13 +137,13 @@ export default class ShipModes extends HTMLElement {
             '.ship-modes-option',
         ).forEach((option) => {
             const id = Number(option.dataset.mode);
-            const mode = shipModes[id];
+            const mode: ShipDefinition = ShipDefinitions[id];
 
             if (!mode) return;
 
             const showDescription = () => {
-                title.textContent = mode.name;
-                description.textContent = mode.description;
+                title.textContent = `${mode.name} (${mode.value})`;
+                description.textContent = mode.description + "\n";
                 tooltip.classList.add('visible');
             };
 
@@ -171,7 +171,7 @@ export default class ShipModes extends HTMLElement {
             option.addEventListener('click', (event) => {
                 event.stopPropagation();
 
-                selectedLabel.textContent = mode.name;
+                selectedLabel.textContent = `${mode.name} (${mode.value})`;
 
                 this.querySelectorAll(
                     '.ship-modes-option',
@@ -186,7 +186,7 @@ export default class ShipModes extends HTMLElement {
                 this.dispatchEvent(
                     new CustomEvent('ship-mode-change', {
                         detail: {
-                            modeId: mode.id,
+                            modeId: mode.type,
                             name: mode.name,
                             description: mode.description,
                         },
@@ -195,11 +195,7 @@ export default class ShipModes extends HTMLElement {
                     }),
                 );
 
-                console.log(
-                    'Selected Ship Mode:',
-                    mode.id,
-                    mode.name,
-                );
+                this._camera.currentlySelectedShipPlaceType = mode.type;
 
                 closeMenu();
             });
@@ -227,6 +223,7 @@ export default class ShipModes extends HTMLElement {
             }
         });
     }
+
 }
 
 if (!customElements.get('ship-modes')) {
