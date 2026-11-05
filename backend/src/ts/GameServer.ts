@@ -132,7 +132,6 @@ export default class GameServer {
         }
 
         } catch(error){
-            console.error(error)
             if (error instanceof Error){
                 response = new ServerErrorMessageBuilder().setError(error.message);
             } else {
