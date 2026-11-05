@@ -4,25 +4,24 @@ import { ClientActionMessage, ClientMessage, ClientMessageType, CreateLobbyMessa
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
 import ChatManager from "./Chat/ChatManager.js";
-import User from "./User/User.js";
+import ActiveUser from "./User/ActiveUser.js";
 import { v4 as uuidv4 } from 'uuid';
 import GameLobbyManager from "./Game/GameLobbyManager.js";
 import crypto from "crypto";
-import AuthManager from "./Authentication/AuthenticationManager.js";
-import { UserDatabase } from "./Database/UserDatabase.js";
 import { AuthUser } from "./Authentication/types.js";
+import Database from "./Database/Database.js";
+import { JsonDatabase } from "./Database/JsonDatabase.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
     readonly gameLobbyManager: GameLobbyManager;
-    readonly authManager: AuthManager;
-    readonly database: UserDatabase;
+    readonly database: Database;
+    readonly activeWebSockets: Record<string, WebSocket> = {};
 
     constructor(port: number) {
-        this.authManager = new AuthManager();
-        this.database = new UserDatabase("./data/users.json");
+        this.database = new JsonDatabase();
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
@@ -31,8 +30,8 @@ export default class GameServer {
             console.log("server online");
         })
 
-        this.userManager = new UserManager(this.database);
         this.chatManager = new ChatManager();
+        this.userManager = new UserManager(this.database, this.chatManager);
         this.gameLobbyManager = new GameLobbyManager(this);
 
         this.chatManager.addChannel("global");
@@ -40,29 +39,21 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
-        const user = new User(websocket, userId);
-        this.userManager.registerActiveUser(user);
-        this.chatManager.subscribe(user, "global");
+        const websocketId = uuidv4();
+        this.activeWebSockets[websocketId] = websocket;
+        this.userManager.registerWebSocket(websocket, websocketId);
 
         websocket.on("message", (data) => {
-            void this.handleWebSocketMessage(websocket, user, data)
-                .catch(error => {
-                    console.error("WebSocket message error:", error);
-        
-                    if (websocket.readyState === WebSocket.OPEN) {
-                        websocket.send(
-                            new ServerErrorMessageBuilder()
-                                .setError("internal server error")
-                                .toJsonString()
-                        );
-                    }
-                });
+            this.handleWebSocketMessage(websocket, websocketId, data);
         });
-        websocket.on("close", ()=>{this.userManager.removeActiveUser(user)});
+
+        websocket.on("close", ()=>{
+            this.userManager.removeWebSocket(websocketId);
+            delete this.activeWebSockets[websocketId];
+        });
     }
 
-    async handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData): Promise<void> {
+    async handleWebSocketMessage(websocket: WebSocket, webSocketId: string, data: WebSocket.RawData): Promise<void> {
         let message: ClientMessage;
         try {
             message = JSON.parse(data.toString()) as ClientMessage;
@@ -72,15 +63,17 @@ export default class GameServer {
 
         let response: ServerMessage | null = null;
         try{
+            const user = this.userManager.getUserFromWebSocketId(webSocketId);
+
             switch(message.type){
             case ClientMessageType.Ping:
                 response = this.handlePingMessage(message);
             break;
             case ClientMessageType.RequestUserInfo:
-                response = this.handleRequestUserInfoMessage(message, user);
+                response = await this.handleRequestUserInfoMessage(message, user);
             break;
             case ClientMessageType.UpdateUserInfo:
-                response = await this.handleUpdateUserInfoMessage(message, user);
+                response = await this.handleUpdateUserInfoMessage(message, webSocketId);
             break;
             case ClientMessageType.RequestActiveUsers:
                 response = this.handleRequestActiveUsersMessage(message)
@@ -119,11 +112,11 @@ export default class GameServer {
                 response = this.handleClientActionMessage(message, user);
             break;
             case ClientMessageType.Login:
-                response = await this.handleLoginMessage(message, user);
+                response = await this.handleLoginMessage(message, websocket, webSocketId);
             break;
             
             case ClientMessageType.Register:
-                response = await this.handleRegisterMessage(message, user);
+                response = await this.handleRegisterMessage(message, websocket, webSocketId);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -166,37 +159,23 @@ export default class GameServer {
         return new PongMessageBuilder().setMessage(pingMessage.message + " pong");
     }
 
-    handleRequestUserInfoMessage(requestUserInfoMessage: RequestUserInfoMessage, user: User): ServerMessage{
-        const id = requestUserInfoMessage.userId == null? user.id : requestUserInfoMessage.userId;
-        const requestedUser = this.userManager.getUser(id);
+    async handleRequestUserInfoMessage(requestUserInfoMessage: RequestUserInfoMessage, user: ActiveUser): Promise<ServerMessage>{
+        const requestedId = requestUserInfoMessage.userId;
+        if(requestedId == null) return user.toUserInfoMessage();
+        const requestedUser = await this.userManager.getDatabaseUser(requestedId);
         if(requestedUser == null) {
             return new ServerErrorMessageBuilder()
             .setError("requested userId does not exist");
         }
 
-        return requestedUser.toUserInfoMessage();
+        return this.userManager.databaseUserToUserInfoMessage(requestedUser);
     }
 
     async handleUpdateUserInfoMessage(
         message: UpdateUserInfoMessage,
-        user: User
+        webSocketId: string
     ): Promise<ServerMessage> {
-        if (message.username != null) {
-            const username = message.username.trim();
-            if (!username) {
-                return new ServerErrorMessageBuilder()
-                    .setError("invalid username");
-            }
-            if (user.accountId !== null) {
-                await this.database.setUsername(
-                    user.accountId,
-                    username
-                );
-            }
-            user.setUsername(username);
-        }
-    
-        return user.toUserInfoMessage();
+        return this.userManager.updateUserInfo(webSocketId, message);
     }
 
     handleRequestActiveUsersMessage(requestActiveUsersMessage: RequestActiveUsersMessage): ServerMessage{
@@ -207,27 +186,27 @@ export default class GameServer {
         return new ActiveUsersInfoMessageBuilder()
         .setTotalActiveUsers(activeUserCount)
         .setPage(paginated.page)
-        .setActiveUsers(paginated.pagninatedMembers.map((user:User) => {return {username: user.username, id:user.id}}))
+        .setActiveUsers(paginated.pagninatedMembers.map((user:ActiveUser) => {return {username: user.username, id:user.id}}))
         .setUsersPerPage(paginated.membersPerPage)
     }
 
     //TODO: send chat history to user when the user subscribes to a channel
-    handleUpdateChatChannelSubscriptionMessage(updateChatChannelSubscriptionMessage: UpdateChatChannelSubscriptionMessage, user: User): ServerMessage | null{
+    handleUpdateChatChannelSubscriptionMessage(updateChatChannelSubscriptionMessage: UpdateChatChannelSubscriptionMessage, user: ActiveUser): ServerMessage | null{
         const channelId = updateChatChannelSubscriptionMessage.channelId;
         if(!this.chatManager.channelExists(channelId)) return new ServerErrorMessageBuilder().setError("requested channel does not exist");
         
         if(updateChatChannelSubscriptionMessage.subscribe){
-            if(user.subscribedChatChannelIds.includes(channelId)) return null
+            if(user.subscribedChatChannels.every(x=>x.channelId != channelId)) return null
             this.chatManager.subscribe(user, channelId);
         } else {
-            if(!user.subscribedChatChannelIds.includes(channelId)) return null
+            if(user.subscribedChatChannels.every(x=>x.channelId != channelId)) return null
             this.chatManager.unsubscribe(user, channelId);
         }
 
         return null;
     }
 
-    handleSendToChatMessage(sendToChatMessage: SendToChatMessage, user: User): ServerMessage | null{
+    handleSendToChatMessage(sendToChatMessage: SendToChatMessage, user: ActiveUser): ServerMessage | null{
         //TODO: configuration
         const MAX_MESSAGE_LENGTH = 300;
         
@@ -241,30 +220,30 @@ export default class GameServer {
         return null;
     }
 
-    handleCreateLobbyMessage(createLobbyMessage: CreateLobbyMessage, user: User): ServerMessage | null{
+    handleCreateLobbyMessage(createLobbyMessage: CreateLobbyMessage, user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.createLobby(user, createLobbyMessage.name, createLobbyMessage.description, createLobbyMessage.isPublic);
 
         return null;
     }
 
-    handleJoinLobbyMessage(joinLobbyMessage: JoinLobbyMessage, user: User): ServerMessage | null{
+    handleJoinLobbyMessage(joinLobbyMessage: JoinLobbyMessage, user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.joinLobby(user, joinLobbyMessage.lobbyCode);
 
         return null;
     }
 
-    handleModifyGameSettingsMessage(modifyGameSettingsMessage: ModifyGameSettingsMessage, user: User): ServerMessage | null{
+    handleModifyGameSettingsMessage(modifyGameSettingsMessage: ModifyGameSettingsMessage, user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.modifyGameSettings(user, modifyGameSettingsMessage.settings);
         return null;
     }
 
     
-    handleStartGameMessage(user: User): ServerMessage | null{
+    handleStartGameMessage(user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.requestGameStart(user);
         return null;
     }
 
-    handleUpdateReadyStateMessage(updateReadyStateMessage: UpdateReadyStateMessage, user: User): ServerMessage | null{
+    handleUpdateReadyStateMessage(updateReadyStateMessage: UpdateReadyStateMessage, user: ActiveUser): ServerMessage | null{
         this.gameLobbyManager.updateReadyStatus(user, updateReadyStateMessage.ready);
         return null;
     }
@@ -288,103 +267,28 @@ export default class GameServer {
         .setlobbiesPerPage(paginatedLobbies.membersPerPage);
     }
 
-    handleClientActionMessage(clientActionMessage: ClientActionMessage, user: User): ServerMessage | null {
+    handleClientActionMessage(clientActionMessage: ClientActionMessage, user: ActiveUser): ServerMessage | null {
         this.gameLobbyManager.notifyClientActionMessage(clientActionMessage, user);
         return null;
     }
 
-    handleExitLobbyMessage(message: ExitLobbyMessage, user: User): ServerMessage | null {
+    handleExitLobbyMessage(message: ExitLobbyMessage, user: ActiveUser): ServerMessage | null {
         this.gameLobbyManager.leaveLobby(user);
         return null;
     }
     async handleRegisterMessage(
         message: RegisterMessage,
-        user: User
+        webSocket: WebSocket,
+        webSocketId: string
     ): Promise<ServerMessage> {
-        if (user.accountId !== null) {
-            return new ServerErrorMessageBuilder()
-                .setError("already authenticated");
-        }
-    
-        const username = message.username?.trim();
-        const password = message.password;
-    
-        if (
-            typeof username !== "string" ||
-            username.length === 0 ||
-            username.length > 32
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid username");
-        }
-    
-        if (
-            typeof password !== "string" ||
-            password.length === 0 ||
-            password.length > 1024
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid password");
-        }
-    
-        const account: AuthUser = {
-            id: crypto.randomUUID(),
-            username,
-            password: await this.authManager.hashPassword(password)
-        };
-    
-        try {
-            await this.database.createUser(account);
-        } catch (error) {
-            if (
-                error instanceof Error &&
-                error.message === "Username already taken"
-            ) {
-                return new ServerErrorMessageBuilder()
-                    .setError("username already taken");
-            }
-            throw error;
-        }
-    
-        user.setAccount(account.id, account.username);
-    
-        return user.toUserInfoMessage();
+        return this.userManager.registerAccount(webSocket, webSocketId, message.username, message.password);
     }
   
     async handleLoginMessage(
         message: LoginMessage,
-        user: User
+        webSocket: WebSocket,
+        webSocketId: string
     ): Promise<ServerMessage> {
-        if (user.accountId !== null) {
-            return new ServerErrorMessageBuilder()
-                .setError("already authenticated");
-        }
-    
-        const username = message.username?.trim();
-        const password = message.password;
-    
-        if (
-            typeof username !== "string" ||
-            typeof password !== "string" ||
-            password.length > 1024
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid credentials");
-        }
-    
-        const account = await this.database.getUserFromName(username);
-        if (
-            account === null ||
-            !(await this.authManager.verifyPassword(
-                password,
-                account.password
-            ))
-        ) {
-            return new ServerErrorMessageBuilder()
-                .setError("invalid username or password");
-        }
-    
-        user.setAccount(account.id, account.username);
-        return user.toUserInfoMessage();
+        return this.userManager.login(webSocket, webSocketId, message.username, message.password);
     }
 }

@@ -1,37 +1,51 @@
 import GameMessage from "../../GameMessage.js";
 import { ServerMessageType } from "../ServerMessageType.js";
 
-export interface UserInfoMessage extends GameMessage{
-    readonly type: ServerMessageType.UserInfo;
-    userInfo: {
-        id: string | null;
-        username: string | null;
-        subscribedChatChannelIds: string[] | null;
-    }
+export interface UserInfo {
+    id: string;
+    username: string;
+    //will be null when requesting a user from the database;
+    subscribedChatChannelIds: string[] | null;
+    isAdmin: boolean;
 }
 
-export class UserInfoMessageBuilder implements UserInfoMessage{
+export interface UserInfoMessage extends GameMessage {
+    readonly type: ServerMessageType.UserInfo;
+    userInfo: UserInfo
+}
+
+export class UserInfoMessageBuilder implements UserInfoMessage {
     readonly type = ServerMessageType.UserInfo;
     readonly timestamp: number = Date.now();
 
-    userInfo: { id: string | null; username: string | null; subscribedChatChannelIds: string[] | null; } = {id: null, username: null, subscribedChatChannelIds: null};
+    userInfo: UserInfo = {
+        id: "",
+        username: "",
+        subscribedChatChannelIds: [],
+        isAdmin: false
+    };
 
-    setId(id:string | null){
+    setId(id: string) {
         this.userInfo.id = id;
         return this;
     }
 
-    setUsername(username: string | null){
+    setUsername(username: string) {
         this.userInfo.username = username;
         return this;
     }
 
-    setSubscribedChatChannelIds(subscribedChatChannelIds: string[]){
+    setSubscribedChatChannelIds(subscribedChatChannelIds: string[] | null) {
         this.userInfo.subscribedChatChannelIds = subscribedChatChannelIds;
         return this;
     }
 
-    toJsonString(): string{
+    setIsAdmin(isAdmin: boolean) {
+        this.userInfo.isAdmin = isAdmin;
+        return this;
+    }
+
+    toJsonString(): string {
         return JSON.stringify(this);
     };
 }

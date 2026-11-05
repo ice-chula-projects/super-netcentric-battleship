@@ -6,7 +6,7 @@ import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientatio
 import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
-import User from "../User/User.js";
+import ActiveUser from "../User/ActiveUser.js";
 import { CurrentTurnNotificationMessageBuilder, MatchCompleteNotificationMessageBuilder, MatchStartNotificationMessageBuilder, RematchStatusNotificationMessageBuilder, UpdateBoardTileStatusesNotificationMessageBuilder } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import Random from "../lib/Random.js";
 import { ClientActionMessage, ClientMessageType, ShipPlacement } from "@super-netcentric-battleship/shared/ClientMessage.js";
@@ -20,8 +20,8 @@ export default class Game{
     };
 
     playerUsers: {
-        [Player.Player1]: User,
-        [Player.Player2]: User
+        [Player.Player1]: ActiveUser,
+        [Player.Player2]: ActiveUser
     };
     timeoutIntervalId: NodeJS.Timeout | null = null;
 
@@ -59,7 +59,7 @@ export default class Game{
         return this.fleetInitialized[Player.Player1] && this.fleetInitialized[Player.Player2];
     }
 
-    constructor(gameSettings: GameSettings, player1User: User, player2User: User){
+    constructor(gameSettings: GameSettings, player1User: ActiveUser, player2User: ActiveUser){
         this.gameSettings = gameSettings;
         this.playerUsers = {
             [Player.Player1]: player1User,
