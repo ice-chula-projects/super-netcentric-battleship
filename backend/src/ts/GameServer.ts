@@ -7,14 +7,24 @@ import ChatManager from "./Chat/ChatManager.js";
 import User from "./User/User.js";
 import GameManager from "./Game/GameManager.js";
 import { GameShip, ShipOrientation } from "./Game/GameBoard.js";
+import crypto from "crypto";
+import AuthManager from "./Authentication/AuthenticationManager.js";
+import { UserDatabase } from "./Database/UserDatabase.js";
+import { AuthUser } from "./Authentication/types.js";
+import { RegisterMessage } from "../../../shared/src/ts/ClientMessage/RegisterMessage.js";
+import { LoginMessage } from "../../../shared/src/ts/ClientMessage/LoginMessage.js";
 
 export default class GameServer {
     readonly webSocketServer: WebSocketServer;
     readonly userManager: UserManager;
     readonly chatManager: ChatManager;
     readonly gameManager: GameManager;
+    readonly authManager: AuthManager;
+    readonly database: UserDatabase;
 
-    constructor(port: number){
+    constructor(port: number) {
+        this.authManager = new AuthManager();
+        this.database = new UserDatabase("./data/users.json");
         this.webSocketServer = new WebSocketServer({port:port});
 
         this.webSocketServer.on("connection", this.handleWebSocketConnection.bind(this));
@@ -23,7 +33,7 @@ export default class GameServer {
             console.log("server online");
         })
 
-        this.userManager = new UserManager();
+        this.userManager = new UserManager(this.database);
         this.chatManager = new ChatManager();
         this.gameManager = new GameManager(this);
 
@@ -32,18 +42,29 @@ export default class GameServer {
 
     //websocket event listeners
     handleWebSocketConnection(websocket: WebSocket, request: IncomingMessage){
-        const userId = `${request.socket.remoteAddress}:${request.socket.remotePort}`;
+        const userId = crypto.randomUUID();
         const user = new User(websocket, userId);
         this.userManager.registerActiveUser(user);
         this.chatManager.subscribe(user, "global");
 
-        websocket.on("message",(data)=>{
-            this.handleWebSocketMessage(websocket,user, data);
+        websocket.on("message", (data) => {
+            void this.handleWebSocketMessage(websocket, user, data)
+                .catch(error => {
+                    console.error("WebSocket message error:", error);
+        
+                    if (websocket.readyState === WebSocket.OPEN) {
+                        websocket.send(
+                            new ServerErrorMessageBuilder()
+                                .setError("internal server error")
+                                .toJsonString()
+                        );
+                    }
+                });
         });
         websocket.on("close", ()=>{this.userManager.removeActiveUser(user)});
     }
 
-    handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData){
+    async handleWebSocketMessage(websocket: WebSocket, user: User, data: WebSocket.RawData): Promise<void> {
         let message: ClientMessage;
         try {
             message = JSON.parse(data.toString()) as ClientMessage;
@@ -60,7 +81,7 @@ export default class GameServer {
                 response = this.handleRequestUserInfoMessage(message, user);
             break;
             case ClientMessageType.UpdateUserInfo:
-                response = this.handleUpdateUserInfoMessage(message, user);
+                response = await this.handleUpdateUserInfoMessage(message, user);
             break;
             case ClientMessageType.RequestActiveUsers:
                 response = this.handleRequestActiveUsersMessage(message)
@@ -79,6 +100,13 @@ export default class GameServer {
             break;
             case ClientMessageType.SendGameAction:
                 response = this.handleSendGameActionMessage(message, user);
+            break;
+            case ClientMessageType.Login:
+                response = await this.handleLoginMessage(message, user);
+            break;
+            
+            case ClientMessageType.Register:
+                response = await this.handleRegisterMessage(message, user);
             break;
             default:
                 response = new ServerErrorMessageBuilder().setError("unsupported message type");
@@ -103,8 +131,25 @@ export default class GameServer {
         return requestedUser.toUserInfoMessage();
     }
 
-    handleUpdateUserInfoMessage(updateUserInfoMessage: UpdateUserInfoMessage, user: User): ServerMessage{
-        if(updateUserInfoMessage.username != null) user.setUsername(updateUserInfoMessage.username);
+    async handleUpdateUserInfoMessage(
+        message: UpdateUserInfoMessage,
+        user: User
+    ): Promise<ServerMessage> {
+        if (message.username != null) {
+            const username = message.username.trim();
+            if (!username) {
+                return new ServerErrorMessageBuilder()
+                    .setError("invalid username");
+            }
+            if (user.accountId !== null) {
+                await this.database.setUsername(
+                    user.accountId,
+                    username
+                );
+            }
+            user.setUsername(username);
+        }
+    
         return user.toUserInfoMessage();
     }
 
@@ -204,5 +249,95 @@ export default class GameServer {
         }
         
         return null;
+    }
+    async handleRegisterMessage(
+        message: RegisterMessage,
+        user: User
+    ): Promise<ServerMessage> {
+        if (user.accountId !== null) {
+            return new ServerErrorMessageBuilder()
+                .setError("already authenticated");
+        }
+    
+        const username = message.username?.trim();
+        const password = message.password;
+    
+        if (
+            typeof username !== "string" ||
+            username.length === 0 ||
+            username.length > 32
+        ) {
+            return new ServerErrorMessageBuilder()
+                .setError("invalid username");
+        }
+    
+        if (
+            typeof password !== "string" ||
+            password.length === 0 ||
+            password.length > 1024
+        ) {
+            return new ServerErrorMessageBuilder()
+                .setError("invalid password");
+        }
+    
+        const account: AuthUser = {
+            id: crypto.randomUUID(),
+            username,
+            password: await this.authManager.hashPassword(password)
+        };
+    
+        try {
+            await this.database.createUser(account);
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                error.message === "Username already taken"
+            ) {
+                return new ServerErrorMessageBuilder()
+                    .setError("username already taken");
+            }
+            throw error;
+        }
+    
+        user.setAccount(account.id, account.username);
+    
+        return user.toUserInfoMessage();
+    }
+  
+    async handleLoginMessage(
+        message: LoginMessage,
+        user: User
+    ): Promise<ServerMessage> {
+        if (user.accountId !== null) {
+            return new ServerErrorMessageBuilder()
+                .setError("already authenticated");
+        }
+    
+        const username = message.username?.trim();
+        const password = message.password;
+    
+        if (
+            typeof username !== "string" ||
+            typeof password !== "string" ||
+            password.length > 1024
+        ) {
+            return new ServerErrorMessageBuilder()
+                .setError("invalid credentials");
+        }
+    
+        const account = await this.database.getUserFromName(username);
+        if (
+            account === null ||
+            !(await this.authManager.verifyPassword(
+                password,
+                account.password
+            ))
+        ) {
+            return new ServerErrorMessageBuilder()
+                .setError("invalid username or password");
+        }
+    
+        user.setAccount(account.id, account.username);
+        return user.toUserInfoMessage();
     }
 }

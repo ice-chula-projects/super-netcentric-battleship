@@ -4,11 +4,20 @@ import Random from "../lib/Random.js";
 
 export default class User{
     readonly socket: WebSocket;
+    // WebSocket id
     readonly id: string;
     readonly subscribedChatChannelIds: string[] = [];
+
     currentGameId: string | null = null;
     active: boolean = true;
     username: string;
+  
+    // Persistent account id, null for guests
+    private _accountId: string | null = null;
+    
+    get accountId(): string | null {
+        return this._accountId;
+    }
 
     setUsername(username:string){
         this.username = username;
@@ -32,15 +41,29 @@ export default class User{
         return userInfoMessage;
     }
     
-    constructor(socket: WebSocket, id: string){
+    constructor(
+        socket: WebSocket,
+        id: string,
+        username?: string,
+        accountId: string | null = null
+    ) {
         this.socket = socket;
         this.id = id;
-        this.username = User.generateRandomUsername();
+        this.username = username ?? User.generateRandomUsername();
+        this._accountId = accountId;
 
         this.socket.on("close", () => {this.active = false});
     }
-    
+  
     toUserInfoMessage(): UserInfoMessage{
         return User.toUserInfoMessage(this);
+    }
+  
+    setAccount(accountId: string, username: string) {
+        if (this._accountId !== null) {
+            throw new Error("User already has an account");
+        }
+        this._accountId = accountId;
+        this.username = username;
     }
 }

@@ -7,5 +7,7 @@ export enum ClientMessageType{
     SendToChat = "sendToChat",
     SendGameAction = "sendGameAction",
     SendBoardSetup = "sendBoardSetup",
-    JoinGame = "joinGame"
+    JoinGame = "joinGame",
+    Login = "login",
+    Register = "register"
 }
