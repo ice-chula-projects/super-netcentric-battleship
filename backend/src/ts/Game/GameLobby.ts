@@ -54,6 +54,10 @@ export default class GameLobby{
         return this.gameType == GameType.AI;
     }
 
+    get joinable(): boolean{
+        return !this.isFull && !this.activeGame;
+    }
+
     setPublic(isPublic: boolean){
         this.isPublic = isPublic;
     }
@@ -106,6 +110,7 @@ export default class GameLobby{
 
     addUser(user: ActiveUser){
         if(this.isFull) throw new Error("Attempted to add a user to a full lobby");
+        if(this.activeGame) throw new Error("Cannot join a lobby with an on-going game");
         this.members.push({
             user: user,
             ready: false

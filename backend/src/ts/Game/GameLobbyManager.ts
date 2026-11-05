@@ -82,7 +82,7 @@ export default class GameLobbyManager{
     }
 
     getPublicLobbies(): GameLobby[]{
-        return this.getLobbies().filter(x => x.isPublic);
+        return this.getLobbies().filter(x => x.isPublic && x.joinable);
     }
 
     getLobby(lobbyCode:string){
