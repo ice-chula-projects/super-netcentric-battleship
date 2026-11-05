@@ -101,7 +101,7 @@ export default class GameLobby{
         if(user.currentLobbyCode != this.id) throw new Error("Attempted to remove a user who is not part of this lobby");
 
         if(this.gameInProgress){
-            this.stopGame();
+            this.stopGame("a participating player left the lobby");
         }
 
         // remove user
@@ -133,7 +133,7 @@ export default class GameLobby{
 
     deleteLobby(){
 
-        if(this.activeGame) this.stopGame();
+        if(this.activeGame) this.stopGame("Lobby deleted");
 
         for(const member of this.members){
             member.user.setCurrentLobbyCode(null);
@@ -206,14 +206,20 @@ export default class GameLobby{
         this.activeGame = new Game(this.gameSettings, player1User, player2User);
     }
     
-    stopGame(){
+    stopGame(reason: string){
         if(!this.gameInProgress) throw new Error("Cannot stop game when none is in progress");
 
-        const message = new GameEndNotificationMessageBuilder();
+        this.activeGame!.terminateGame();
+        const finalScore = this.activeGame!.score;
+        this.activeGame = null;
+
+        const message = new GameEndNotificationMessageBuilder()
+        .setFinalScore(finalScore)
+        .setReason(reason);
+
         const jsonString = message.toJsonString();
         for(const members of this.members){
             members.user.socket.send(jsonString);
         }
-        this.activeGame = null;
     }
 }

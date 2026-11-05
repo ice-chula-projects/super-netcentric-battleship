@@ -149,7 +149,7 @@ export default class Game{
         this.switchTurns();
         this.resetTimeoutInterval();
 
-        if(!targetBoard.alive) this.endGame(attackingPlayer);
+        if(!targetBoard.alive) this.endMatch(attackingPlayer);
     }
 
     requestRematch(requestingPlayer: Player){
@@ -165,7 +165,7 @@ export default class Game{
         this.notifyCurrentTurn();
     }
 
-    endGame(winner: Player){
+    endMatch(winner: Player){
         if(this.gameState != GameState.Battle) throw new Error("Tried to end a game in non Battle State");
         this.gameState = GameState.End;
         this.score[winner]++;
@@ -173,6 +173,11 @@ export default class Game{
         //if a rematch happens set the winner to be the first player of the next game
         this.currentTurn = winner;
         this.notifyGameEnd(winner);
+    }
+
+    //used when game is ended (i.e from player leaving)
+    terminateGame(){
+        if(this.timeoutIntervalId != null) clearTimeout(this.timeoutIntervalId);
     }
 
     rematch(){

@@ -1,11 +1,7 @@
 import { Player } from "../../Game/Player.js";
+import Score from "../../Game/Score.js";
 import GameMessage from "../../GameMessage.js";
 import { ServerMessageType } from "../ServerMessageType.js";
-
-export interface Score {
-    [Player.Player1]: number,
-    [Player.Player2]: number
-}
 
 export interface MatchCompleteNotificationMessage extends GameMessage{
     readonly type: ServerMessageType.MatchCompleteNotification;
