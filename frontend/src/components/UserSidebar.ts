@@ -30,7 +30,7 @@ export default class UserSidebar extends HTMLElement {
                     left: 0;
                     bottom: 0;
 
-                    width: min(350px, 85vw);
+                    width: 500px;
                     box-sizing: border-box;
 
                     background: var(--color-satellite-base);
