@@ -1,27 +1,48 @@
-import { ActiveUsersInfoMessage } from "./ActiveUsersInfoMessage.js";
-import { ChatMessageNotificationMessage } from "./ChatMessageNotificationMessage.js";
-import { GameActionResultNotificactionMessage } from "./GameActionResultNotificationMessage.js";
-import { GameStateNotificationMessage } from "./GameStateNotificationMessage.js";
-import { OpponentGameActionNotificationMessage } from "./OpponentGameActionNotificationMessage.js";
+import { ActiveUsersInfoMessage } from "./User/ActiveUsersInfoMessage.js";
+import { ChatMessageNotificationMessage } from "./Chat/ChatMessageNotificationMessage.js";
 import { PongMessage } from "./PongMessage.js";
 import { ServerErrorMessage } from "./ServerErrorMessage.js";
-import { UserInfoMessage } from "./UserInfoMessage.js";
+import { UpdateBoardTileStatusesNotificationMessage } from "./Game/UpdateBoardTileNotificationMessage.js";
+import { UserInfoMessage } from "./User/UserInfoMessage.js";
+import { CurrentTurnNotificationMessage } from "./Game/CurrentTurnNotificationMessage.js";
+import { LobbyInfoNotificationMessage } from "./Game/Lobby/LobbyInfoNotificationMessage.js";
+import { PublicLobbiesInfoMessage } from "./Game/Lobby/PublicLobbiesInfoMessage.js";
+import { GameStartNotificationMessage } from "./Game/Lobby/GameStartNotificationMessage.js";
+import { GameEndNotificationMessage } from "./Game/Lobby/GameEndNotificationMessage.js";
+import { MatchCompleteNotificationMessage } from "./Game/MatchCompleteNotificationMessage.js";
+import { RematchStatusNotificationMessage } from "./Game/RematchStatusNotificationMessage.js";
+import { MatchStartNotificationMessage } from "./Game/MatchStartNotificationMessage.js";
+import { LobbyExitNotificationMessage } from "./Game/Lobby/LobbyExitNotificationMessage.js";
 
 export * from "./ServerMessageType.js";
 export * from "./PongMessage.js";
-export * from "./UserInfoMessage.js";
+export * from "./User/UserInfoMessage.js";
 export * from "./ServerErrorMessage.js";
-export * from "./ActiveUsersInfoMessage.js";
-export * from "./ChatMessageNotificationMessage.js";
-export * from "./GameActionResultNotificationMessage.js";
-export * from "./GameStateNotificationMessage.js";
-export * from "./OpponentGameActionNotificationMessage.js";
+export * from "./User/ActiveUsersInfoMessage.js";
+export * from "./Chat/ChatMessageNotificationMessage.js";
+export * from "./Game/UpdateBoardTileNotificationMessage.js";
+export * from "./Game/CurrentTurnNotificationMessage.js";
+export * from "./Game/Lobby/LobbyInfoNotificationMessage.js";
+export * from "./Game/Lobby/PublicLobbiesInfoMessage.js"
+export * from "./Game/Lobby/GameStartNotificationMessage.js";
+export * from "./Game/Lobby/GameEndNotificationMessage.js";
+export * from "./Game/MatchCompleteNotificationMessage.js";
+export * from "./Game/RematchStatusNotificationMessage.js";
+export * from "./Game/MatchStartNotificationMessage.js";
+export * from "./Game/Lobby/LobbyExitNotificationMessage.js";
 
 export type ServerMessage = PongMessage |
 UserInfoMessage |
 ServerErrorMessage |
 ActiveUsersInfoMessage |
-ChatMessageNotificationMessage |
-GameActionResultNotificactionMessage |
-GameStateNotificationMessage |
-OpponentGameActionNotificationMessage;
+ChatMessageNotificationMessage | 
+UpdateBoardTileStatusesNotificationMessage |
+CurrentTurnNotificationMessage |
+LobbyInfoNotificationMessage | 
+PublicLobbiesInfoMessage |
+GameStartNotificationMessage |
+GameEndNotificationMessage |
+MatchCompleteNotificationMessage |
+RematchStatusNotificationMessage |
+MatchStartNotificationMessage |
+LobbyExitNotificationMessage;

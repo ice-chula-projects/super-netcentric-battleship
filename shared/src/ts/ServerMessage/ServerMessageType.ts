@@ -4,7 +4,14 @@ export enum ServerMessageType{
     Error = "error",
     ActiveUsersInfo = "activeUsersInfo",
     ChatMessageNotification = "chatMessageNotification",
-    GameStateNotification = "gameStateNotification",
-    GameActionResultNotificaction = "gameActionResultNotification",
-    OpponentGameActionNotification = "opponentGameActionNotification"
+    UpdateBoardTileStatusesNotification = "updateBoardTileStatusesNotification",
+    LobbyInfoNotification = "lobbyInfoNotification",
+    CurrentTurnNotification = "currentTurnNotification",
+    PublicLobbiesInfo = "publicLobbiesInfo",
+    GameStartNotification = "gameStartNotification",
+    GameEndNotification = "gameEndNotification",
+    MatchCompleteNotification = "matchCompleteNotification",
+    RematchStatusNotification = "rematchStatusNotification",
+    MatchStartNotification = "matchStartNotification",
+    LobbyExitNotification = "lobbyExitNotification"
 }

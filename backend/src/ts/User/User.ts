@@ -7,10 +7,14 @@ export default class User{
     // WebSocket id
     readonly id: string;
     readonly subscribedChatChannelIds: string[] = [];
+    currentLobbyCode: string | null = null;
 
-    currentGameId: string | null = null;
     active: boolean = true;
     username: string;
+    
+    get currentlyInGameLobby(): boolean{
+        return this.currentLobbyCode != null;
+    } 
   
     // Persistent account id, null for guests
     private _accountId: string | null = null;
@@ -23,8 +27,8 @@ export default class User{
         this.username = username;
     }
 
-    setCurrentGameId(currentGameId: string | null){
-        this.currentGameId = currentGameId;
+    setCurrentLobbyCode(currentLobbyCode: string | null){
+        this.currentLobbyCode = currentLobbyCode;
     }
 
     //TODO: random username system
