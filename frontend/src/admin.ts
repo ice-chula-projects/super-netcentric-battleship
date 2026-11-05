@@ -191,7 +191,7 @@ document.body.style.visibility = 'visible';
 
 function authorizeAdmin(): void {
     // Always hide the dashboard unless authorization succeeds.
-    dashboard.hidden = true;
+    dashboard!.hidden = true;
 
     // Wait until user information is available.
     if (!loginManager.user) {
@@ -214,14 +214,14 @@ function authorizeAdmin(): void {
 
     // Avoid initializing the dashboard more than once.
     if (dashboardInitialized) {
-        dashboard.hidden = false;
+        dashboard!.hidden = false;
         return;
     }
 
     dashboardInitialized = true;
 
     // Authorized admins can see the dashboard.
-    dashboard.hidden = false;
+    dashboard!.hidden = false;
 
     if (userSidebar) {
         userSidebar.hidden = false;
@@ -241,7 +241,7 @@ webSocket.addEventListener('open', () => {
 
     // Request the current user's information.
     webSocket.send(new ClientMessage.RequestUserInfoMessageBuilder().toJsonString());
-    userSidebar.isOpen = false;
+    userSidebar!.isOpen = false;
 });
 
 webSocket.addEventListener('close', () => {
