@@ -250,8 +250,9 @@ export default class GameLobby{
         .setReason(reason);
 
         const jsonString = message.toJsonString();
-        for(const members of this.members){
-            members.user.socket.send(jsonString);
+        for(const member of this.members){
+            member.user.socket.send(jsonString);
+            member.ready = false;
         }
     }
 }
