@@ -67,7 +67,42 @@ class ShipDefinitionFactory {
 //define new ship types here
 export enum ShipType {
     Standard,
-    Star
+    Star,
+    BlueRicky,
+    OrangeRicky,
+    CleavelandZ,
+    RhodeIslandZ,
+    Smashboy,
+    Teewee,
+    SmolHero,
+    Dot,
+    Auto,
+    Warm,
+    Pro,
+    Non,
+    Pong,
+    Azmi,
+    Defender,
+    Scout,
+    Infantry,
+    Sniper,
+    Warrior,
+    King,
+    Queen,
+    Rook,
+    Bishop,
+    Knight,
+    Pawn,
+    Wingman,
+    Dragon,
+    Voltz,
+    Ghost,
+    Shark,
+    Archer,
+    Sword,
+    Mace,
+    Spear
+
 }
 
 const ShipDefinitions: Record<ShipType, ShipDefinition> = {
@@ -108,7 +143,603 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, -1, 1)
         ]
-    )
+    ),
+
+        [ShipType.BlueRicky]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.BlueRicky,
+        "BlueRicky",
+        "4-Block ⅃",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-2, 0, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.OrangeRicky]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.OrangeRicky,
+        "OrangeRicky",
+        "4-Block L",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(2, 0, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.CleavelandZ]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.CleavelandZ,
+        "CleavelandZ",
+        "4-Block Z",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.RhodeIslandZ]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.RhodeIslandZ,
+        "RhodeIslandZ",
+        "Reverse 4-Block Z",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Smashboy]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Smashboy,
+        "Smashboy",
+        "4-Block Cube",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Teewee]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Teewee,
+        "Teewee",
+        "4-Block Cube Pyramid",
+        
+        4,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.SmolHero]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.SmolHero,
+        "SmolHero",
+        "3-Block Line",
+        
+        3,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Auto]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Auto,
+        "Auto",
+        "5-Block Line",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Warm]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Warm,
+        "Warm",
+        "5-Block Open Pyramid",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(2, 2, 1),
+        ShipDefinitionFactory.createShipHullTile(-2, -2, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Pro]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Pro,
+        "Pro",
+        "5-Block Abstract X",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(2, 2, 1),
+        ShipDefinitionFactory.createShipHullTile(-2, 2, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Non]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Non,
+        "Non",
+        "5-Block Propellar",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Pong]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Pong,
+        "Pong",
+        "5-Block Table",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Azmi]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Azmi,
+        "Azmi",
+        "5-Block X",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)]
+    ),
+
+        [ShipType.Dot]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Dot,
+        "Dot",
+        "Abandon all hope all ye who enters",
+        
+        20,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 10)],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 10),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 10)
+        ]
+    ),
+
+    [ShipType.Defender]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Defender,
+        "Defender",
+        "T-shaped",
+        
+        5,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0)
+        ]
+    ),
+
+    [ShipType.Scout]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Scout,
+        "Scout",
+        "Low damage, Big AOE",
+        
+        7,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 0)
+        ]
+    ),
+
+    [ShipType.Infantry]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Infantry,
+        "Infantry",
+        "Cheap",
+        
+        2,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1)
+        ]
+    ),
+
+    [ShipType.Sniper]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Sniper,
+        "Sniper",
+        "High damage, Fragile",
+        
+        6,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 3)
+        ]
+    
+    ),
+
+    [ShipType.Warrior]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Warrior,
+        "Warrior",
+        "High damage, Mid HP",
+        
+        6,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 2)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 0),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 0)
+        ]
+
+    ),
+
+    [ShipType.King]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.King,
+        "King",
+        "Tyrant of the battlefied, Huge HP and DMG but easy to spot",
+        
+        6,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(2, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 2)
+        ]
+
+    ),
+
+    [ShipType.Queen]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Queen,
+        "Queen",
+        "The Ultimate Glass Cannon, High DMG, Low HP. High risk high reward",
+        
+        7 ,
+
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 4),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 4),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 4)
+        ]
+
+    ),
+
+    [ShipType.Rook]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Rook,
+        "Rook",
+        "The Twin Tower",
+        
+        5 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 2)
+        ]
+
+    ),
+
+    [ShipType.Bishop]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Bishop,
+        "Bishop",
+        "Bi-shop",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 1)
+        ]
+
+    ),
+
+    [ShipType.Knight]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Knight,
+        "Knight",
+        "In their shining armor",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(1, -2, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(2, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(2, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 2, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 2, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-2, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-2, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -2, 1)
+        ]
+
+    ),
+
+    [ShipType.Pawn]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Pawn,
+        "Pawn",
+        "Footsoldier",
+        
+        1 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1)
+        ]
+
+    ),
+
+    [ShipType.Wingman]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Wingman,
+        "Wingman",
+        "Your trusty companion",
+        
+        2 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2)
+        ]
+
+    ),
+
+    [ShipType.Dragon]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Dragon,
+        "Dragon",
+        "Tyrant of the sky",
+        
+        8 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 3),
+        ShipDefinitionFactory.createShipHullTile(2, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 4),
+        ShipDefinitionFactory.createShipHullTile(2, 1, 3),
+        ShipDefinitionFactory.createShipHullTile(2, 2, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 2)
+        ]
+
+    ),
+
+    [ShipType.Voltz]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Voltz,
+        "Voltz",
+        "Zap",
+        
+        3 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -2, 1)
+        ],
+
+    ),
+
+    [ShipType.Ghost]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Ghost,
+        "Ghost",
+        "Boo!",
+        
+        3 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)
+        ],
+    ),
+
+    [ShipType.Shark]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Shark,
+        "Shark",
+        "There's blood in the water",
+        
+        6 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 2, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 2)
+        ]
+
+    ),
+
+    [ShipType.Archer]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Archer,
+        "Archer",
+        "Pew pew",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 4),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(2, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(3, 0, 1)
+        ]
+
+    ),
+
+    [ShipType.Sword]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Sword,
+        "Sword",
+        "Staby stab",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(0, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, -2, 1),
+        //ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 2), 
+        ]
+
+    ),
+
+    [ShipType.Mace]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Mace,
+        "Mace",
+        "Smashy smack",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(0, 2, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 3, 1),
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 1)
+        ]
+
+    ),
+
+[ShipType.Spear]: ShipDefinitionFactory.createShipDefinition(
+        ShipType.Spear,
+        "Spear",
+        "Pointy pokey",
+        
+        4 ,
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        ShipDefinitionFactory.createShipHullTile(0, 1, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 2, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 3, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 4, 1),
+        ShipDefinitionFactory.createShipHullTile(0, 5, 1)
+        ],
+
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -2, 1)
+        ]
+
+     ),
 }
 
 export default ShipDefinitions;
