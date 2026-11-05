@@ -13,11 +13,11 @@ export interface LobbyMember{
 
 export default class GameLobby{
     readonly id: string;
-    readonly hostId: string;
     readonly members: LobbyMember[] = [];
     readonly chatManager: ChatManager;
     readonly chatChannelId: string;
-
+    
+    hostId: string;
     isPublic: boolean = false;
     name: string = "Untitled Lobby";
     description: string = "";
@@ -96,6 +96,29 @@ export default class GameLobby{
         this.chatManager.subscribe(user, this.chatChannelId);
         user.setCurrentLobbyCode(this.id);
         this.notifyLobbyInformation();
+    }
+
+    removeUser(user: User){
+        if(user.currentLobbyCode != this.id) throw new Error("Attempted to remove a user who is not part of this lobby");
+
+        if(this.gameInProgress){
+            this.activeGame;
+        }
+
+        if(this.members.length <= 1){
+            this.deleteLobby();
+        } else {
+            // remove user
+            this.members.splice(this.members.indexOf(this.getMemberFromUser(user)), 1);   
+            
+            // migrate host if the user was the host
+            if(user.id == this.hostId){
+                this.hostId = this.members[0].user.id;
+            }
+
+            this.notifyLobbyInformation();
+        }
+             
     }
 
     updateReadyStatus(user: User, ready: boolean){
@@ -180,5 +203,12 @@ export default class GameLobby{
         player2User.socket.send(new GameStartNotificationMessageBuilder().setPlayerId(Player.Player2).toJsonString());
 
         this.activeGame = new Game(this.gameSettings, player1User, player2User);
+    }
+    
+    stopGame(){
+        if(!this.gameInProgress) throw new Error("Cannot stop game when none is in progress");
+
+
+        this.activeGame = null;
     }
 }
