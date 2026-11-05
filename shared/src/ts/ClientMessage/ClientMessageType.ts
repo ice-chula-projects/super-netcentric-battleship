@@ -15,7 +15,7 @@ export enum ClientMessageType{
     InitializeFleetAction = "InitializeFleetAction",
     UseAbilityAction = "useAbilityAction",
     Login = "login",
-    Register = "register"
+    Register = "register",
     RequestRematchAction = "requestRematchAction",
     ExitLobby = "exitLobby"
 }

@@ -57,12 +57,12 @@ export class GameManager extends EventTarget {
 
     get playerScore(): number | null {
         if(this.playerId == null) return null;
-        return this.score[this.playerId];
+        return this.score![this.playerId!];
     }
 
     get opponentScore(): number | null {
         if(this.playerId == null) return null;
-        return this.score[this.opponentId];
+        return this.score![this.opponentId!];
     }
 
     fleet: ShipPlacement[] = [];
@@ -80,12 +80,12 @@ export class GameManager extends EventTarget {
 
     getPlayerBoard(): GameBoard{
         if(!this.initialized) throw new Error("Game is not Initialized");
-        return this.boards[this.playerId];
+        return this.boards![this.playerId!];
     }
 
     getOpponentBoard(): GameBoard{
         if(!this.initialized) throw new Error("Game is not Initialized");
-        return this.boards[this.opponentId];
+        return this.boards![this.opponentId!];
     }
 
     addShipToFleet(shipType: ShipType, location: Coordinate, orientation: Orientation){

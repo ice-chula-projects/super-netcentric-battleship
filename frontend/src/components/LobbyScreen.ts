@@ -291,9 +291,7 @@ export default class LobbyScreen extends HTMLElement {
 
     shadow.querySelector("#leave-button")!
       .addEventListener("click", () => {
-        this.dispatchEvent(new CustomEvent("leave-lobby", {
-          bubbles: true
-        }));
+        this.lobbyManager.exitLobby();
       });
   }
 

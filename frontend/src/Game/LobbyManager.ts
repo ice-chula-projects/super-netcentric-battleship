@@ -1,6 +1,6 @@
 import { CreateLobbyMessageBuilder, ExitLobbyMessageBuilder, JoinLobbyMessageBuilder, ModifyGameSettingsMessageBuilder, RequestPublicLobbiesMessageBuilder, StartGameMessageBuilder, UpdateReadyStateMessageBuilder } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import GameSettings from "@super-netcentric-battleship/shared/Game/GameSettings.js";
-import { GameEndNotificationMessage, GameStartNotificationMessage, LobbyExitNotificationMessage, LobbyInfoNotificationMessage, PublicLobbiesInfoMessage, PublicLobbyInformation, ServerMessage, ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
+import { GameEndNotificationMessage, GameStartNotificationMessage, LobbyExitNotificationMessage, LobbyInfoNotificationMessage, LobbyPlayerInformation, PublicLobbiesInfoMessage, PublicLobbyInformation, ServerMessage, ServerMessageType } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import { GameManager } from "./GameManager";
 
 export class LobbyManager extends EventTarget {
@@ -56,7 +56,6 @@ export class LobbyManager extends EventTarget {
 
     exitLobby(){
         const message = new ExitLobbyMessageBuilder();
-
         this.webSocket.send(message.toJsonString());
     }
 
@@ -134,7 +133,7 @@ export class LobbyManager extends EventTarget {
     }
 
     handleGameStartNotificationMessage(gameStartNotificationMessage: GameStartNotificationMessage){
-        this.gameManager.initializeGame(this.currentLobbyInfo.gameSettings, gameStartNotificationMessage.playerId);
+        this.gameManager.initializeGame(this.currentLobbyInfo!.gameSettings, gameStartNotificationMessage.playerId);
     }
 
     handleGameEndNotificationMessage(gameEndNotificationMessage: GameEndNotificationMessage){
@@ -144,5 +143,10 @@ export class LobbyManager extends EventTarget {
 
     handleLobbyExitNotificationMessage(message: LobbyExitNotificationMessage){
         this.currentLobbyInfo = null;
+        this.notifyStateChanged();
+    }
+
+    private notifyStateChanged() {
+      this.dispatchEvent(new Event("state-change"));
     }
 }

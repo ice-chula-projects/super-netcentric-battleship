@@ -47,6 +47,8 @@ UpdateChatChannelSubscriptionMessage |
 SendToChatMessage |
 CreateLobbyMessage |
 JoinLobbyMessage |
+ExitLobbyMessage |
+RequestRematchActionMessage |  
 ModifyGameSettingsMessage |
 StartGameMessage |
 UpdateReadyStateMessage |
@@ -59,11 +61,6 @@ RegisterMessage;
 
 export type ClientActionMessage = FireVolleyActionMessage |
 InitializeFleetActionMessage |
-UseAbilityActionMessage;
+UseAbilityActionMessage |
 RequestRematchActionMessage |
 ExitLobbyMessage;
-
-export type ClientActionMessage = FireVolleyActionMessage |
-InitializeFleetActionMessage |
-UseAbilityActionMessage |
-RequestRematchActionMessage;

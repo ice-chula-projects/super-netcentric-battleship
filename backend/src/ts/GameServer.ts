@@ -17,7 +17,8 @@ import {
   UpdateReadyStateMessage,
   UpdateUserInfoMessage,
   LoginMessage,
-  RegisterMessage
+  RegisterMessage,
+  ExitLobbyMessage
 } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import { ActiveUsersInfoMessageBuilder, PongMessage, PongMessageBuilder, PublicLobbiesInfoMessageBuilder, ServerErrorMessageBuilder, ServerMessage } from "@super-netcentric-battleship/shared/ServerMessage.js";
 import UserManager from "./User/UserManager.js";
