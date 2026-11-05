@@ -6,6 +6,7 @@ import { GameEndNotificationMessageBuilder, GameStartNotificationMessageBuilder,
 import { Player } from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ClientActionMessage } from "@super-netcentric-battleship/shared/ClientMessage.js";
 import AIControlledGame from "./AI/AIControlledGame.js";
+import GameLobbyManager from "./GameLobbyManager.js";
 
 export interface LobbyMember{
     user: ActiveUser,
@@ -18,6 +19,7 @@ export enum GameType {
 }
 
 export default class GameLobby{
+    readonly lobbyManager: GameLobbyManager
     readonly id: string;
     readonly members: LobbyMember[] = [];
     readonly chatManager: ChatManager;
@@ -64,8 +66,9 @@ export default class GameLobby{
         this.description = description;
     }
 
-    constructor(id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean, gameSettingPreset: GameSettingsPresetNames){
+    constructor(lobbyManager: GameLobbyManager, id:string, chatManager: ChatManager, name: string, description: string, isPublic: boolean, gameSettingPreset: GameSettingsPresetNames){
         this.name = name;
+        this.lobbyManager = lobbyManager;
         this.description = description;
         this.isPublic = isPublic;
         
@@ -127,6 +130,8 @@ export default class GameLobby{
 
         user.socket.send(new LobbyExitNotificationMessageBuilder().toJsonString());
 
+        if(this.members.length <= 0) this.deleteLobby();
+
         // migrate host if the user was the host
         if(user == this.hostUser){
             this.hostUser = this.members.length == 0? null : this.members[0].user;
@@ -148,8 +153,8 @@ export default class GameLobby{
     }
 
     deleteLobby(){
-
         if(this.activeGame) this.stopGame("Lobby deleted");
+        this.lobbyManager.notifyLobbyDeletion(this);
 
         for(const member of this.members){
             member.user.setCurrentLobby(null);

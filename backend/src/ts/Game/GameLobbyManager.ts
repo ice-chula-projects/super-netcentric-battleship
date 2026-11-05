@@ -25,7 +25,7 @@ export default class GameLobbyManager{
     createLobby(hostUser: ActiveUser, name: string, description: string, isPublic: boolean, gameSettingPreset: GameSettingsPresetNames): GameLobby{
         if(hostUser.currentlyInGameLobby) throw new Error("Attempted to create a new lobby while host is already in a lobby");
         const lobbyCode = this.generateNewLobbyCode();
-        const lobby = new GameLobby(lobbyCode, this.gameServer.chatManager, name, description, isPublic, gameSettingPreset);
+        const lobby = new GameLobby(this, lobbyCode, this.gameServer.chatManager, name, description, isPublic, gameSettingPreset);
         this.lobbies[lobbyCode] = lobby;
         lobby.addUser(hostUser);
 
@@ -96,5 +96,9 @@ export default class GameLobbyManager{
         lobby.deleteLobby();
 
         delete this.lobbies[lobbyCode];
+    }
+
+    notifyLobbyDeletion(lobby: GameLobby){
+        if(this.lobbies[lobby.id] != null) delete this.lobbies[lobby.id];
     }
 }
