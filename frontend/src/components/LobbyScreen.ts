@@ -1,6 +1,6 @@
 import { LobbyManager } from '../Game/LobbyManager';
 import { Player } from '@super-netcentric-battleship/shared/Game/Player.js';
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import { GameSettingsPresetNames } from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 
 export default class LobbyScreen extends HTMLElement {

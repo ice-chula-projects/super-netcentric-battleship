@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import LobbyScreen from './LobbyScreen';
 import AuthenticationPopover from './AuthenticationPopover';
 import shipModesCSS from './ShipModes.css?inline';
@@ -7,24 +7,29 @@ import { ShipType } from '@super-netcentric-battleship/shared/Game/ShipDefinitio
 export default class GameHeader extends HTMLElement {
     private shipModeSelect!: HTMLElement;
     private authenticationPopover!: AuthenticationPopover;
+    private shipModeSelectorStyles: CSSStyleSheet = new CSSStyleSheet();
 
     constructor() {
         super();
 
         const shadow = this.attachShadow({ mode: 'open' });
-        shadow.adoptedStyleSheets = [appStyles];
+        this.shipModeSelectorStyles.replaceSync(shipModesCSS);
+        shadow.adoptedStyleSheets = [appStyles, this.shipModeSelectorStyles];
         shadow.innerHTML = /* html */ `
             <style>
-                ${shipModesCSS}
                 :host {
                     display: block;
+                }
+
+                :host([variant="admin"]) .invisible-as-admin {
+                    display: none;
                 }
 
                 header {
                     display: flex;
                     flex-direction: row;
                     justify-content: space-between;
-                    height: var(--header-height);
+                    height: auto;
                     padding: 1rem 2rem;
                     position: fixed;
                     width: 100vw;
@@ -33,11 +38,11 @@ export default class GameHeader extends HTMLElement {
                     height: auto;
                     background-image: linear-gradient(
                         120deg,
-                        var(--color-satellite-glow),
-                        var(--color-satellite-base)
+                        var(--bg),
+                        var(--surface-2)
                     );
                     border-radius: 0 0 8px 8px;
-                    border-bottom: 2px solid var(--color-satellite-glow);
+                    border-bottom: 2px solid var(--border);
                     box-shadow: 0 5px 4px 6px #00000025;
                     z-index: 20;
                     box-sizing: border-box;
@@ -53,33 +58,7 @@ export default class GameHeader extends HTMLElement {
                     display: none;
                 }
 
-                .avatar-button {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0;
-                    border: none;
-                    background: none;
-                    cursor: pointer;
-                    border-radius: 50%;
-                    outline: 1.5px solid var(--color-satellite-foreground-border);
-                    line-height: 0;
-                }
-
-                .avatar-button:hover {
-                    outline: 2px solid var(--color-satellite-glow);
-                    outline-offset: 3px;
-                }
-
-                .avatar-button user-avatar {
-                    display: flex;
-                }
-
-                :host([variant="admin"]) .invisible-as-admin {
-                    display: none;
-                }
-
-                @media (max-width: 790px) {
+                @media (max-width: 900px) {
                     .full-text {
                         display: none;
                     }
@@ -132,6 +111,7 @@ export default class GameHeader extends HTMLElement {
                         </button>
                         <lobby-screen id="lobby-form" popover></lobby-screen>
                     </div>
+                    <theme-switcher></theme-switcher>
                     <button
                         class="icon invisible-as-admin"
                         id="chat-toggle"
@@ -191,7 +171,7 @@ export default class GameHeader extends HTMLElement {
         });
 
         const header = shadow.querySelector('header')!;
-        this.shipModeSelect = shadow.querySelector('ship-modes')
+        this.shipModeSelect = shadow.querySelector('ship-modes');
         const resizeObserver = new ResizeObserver(([entry]) => {
             const height = entry.borderBoxSize[0].blockSize;
 
@@ -214,7 +194,7 @@ export default class GameHeader extends HTMLElement {
     }
 
     public notifyAllowedShipTypesChanged(allowedShipTypes: ShipType[]) {
-        if (!this.shipModeSelect) throw new Error("ship mode select not defined")
+        if (!this.shipModeSelect) throw new Error('ship mode select not defined');
         this.shipModeSelect?.dispatchEvent(
             new CustomEvent('send-allowed-ship-types', {
                 detail: allowedShipTypes,

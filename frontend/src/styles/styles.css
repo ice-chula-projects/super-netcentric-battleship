@@ -1,13 +1,6 @@
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-/* 2. Remove default margin */
-*:not(dialog) {
-    margin: 0;
-}
+@import 'reset.css';
+@import 'theme.css';
+@import 'buttons.css';
 
 :root {
     --color-satellite-glow: #dbfff4;
@@ -17,112 +10,45 @@
     --color-satellite-foreground-border: #89a4a4;
     --color-satellite-foreground-text: #6c7c7c;
     --color-satellite-accent: #475d7d;
-    background: #9a89a9;
-}
-
-[popover] {
-    position: fixed;
-    inset: 0;
-    margin: auto;
-
-    background-color: var(--color-satellite-base);
-    border-color: var(--color-satellite-glow);
-    width: fit-content;
-    height: fit-content;
-    padding: 1rem;
-    border-radius: 8px;
-}
-
-button {
-    background-color: var(--color-satellite-glow);
-    border: none;
-    padding: 0.25rem 0.75rem;
-    border-radius: 8px;
-    transition: 0.1s;
-}
-
-button:hover {
-    background-color: var(--color-satellite-foreground-focus);
-}
-
-button[disabled] {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-button.secondary {
-    background-color: var(--color-satellite-foreground);
-    border: 2px solid var(--color-satellite-foreground-border);
-    color: var(--color-satellite-foreground-text);
-    transition: 0.2s;
-}
-
-button.secondary:hover {
-    background-color: var(--color-satellite-foreground-focus);
-    border-color: var(--color-satellite-glow);
-    font-weight: bold;
-}
-
-button.icon {
-    display: inline-grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border-radius: 8px;
-    background-color: var(--color-satellite-foreground);
-    border: 2px solid var(--color-satellite-foreground-border);
-    transition: 0.2s;
-    color: var(--color-satellite-accent);
-    cursor: pointer;
-}
-
-button.icon:hover,
-button.icon[aria-pressed='true'] {
-    background-color: var(--color-satellite-foreground-focus);
-    border-color: var(--color-satellite-glow);
-}
-button.icon[aria-expanded='true'] {
-    background-color: var(--color-satellite-foreground-focus);
-}
-button.icon svg {
-    width: 22px;
-    height: 22px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-button.mode-selector {
-    flex: 1;
-    padding: 0.65rem;
-    background: var(--color-satellite-foreground);
-    border: 2px solid var(--color-satellite-foreground-border);
-    color: #263a3a;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-}
-
-button.mode-selector[aria-pressed='true'] {
-    background: var(--color-satellite-accent);
-    color: var(--color-satellite-foreground);
-    border-color: var(--color-satellite-accent);
-}
-
-h1 {
-    font-size: 1.5rem;
-    letter-spacing: 3%;
-    color: var(--color-satellite-accent);
+    --sidebar-width: max(25vw, 300px);
+    background: var(--bg);
 }
 
 body {
     height: 100vh;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-image: linear-gradient(to bottom, #655561 0%, #9a89a9 100%);
+    background-image: linear-gradient(to bottom, var(--surface-2) 0%, var(--bg) 100%);
     overflow-x: clip;
+}
+
+[popover] {
+    background-color: var(--bg);
+    border: 2px solid var(--border);
+    width: fit-content;
+    height: fit-content;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+h1,
+h2 {
+    font-size: 1.5rem;
+    letter-spacing: 3%;
+    color: var(--muted);
+}
+
+main {
+    padding-top: calc(var(--header-height) + 1rem);
+    gap: 2rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+    width: 100%;
+    opacity: 1;
 }
 
 #app {
@@ -135,48 +61,36 @@ body {
     justify-content: space-between;
 }
 
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.5rem;
+}
+
 /* Sidebar */
 
 aside {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: var(--header-height, 0px);
     right: 0;
     bottom: 0;
-    z-index: 1;
 
     height: 100vh;
-    padding: calc(var(--header-height) + 1rem) 1rem 1rem 1rem;
-    background-image: linear-gradient(
-        to bottom,
-        var(--color-satellite-base),
-        var(--color-satellite-glow)
-    );
-    border-left: 2px solid var(--color-satellite-glow);
-    overflow-y: auto;
+    width: var(--sidebar-width);
 
+    display: flex;
+    flex-direction: column;
+
+    padding: 1rem 1rem 1rem 1rem;
+    background-image: linear-gradient(to bottom, var(--surface-2), var(--bg));
+
+    overflow-y: scroll;
     transform: translateX(0);
     transition: transform 250ms ease;
     z-index: 10;
-}
-
-#app.sidebar-collapsed aside {
-    transform: translateX(100%);
-    pointer-events: none;
-}
-
-aside h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1rem;
-}
-
-aside section + section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-}
-
-aside ul {
-    padding-left: 1.1rem;
 }
 
 .space-grotesk-bold {
@@ -502,12 +416,7 @@ aside ul {
     border-bottom: 2px solid rgba(71, 93, 125, 0.15);
 }
 
-.section-title {
-    color: #475d7d;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
+
 
 /* Refresh */
 

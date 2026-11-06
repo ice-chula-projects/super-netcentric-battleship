@@ -10,8 +10,21 @@
             href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
             rel="stylesheet"
         />
-        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="src/styles/styles.css" />
         <script type="module" src="/src/index.ts"></script>
+        <script>
+            (function () {
+                var pref = 'system';
+                try {
+                    pref = localStorage.getItem('theme-pref') || 'system';
+                } catch (e) {}
+                var dark =
+                    pref === 'dark' ||
+                    (pref === 'system' &&
+                        window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            })();
+        </script>
         <title>Ship Ship Hooray!</title>
     </head>
     <body>
@@ -19,15 +32,27 @@
             <game-header></game-header>
             <chat-sidebar></chat-sidebar>
             <user-sidebar></user-sidebar>
-            <main style="padding-top: var(--header-height); gap: 2rem">
-                <div style="display: flex; justify-content: center; align-items: center; width: 100%; flex-direction: column;">
+            <main>
+                <div
+                    style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        flex-direction: column;
+                    "
+                >
                     <canvas
-                    width="750"
-                    height="750"
-                    style="width: 750px; height: 750px; margin: 3px"
-                    id="canvas"
-                ></canvas>
-                <button style="padding: 1.5rem 2.5rem; margin: 10px; font-size: 40px;" id="game-manager-state" hidden></button>
+                        width="750"
+                        height="500"
+                        style="width: 750px; height: 500px; margin: 3px"
+                        id="canvas"
+                    ></canvas>
+                    <button
+                        style="padding: 1.5rem 2.5rem; margin: 10px; font-size: 40px"
+                        id="game-manager-state"
+                        hidden
+                    ></button>
                 </div>
             </main>
         </div>
