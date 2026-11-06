@@ -7,6 +7,7 @@ import LoginManager from './Game/LoginManager';
 import './components/UserSidebar';
 import './components/UserAvatar';
 import './components/AuthenticationPopover';
+import './components/ThemeSwitcher';
 import './components/AuthenticationPopover';
 
 // TODO: config
