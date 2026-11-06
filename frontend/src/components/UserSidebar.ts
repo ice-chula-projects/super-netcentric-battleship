@@ -141,6 +141,10 @@ export default class UserSidebar extends HTMLElement {
                     flex-direction: column;
                     gap: 0.3rem;
                     min-width: 0;
+                    flex: 1;
+                    padding-bottom: 0.5rem;
+                    /* Dark, clear border line under text */
+                    border-bottom: 2px solid #334155;
                 }
 
                 .user-name {
@@ -148,6 +152,7 @@ export default class UserSidebar extends HTMLElement {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    color: #1e293b;
                 }
 
                 .user-status {
@@ -351,6 +356,7 @@ export default class UserSidebar extends HTMLElement {
             avatar.username = username;
         }
     }
+
     private renderUsers() {
         this.usersListElement.replaceChildren(
             ...this._users.map((username) => {
