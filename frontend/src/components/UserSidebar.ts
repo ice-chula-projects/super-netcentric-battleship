@@ -150,7 +150,7 @@ export default class UserSidebar extends HTMLElement {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
-                    color: #1e293b;
+                    color: var(--text);
                 }
 
                 .user-status {
@@ -158,7 +158,7 @@ export default class UserSidebar extends HTMLElement {
                     align-items: center;
                     gap: 0.4rem;
                     font-size: 0.8rem;
-                    color: #64748b;
+                    color: var(--muted);
                 }
 
                 .status-indicator {
