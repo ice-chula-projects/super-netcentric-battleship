@@ -18,8 +18,10 @@ body {
     height: 100vh;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-image: linear-gradient(to bottom, var(--surface-2) 0%, var(--bg) 100%);
+    background-image: linear-gradient(to bottom, var(--gradient-bg));
     overflow-x: clip;
+    font-size: 0.85rem;
+    color: var(--text);
 }
 
 [popover] {
@@ -51,6 +53,12 @@ hr {
     opacity: 1;
 }
 
+input::placeholder,
+textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+}
+
 #app {
     position: relative;
 }
@@ -70,8 +78,6 @@ hr {
     font-size: 1.5rem;
 }
 
-/* Sidebar */
-
 aside {
     position: fixed;
     top: var(--header-height, 0px);
@@ -85,7 +91,7 @@ aside {
     flex-direction: column;
 
     padding: 1rem 1rem 1rem 1rem;
-    background-image: linear-gradient(to bottom, var(--surface-2), var(--bg));
+    background-image: linear-gradient(to bottom, var(--gradient-bg));
 
     overflow-y: scroll;
     transform: translateX(0);
@@ -415,8 +421,6 @@ aside {
     padding-bottom: 16px;
     border-bottom: 2px solid rgba(71, 93, 125, 0.15);
 }
-
-
 
 /* Refresh */
 

@@ -30,10 +30,6 @@ export default class LobbyScreen extends HTMLElement {
         // HTML
         shadow.innerHTML = /* html */ `
             <style>
-                :host {
-                    color: var(--muted);
-                }
-
                 :host([popover]) {
                     box-sizing: border-box;
                     max-height: calc(100dvh - 2rem);
@@ -54,9 +50,11 @@ export default class LobbyScreen extends HTMLElement {
                     text-align: center;
                     padding-bottom: 1rem;
                 }
+                
                 h2,
                 h3 {
                     margin-top: 0;
+                    padding-bottom: 0.5rem;
                 }
 
                 .panels {
@@ -69,7 +67,7 @@ export default class LobbyScreen extends HTMLElement {
                     padding: 1.5rem;
                     border-radius: 16px;
                     background: var(--surface-2);
-                    box-shadow: 0 4px 12px #00000020;
+                    box-shadow: var(--shadow);
                 }
 
                 input,
@@ -87,7 +85,6 @@ export default class LobbyScreen extends HTMLElement {
                     border: 2px solid var(--border);
                     border-radius: 8px;
                     background: var(--surface);
-                    color: #263a3a;
                 }
 
                 textarea {
@@ -120,11 +117,6 @@ export default class LobbyScreen extends HTMLElement {
                     margin: 0.25rem 0;
                 }
 
-                .muted {
-                    opacity: 0.7;
-                    font-size: 0.9rem;
-                }
-
                 .pagination {
                     display: flex;
                     justify-content: space-between;
@@ -140,7 +132,6 @@ export default class LobbyScreen extends HTMLElement {
                     margin: 0.5rem 0;
                     border-radius: 8px;
                     background: var(--surface);
-                    color: #263a3a;
                 }
 
                 .status {
@@ -149,11 +140,11 @@ export default class LobbyScreen extends HTMLElement {
                 }
 
                 .ready {
-                    color: green;
+                    color: var(--positive);
                 }
 
                 .not-ready {
-                    color: #a66b22;
+                    color: var(--accent);
                 }
 
                 .hidden {
@@ -232,10 +223,6 @@ export default class LobbyScreen extends HTMLElement {
                         padding: 1rem;
                     }
                 }
-
-                [hidden] {
-                    display: none !important
-                }
             </style>
 
             <main class="screen">
@@ -300,7 +287,7 @@ export default class LobbyScreen extends HTMLElement {
                         </div>
 
                         <div id="lobby-list">
-                            <p class="muted">No lobbies loaded.</p>
+                            <p>No lobbies loaded.</p>
                         </div>
 
                         <div class="pagination">

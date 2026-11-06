@@ -81,7 +81,7 @@ class ThemeSwitcher extends HTMLElement {
         }
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
         if (name === 'theme' && oldValue !== newValue) {
             if (newValue !== 'light' && newValue !== 'dark') {
                 return;
@@ -111,11 +111,11 @@ class ThemeSwitcher extends HTMLElement {
         this.theme = this.isDark ? 'light' : 'dark';
     }
 
-    setTheme(theme) {
+    setTheme(theme: string) {
         this.theme = theme;
     }
 
-    _applyTheme(theme) {
+    _applyTheme(theme: string) {
         const isDark = theme === 'dark';
 
         // Update the document theme.
