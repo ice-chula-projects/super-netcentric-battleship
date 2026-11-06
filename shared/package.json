@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "scripts": {
         "dev": "echo hello from the shared workspace",
-        "tsc": "tsc -w"
+        "tsc": "tsc -w",
+        "build": "npx tsc"
     },
     "type": "module",
     "exports": {
@@ -18,6 +19,10 @@
         "./ClientMessage.js": {
             "types": "./src/ts/ClientMessage/index.ts",
             "default": "./src/js/ClientMessage/index.js"
+        },
+        "./Game/*.js": {
+            "types": "./src/ts/Game/*.ts",
+            "default": "./src/js/Game/*.js"
         }
     }
 }

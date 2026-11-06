@@ -12,9 +12,18 @@
   },
   "type": "module",
   "main": "index.js",
-  "workspaces": ["backend", "frontend", "shared"],
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "cd ./backend && start npm run tsc && cd .././shared && start npm run tsc"
+    "tsc": "cd ./backend && start npm run tsc && cd .././shared && start npm run tsc",
+    "format": "prettier --write ./frontend",
+    "build": "cd ./backend && npm run build && cd .././shared && npm run build && cd .././frontend && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
   }
 }
