@@ -137,7 +137,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         "Star ship, center has 3 health",
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 5),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
@@ -152,7 +152,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         4,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 4),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-2, 0, 1)],
@@ -170,7 +170,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         4,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 4),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(2, 0, 1)],
@@ -188,7 +188,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         4,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 4),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
@@ -206,7 +206,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         4,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 4),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(1, 1, 1)],
@@ -226,7 +226,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
+        ShipDefinitionFactory.createShipHullTile(1, -1, 2),
         ShipDefinitionFactory.createShipHullTile(0, -1, 1)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
@@ -242,7 +242,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         4,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 4),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1)],
@@ -261,8 +261,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         2,
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
-        ShipDefinitionFactory.createShipHullTile(1, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(-1, 0, 1)],
+        ShipDefinitionFactory.createShipHullTile(1, 0, 3),
+        ShipDefinitionFactory.createShipHullTile(-1, 0, 3)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 4)]
     ),
@@ -274,7 +274,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(1, 1, 1),
@@ -294,7 +294,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
         ShipDefinitionFactory.createShipHullTile(1, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, -1, 1),
         ShipDefinitionFactory.createShipHullTile(2, 2, 1),
@@ -315,10 +315,10 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         5,
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
-        ShipDefinitionFactory.createShipHullTile(-1, 1, 1),
-        ShipDefinitionFactory.createShipHullTile(2, 2, 1),
-        ShipDefinitionFactory.createShipHullTile(-2, 2, 1)],
+        ShipDefinitionFactory.createShipHullTile(1, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(2, 2, 2),
+        ShipDefinitionFactory.createShipHullTile(-2, 2, 2)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
          ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
@@ -338,11 +338,11 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 0),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(1, -1, 1),
-        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+        ShipDefinitionFactory.createShipHullTile(1, -1, 3),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 3)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
          ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 2),
@@ -358,11 +358,11 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
-        ShipDefinitionFactory.createShipHullTile(1, 1, 1),
-        ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
+        ShipDefinitionFactory.createShipHullTile(1, 1, 2),
+        ShipDefinitionFactory.createShipHullTile(-1, 1, 2)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
          ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 1),
@@ -378,7 +378,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         5,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
         ShipDefinitionFactory.createShipHullTile(1, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, -1, 1),
         ShipDefinitionFactory.createShipHullTile(1, -1, 1),
@@ -398,7 +398,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         20,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 10)],
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 2)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 10),
         ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 10),
