@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import ChatMessage from './ChatMessage';
 
 type ChatAuthor = {
@@ -25,24 +25,8 @@ export default class ChatSidebar extends HTMLElement {
                 }
 
                 aside {
-                    position: fixed;
-                    top: var(--header-height, 0px);
-                    right: 0;
-                    bottom: 0;
-
-                    width: min(500px, 85vw);
-                    box-sizing: border-box;
-
-                    display: flex;
-                    flex-direction: column;
-
-                    background: var(--color-satellite-base);
-                    border-left: 4px solid var(--color-satellite-glow);
-                    box-shadow: -5px 0 12px #00000020;
-
-                    transition: transform 250ms ease;
-                    z-index: 10;
-                    overflow: visible;
+                    display-style: border-box;
+                    border-left: 2px solid var(--border);
                 }
 
                 :host([collapsed]) aside {
@@ -65,7 +49,10 @@ export default class ChatSidebar extends HTMLElement {
                 .messages {
                     flex: 1;
                     min-height: 0;
+                    min-width: 0;
+
                     overflow-y: scroll;
+                    overflow-x: hidden;
 
                     display: flex;
                     flex-direction: column;
@@ -73,7 +60,9 @@ export default class ChatSidebar extends HTMLElement {
 
                     list-style: none;
                     margin: 0;
-                    padding: 1rem 1.5rem 13.5rem 1.5rem;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                    margin-bottom: 17rem;
                 }
 
                 .composer {
@@ -83,14 +72,14 @@ export default class ChatSidebar extends HTMLElement {
                     bottom: 0;
                     right: 0;
 
-                    width: min(calc(500px + 2rem), 100vw);
+                    width: min(calc(var(--sidebar-width) + 2rem), 100vw);
                     box-sizing: border-box;
 
                     padding: 1.5rem 2rem;
 
-                    background: var(--color-satellite-base);
-                    border-top: 3px solid var(--color-satellite-glow);
-                    border-left: 3px solid var(--color-satellite-glow);
+                    background: var(--surface-2);
+                    border-top: 2px solid var(--border);
+                    border-left: 2px solid var(--border);
                     border-radius: 24px 0 0 0;
                     box-shadow: 0 -4px 8px #00000015;
 
@@ -115,17 +104,17 @@ export default class ChatSidebar extends HTMLElement {
                     box-sizing: border-box;
 
                     padding: 1rem;
-                    border: 2px solid var(--color-satellite-foreground-border);
+                    border: 2px solid var(--border);
                     border-radius: 12px;
 
-                    background: var(--color-satellite-foreground);
-                    color: #263a3a;
+                    background: var(--surface);
+                    color: var(--text);
                     font: inherit;
                     font-size: 1rem;
                 }
 
                 textarea:focus {
-                    outline: 2px solid var(--color-satellite-glow);
+                    outline: 2px solid var(--focus);
                     outline-offset: 2px;
                 }
 
@@ -140,10 +129,10 @@ export default class ChatSidebar extends HTMLElement {
                 select {
                     min-width: 0;
                     padding: 0.5rem 1rem;
-                    border: 2px solid var(--color-satellite-foreground-border);
+                    border: 2px solid var(--border);
                     border-radius: 10px;
-                    background: var(--color-satellite-foreground);
-                    color: inherit;
+                    background: var(--surface);
+                    color: var(--text);
                     font: inherit;
                     font-size: 14px;
                     appearance: none;
@@ -159,6 +148,11 @@ export default class ChatSidebar extends HTMLElement {
 
                 button.send {
                     padding: 0.75rem 1rem;
+                }
+
+                span.icon {
+                    width: 24px;
+                    height: 24px;
                 }
 
                 @media (max-width: 639px) {
@@ -189,9 +183,28 @@ export default class ChatSidebar extends HTMLElement {
 
             <aside id="chat-sidebar">
                 <div class="chat-header">
-                    <h2 class="space-mono-bold">Global Chat</h2>
+                    <h2 class="section-title">
+                        <span class="icon" aria-hidden="true">
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 -960 960 960"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M240-399h313v-60H240v60Zm0-130h480v-60H240v60Zm0-130h480v-60H240v60ZM80-80v-740q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H240L80-80Zm134-220h606v-520H140v600l74-80Zm-74 0v-520 520Z"
+                                    fill="currentColor"
+                                ></path>
+                            </svg>
+                        </span>
+                            Global Chat
+                        
+                    </h2>
                 </div>
-
+                <hr>
                 <ul class="messages" id="messages" aria-label="Chat messages"></ul>
             </aside>
             <form class="composer" id="message-form">

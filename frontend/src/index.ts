@@ -11,6 +11,7 @@ import './components/UserAvatar';
 import './components/UserSidebar';
 import './components/AuthenticationPopover';
 import './components/ShipModes';
+import './components/ThemeSwitcher';
 import type ChatSidebar from './components/ChatSidebar';
 import GameHeader from './components/GameHeader';
 import UserSidebar from './components/UserSidebar';

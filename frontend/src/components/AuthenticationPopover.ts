@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import UserAvatar from './UserAvatar';
 
 interface AuthenticationCredentials {
@@ -36,12 +36,12 @@ export default class AuthenticationPopover extends HTMLElement {
                     background: none;
                     cursor: pointer;
                     border-radius: 50%;
-                    outline: 1.5px solid var(--color-satellite-foreground-border);
+                    outline: 1.5px solid var(--border);
                     line-height: 0;
                 }
 
                 .avatar-button:hover {
-                    outline: 2px solid var(--color-satellite-glow);
+                    outline: 2px solid var(--focus);
                     outline-offset: 3px;
                 }
 
@@ -57,9 +57,9 @@ export default class AuthenticationPopover extends HTMLElement {
                     width: min(340px, calc(100vw - 2rem));
                     box-sizing: border-box;
 
-                    background: var(--color-satellite-base);
-                    color: var(--color-satellite-foreground);
-                    border: 2px solid var(--color-satellite-glow);
+                    background: var(--bg);
+                    color: var(--surface);
+                    border: 2px solid var(--border);
                     border-radius: 12px;
                     box-shadow: 0 8px 24px #00000030;
 
@@ -72,7 +72,7 @@ export default class AuthenticationPopover extends HTMLElement {
 
                 .auth-header h2 {
                     margin: 0;
-                    color: #465f80;
+                    color: var(--text);
                     font-size: 1.4rem;
                 }
 
@@ -94,21 +94,22 @@ export default class AuthenticationPopover extends HTMLElement {
 
                 .auth-form label {
                     font-weight: 600;
+                    color: var(--muted)
                 }
 
                 .auth-form input {
                     width: 100%;
                     box-sizing: border-box;
                     padding: 0.75rem;
-                    border: 2px solid var(--color-satellite-foreground-border);
+                    border: 2px solid var(--border);
                     border-radius: 8px;
-                    background: var(--color-satellite-foreground);
-                    color: #263a3a;
+                    background: var(--surface);
+                    color: var(--text);
                     font: inherit;
                 }
 
                 .auth-form input:focus {
-                    outline: 2px solid var(--color-satellite-glow);
+                    outline: 2px solid var(--border);
                     outline-offset: 2px;
                 }
 
@@ -117,7 +118,7 @@ export default class AuthenticationPopover extends HTMLElement {
                 }
 
                 .auth-error {
-                    color: #c0392b;
+                    color: var(--accent);
                     font-size: 0.875rem;
                     margin: 0 0 0.75rem;
                 }
@@ -337,6 +338,7 @@ export default class AuthenticationPopover extends HTMLElement {
             this.loginForm.reset();
             this.registerForm.reset();
             this.clearError();
+            alert(`Hello ${username}`);
         }
     };
 

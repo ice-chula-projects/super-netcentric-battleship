@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import UserAvatar from './UserAvatar';
 import './UserAvatar';
 
@@ -10,7 +10,7 @@ export default class UserSidebar extends HTMLElement {
     private _users: string[] = [];
     private _isOpen = true;
 
-    private layoutQuery = window.matchMedia('(max-width: 800px)');
+    private layoutQuery = window.matchMedia('(max-width: 1200px)');
 
     constructor() {
         super();
@@ -30,11 +30,11 @@ export default class UserSidebar extends HTMLElement {
                     left: 0;
                     bottom: 0;
 
-                    width: 500px;
+                    width: var(--sidebar-width);
                     box-sizing: border-box;
 
-                    background: var(--color-satellite-base);
-                    border-right: 2px solid var(--color-satellite-glow);
+                    background: var(--surface);
+                    border-right: 2px solid var(--border);
                     box-shadow: 5px 0 12px #00000020;
 
                     overflow-y: auto;
@@ -81,15 +81,6 @@ export default class UserSidebar extends HTMLElement {
                     font-size: 1.2rem;
                 }
 
-                .section-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    margin: 0;
-                    color: #465f80;
-                    font-size: 1.5rem;
-                }
-
                 .users-icon {
                     display: inline-flex;
                     align-items: center;
@@ -125,8 +116,8 @@ export default class UserSidebar extends HTMLElement {
                     padding: 0.875rem;
                     border-radius: 12px;
 
-                    background: var(--color-satellite-foreground);
-                    border: 1px solid var(--color-satellite-foreground-border);
+                    background: var(--surface);
+                    border: 1px solid var(--border);
 
                     transition:
                         transform 150ms ease,
@@ -136,7 +127,7 @@ export default class UserSidebar extends HTMLElement {
 
                 .user-item:hover {
                     transform: translateX(3px);
-                    border-color: var(--color-satellite-glow);
+                    border-color: var(--focus);
                     box-shadow: 0 3px 8px #00000012;
                 }
 
@@ -150,6 +141,8 @@ export default class UserSidebar extends HTMLElement {
                     flex-direction: column;
                     gap: 0.3rem;
                     min-width: 0;
+                    flex: 1;
+                    padding-bottom: 0.5rem;
                 }
 
                 .user-name {
@@ -157,6 +150,7 @@ export default class UserSidebar extends HTMLElement {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    color: var(--text);
                 }
 
                 .user-status {
@@ -164,7 +158,7 @@ export default class UserSidebar extends HTMLElement {
                     align-items: center;
                     gap: 0.4rem;
                     font-size: 0.8rem;
-                    color: #64748b;
+                    color: var(--muted);
                 }
 
                 .status-indicator {
@@ -174,16 +168,6 @@ export default class UserSidebar extends HTMLElement {
                     border-radius: 50%;
                     background: #22a06b;
                     box-shadow: 0 0 5px #22a06b66;
-                }
-
-                @media (max-width: 639px) {
-                    aside {
-                        width: 85vw;
-                    }
-
-                    .sidebar-inner {
-                        padding: 1rem;
-                    }
                 }
             </style>
 
@@ -220,7 +204,7 @@ export default class UserSidebar extends HTMLElement {
                                 </svg>
                             </button>
                         </div>
-
+                        <hr>
                         <ul id="active-users" aria-label="Active users"></ul>
                     </section>
 
@@ -240,7 +224,7 @@ export default class UserSidebar extends HTMLElement {
                             </span>
                             Users
                         </h2>
-
+                        <hr>
                         <div id="users-list" class="users-list"></div>
                     </section>
                 </div>
@@ -370,6 +354,7 @@ export default class UserSidebar extends HTMLElement {
             avatar.username = username;
         }
     }
+
     private renderUsers() {
         this.usersListElement.replaceChildren(
             ...this._users.map((username) => {

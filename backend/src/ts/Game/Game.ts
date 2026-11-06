@@ -3,7 +3,7 @@ import Board, { BoardTileUpdate } from "./Board/Board.js";
 import {getOppositePlayer, Player} from "@super-netcentric-battleship/shared/Game/Player.js";
 import { ShipType } from "@super-netcentric-battleship/shared/Game/ShipDefinitions.js";
 import { Orientation } from "@super-netcentric-battleship/shared/Game/Orientation.js";
-import Coordinate from "@super-netcentric-battleship/shared/Game/Coordinate.js";
+import Coordinate, { relativeCoordinateToAbsoluteCoordinate } from "@super-netcentric-battleship/shared/Game/Coordinate.js";
 import Ship from "./Ship/Ship.js";
 import { GameState } from "@super-netcentric-battleship/shared/Game/GameState.js";
 import ActiveUser from "../User/ActiveUser.js";
@@ -170,10 +170,31 @@ export default class Game{
         if(this.gameState != GameState.Battle) throw new Error("Tried to end a game in non Battle State");
         this.gameState = GameState.End;
         this.score[winner]++;
+        
+        this.revealAllShipTiles();
 
         //if a rematch happens set the winner to be the first player of the next game
         this.currentTurn = winner;
         this.notifyGameEnd(winner);
+    }
+
+    revealAllShipTiles(){
+        const player1ShipTiles: BoardTileUpdate[] = [];
+        for(const ship of this.boards[Player.Player1].ships){
+            for(const shipTile of ship.shipTiles){
+                player1ShipTiles.push(this.boards[Player.Player1].getTileState(shipTile.absoluteCoordinates!));
+            }
+        }
+        this.notifyBoardTileUpdateToBothPlayers(Player.Player1, player1ShipTiles);
+
+        const player2ShipTiles: BoardTileUpdate[] = [];
+
+        for(const ship of this.boards[Player.Player2].ships){
+            for(const shipTile of ship.shipTiles){
+                player2ShipTiles.push(this.boards[Player.Player2].getTileState(shipTile.absoluteCoordinates!));
+            }
+        }
+        this.notifyBoardTileUpdateToBothPlayers(Player.Player2, player2ShipTiles);
     }
 
     //used when game is ended (i.e from player leaving)

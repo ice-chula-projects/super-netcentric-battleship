@@ -45,6 +45,8 @@ export default class Camera {
     damageTextColor: string = 'red';
     textSize: number = 30;
     victoryTextSize: number = 60;
+    victoryTextColor: string = "white";
+    victoryStrokeColor: string = "grey";
     boardSize: number = 330;
     boardMargin: number = 30;
 
@@ -485,10 +487,20 @@ export default class Camera {
     drawVictoryText() {
         const victoryText =
             this.gameManager.matchWinner == this.gameManager.playerId ? 'You Win' : 'You Lose';
-
+        
         const context = this.canvas.getContext('2d');
-        context.fillStyle = this.textColor;
         context.font = `${this.victoryTextSize}px Arial`;
+
+        const textWidth = context.measureText(victoryText).width;
+        const centerX = this.canvas.width / 2;
+        const centerY =this.canvas.height / 2;
+        
+        context.fillStyle = this.victoryTextColor;
+        context.strokeStyle = this.victoryStrokeColor;
+        context.fillRect(centerX - textWidth/2 - 3, centerY - this.victoryTextSize - 3, textWidth + 3, this.victoryTextSize + 3);
+        context.strokeRect(centerX - textWidth/2 - 3, centerY - this.victoryTextSize - 3, textWidth + 3, this.victoryTextSize + 3);
+        
+        context.fillStyle = this.textColor;
         context.textAlign = 'center';
         context.fillText(victoryText, this.canvas.width / 2, this.canvas.height / 2);
         context.strokeText(victoryText, this.canvas.width / 2, this.canvas.height / 2);
@@ -503,6 +515,8 @@ export default class Camera {
             this.canvas.width / 2,
             this.canvas.height / 2 + this.textSize,
         );
+        context.strokeText(rematchText, this.canvas.width / 2, this.canvas.height / 2 + this.textSize);
+
     }
 
     drawScoreText() {

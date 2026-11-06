@@ -1,0 +1,93 @@
+/* Primary button */
+button {
+    background-color: var(--accent);
+    color: var(--accent-text);
+    border: 2px solid var(--accent);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition:
+        background-color 0.2s,
+        border-color 0.2s,
+        color 0.2s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--focus);
+    border-color: var(--focus);
+}
+
+button[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Secondary button */
+button.secondary {
+    background-color: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--text);
+    transition: 0.2s;
+}
+
+button.secondary:hover {
+    background-color: var(--surface-2);
+    border-color: var(--focus);
+}
+
+/* Icon button */
+button.icon {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    background-color: var(--surface);
+    border: 2px solid var(--border);
+    transition: 0.2s;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+button.icon:hover,
+button.icon[aria-pressed='true'],
+button.icon[aria-expanded='true'] {
+    background-color: var(--surface-2);
+    border-color: var(--focus);
+}
+
+button.icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Mode selector */
+button.mode-selector {
+    flex: 1;
+    padding: 0.65rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--text);
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
+button.mode-selector[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+}
+
+/* Accessibility */
+button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+}

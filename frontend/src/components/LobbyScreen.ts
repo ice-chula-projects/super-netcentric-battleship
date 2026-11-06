@@ -1,6 +1,6 @@
 import { LobbyManager } from '../Game/LobbyManager';
 import { Player } from '@super-netcentric-battleship/shared/Game/Player.js';
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import { GameSettingsPresetNames } from '@super-netcentric-battleship/shared/Game/GameSettings.js';
 
 export default class LobbyScreen extends HTMLElement {
@@ -31,7 +31,7 @@ export default class LobbyScreen extends HTMLElement {
         shadow.innerHTML = /* html */ `
             <style>
                 :host {
-                    color: var(--color-satellite-accent);
+                    color: var(--muted);
                 }
 
                 :host([popover]) {
@@ -68,7 +68,7 @@ export default class LobbyScreen extends HTMLElement {
                 .panel {
                     padding: 1.5rem;
                     border-radius: 16px;
-                    background: var(--color-satellite-foreground-focus);
+                    background: var(--surface-2);
                     box-shadow: 0 4px 12px #00000020;
                 }
 
@@ -84,9 +84,9 @@ export default class LobbyScreen extends HTMLElement {
                     width: 100%;
                     padding: 0.75rem;
                     margin: 0.4rem 0 1rem;
-                    border: 2px solid var(--color-satellite-foreground-border);
+                    border: 2px solid var(--border);
                     border-radius: 8px;
-                    background: var(--color-satellite-foreground);
+                    background: var(--surface);
                     color: #263a3a;
                 }
 
@@ -113,7 +113,7 @@ export default class LobbyScreen extends HTMLElement {
                     align-items: center;
                     gap: 1rem;
                     padding: 1rem 0;
-                    border-bottom: 1px solid var(--color-satellite-foreground-border);
+                    border-bottom: 1px solid var(--border);
                 }
 
                 .lobby-entry p {
@@ -139,7 +139,7 @@ export default class LobbyScreen extends HTMLElement {
                     padding: 1rem;
                     margin: 0.5rem 0;
                     border-radius: 8px;
-                    background: var(--color-satellite-foreground);
+                    background: var(--surface);
                     color: #263a3a;
                 }
 
@@ -204,13 +204,13 @@ export default class LobbyScreen extends HTMLElement {
                     justify-content: center;
                     padding: 0.4rem;
                     background: transparent;
-                    color: var(--color-satellite-accent);
-                    border: 1px solid var(--color-satellite-foreground-border);
+                    color: var(--accent);
+                    border: 1px solid var(--border);
                     border-radius: 6px;
                 }
 
                 .icon-button:hover {
-                    background: var(--color-satellite-foreground-border);
+                    background: var(--border);
                 }
 
                 .icon-button svg {
