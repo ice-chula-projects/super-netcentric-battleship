@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import UserAvatar from './UserAvatar';
 
 type ChatAuthor = {
@@ -34,8 +34,8 @@ export default class ChatMessage extends HTMLElement {
                     gap: 0.75rem;
                     padding: 0.85rem 1rem;
                     border-radius: 10px;
-                    background: var(--color-satellite-foreground, #f3fffb);
-                    border: 1px solid var(--color-satellite-foreground-border, #89a4a4);
+                    background: var(--surface);
+                    border: 1px solid var(--border);
                     transition:
                         background 150ms ease,
                         border-color 150ms ease;
@@ -57,17 +57,17 @@ export default class ChatMessage extends HTMLElement {
                 .author {
                     font-weight: bold;
                     font-size: 0.9rem;
-                    color: var(--color-satellite-foreground-border, #526b6b);
+                    color: var(--text);
                 }
 
                 time {
-                    color: #849393;
+                    color: var(--muted);
                     font-size: 0.7rem;
                 }
 
                 .message {
                     margin: 0;
-                    color: #263a3a;
+                    color: var(--text);
                     font-size: 0.9rem;
                     line-height: 1.5;
                     white-space: pre-wrap;

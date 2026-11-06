@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 import UserAvatar from './UserAvatar';
 import './UserAvatar';
 
@@ -10,7 +10,7 @@ export default class UserSidebar extends HTMLElement {
     private _users: string[] = [];
     private _isOpen = true;
 
-    private layoutQuery = window.matchMedia('(max-width: 800px)');
+    private layoutQuery = window.matchMedia('(max-width: 1200px)');
 
     constructor() {
         super();
@@ -30,7 +30,7 @@ export default class UserSidebar extends HTMLElement {
                     left: 0;
                     bottom: 0;
 
-                    width: 500px;
+                    width: var(--sidebar-width);
                     box-sizing: border-box;
 
                     background: var(--color-satellite-base);
@@ -79,15 +79,6 @@ export default class UserSidebar extends HTMLElement {
                     margin: 0;
                     color: #465f80;
                     font-size: 1.2rem;
-                }
-
-                .section-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    margin: 0;
-                    color: #465f80;
-                    font-size: 1.5rem;
                 }
 
                 .users-icon {
@@ -150,6 +141,10 @@ export default class UserSidebar extends HTMLElement {
                     flex-direction: column;
                     gap: 0.3rem;
                     min-width: 0;
+                    flex: 1;
+                    padding-bottom: 0.5rem;
+                    /* Dark, clear border line under text */
+                    border-bottom: 2px solid #334155;
                 }
 
                 .user-name {
@@ -157,6 +152,7 @@ export default class UserSidebar extends HTMLElement {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    color: #1e293b;
                 }
 
                 .user-status {
@@ -174,16 +170,6 @@ export default class UserSidebar extends HTMLElement {
                     border-radius: 50%;
                     background: #22a06b;
                     box-shadow: 0 0 5px #22a06b66;
-                }
-
-                @media (max-width: 639px) {
-                    aside {
-                        width: 85vw;
-                    }
-
-                    .sidebar-inner {
-                        padding: 1rem;
-                    }
                 }
             </style>
 
@@ -370,6 +356,7 @@ export default class UserSidebar extends HTMLElement {
             avatar.username = username;
         }
     }
+
     private renderUsers() {
         this.usersListElement.replaceChildren(
             ...this._users.map((username) => {

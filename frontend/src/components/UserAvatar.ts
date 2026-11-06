@@ -1,4 +1,4 @@
-import { appStyles } from '../styles';
+import { appStyles } from '../styles/styles';
 
 export default class UserAvatar extends HTMLElement {
     private avatarElement: HTMLDivElement;
@@ -27,8 +27,8 @@ export default class UserAvatar extends HTMLElement {
                     width: var(--avatar-size, 34px);
                     height: var(--avatar-size, 34px);
                     border-radius: 50%;
-                    background: var(--color-satellite-base, #baccd0);
-                    color: var(--color-satellite-foreground, #f3fffb);
+                    background: var(--accent);
+                    color: var(--accent-text);
                     font-size: calc(var(--avatar-size, 34px) * 0.45);
                     font-weight: bold;
                     text-transform: uppercase;
