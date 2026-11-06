@@ -53,10 +53,14 @@ button.icon {
 }
 
 button.icon:hover,
-button.icon[aria-pressed='true'],
 button.icon[aria-expanded='true'] {
     background-color: var(--surface-2);
     border-color: var(--focus);
+}
+
+button.icon[aria-pressed='true'] {
+    background-color: var(--surface-2);
+    border-color: var(--border);
 }
 
 button.icon svg {

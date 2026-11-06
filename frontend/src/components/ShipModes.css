@@ -1,3 +1,4 @@
+@import "../styles/styles.css";
 /* =========================================
    SHIP MODES - MAIN COMPONENT
 ========================================= */
@@ -29,20 +30,15 @@ ship-modes {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-
-    width: 150px;
     min-width: 0;
-    height: 32px;
-    padding: 5px 10px;
     box-sizing: border-box;
 
-    background: #ffffff;
-    border: 1px solid #94a3b8;
+    background: var(--surface);
+    border: 2px solid var(--border);
     border-radius: 7px;
 
-    color: #1e293b;
+    color: var(--text);
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
     font-weight: 500;
 
     cursor: pointer;
@@ -50,18 +46,18 @@ ship-modes {
 }
 
 .ship-modes-trigger:hover {
-    border-color: #2563eb;
-    background: #f8fafc;
+    border-color: var(--focus);
+    background: var(--surface-2);
 }
 
 .ship-modes-trigger:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 4px solid var(--focus);
     outline-offset: 2px;
 }
 
 .ship-modes-trigger[aria-expanded='true'] {
-    border-color: #2563eb;
-    background: #eff6ff;
+    border-color: var(--focus);
+    background: var(--surface-2);
 }
 
 .ship-modes-selected {
@@ -100,15 +96,15 @@ ship-modes {
     overflow-y: auto;
     overflow-x: hidden;
 
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 9px;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);
     z-index: 1000;
 
     scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #f1f5f9;
+    scrollbar-color: var(--border) var(--bg);
 }
 
 .ship-modes-menu.open {
@@ -126,10 +122,10 @@ ship-modes {
 
     background: transparent;
     border: none;
-    border-bottom: 1px solid #f1f5f9;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
 
     text-align: left;
-    color: #1e293b;
     font-family: inherit;
     font-size: 12px;
     font-weight: 400;
@@ -144,14 +140,14 @@ ship-modes {
 
 .ship-modes-option:hover,
 .ship-modes-option:focus-visible {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: var(--bg);
+    color: var(--focus);
     outline: none;
 }
 
 .ship-modes-option[aria-selected='true'] {
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: var(--bg);
+    color: var(--focus);
     font-weight: 700;
 }
 
@@ -175,12 +171,11 @@ ship-modes {
     padding: 14px;
     box-sizing: border-box;
 
-    background: #eff6ff;
-    border: 1px solid #93c5fd;
+    background: var(--bg);
+    border: 1px solid var(--focus);
     border-radius: 9px;
 
-    color: #1e293b;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow);
 
     z-index: 1001;
     pointer-events: none;
@@ -194,14 +189,13 @@ ship-modes {
     display: block;
     font-size: 14px;
     font-weight: 700;
-    color: #1e40af;
+    color: var(--muted);
 }
 
 .ship-modes-tooltip-description {
     font-size: 12px;
     line-height: 1.6;
     margin: 8px 0 0;
-    color: #334155;
     overflow-wrap: break-word;
 }
 
@@ -211,11 +205,7 @@ ship-modes {
 
 @media (max-width: 900px) {
     .ship-modes-trigger {
-        width: 150px;
         min-width: 0;
-        height: 32px;
-        padding: 5px 10px;
-        font-size: 12px;
     }
 
     .ship-modes-menu {
@@ -230,11 +220,7 @@ ship-modes {
 
 @media (max-width: 639px) {
     .ship-modes-trigger {
-        width: 150px;
         min-width: 0;
-        height: 32px;
-        padding: 5px 10px;
-        font-size: 12px;
     }
 
     .ship-modes-menu {

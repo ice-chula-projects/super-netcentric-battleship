@@ -11,7 +11,6 @@ export default class GameHeader extends HTMLElement {
 
     constructor() {
         super();
-
         const shadow = this.attachShadow({ mode: 'open' });
         this.shipModeSelectorStyles.replaceSync(shipModesCSS);
         shadow.adoptedStyleSheets = [appStyles, this.shipModeSelectorStyles];
@@ -36,14 +35,10 @@ export default class GameHeader extends HTMLElement {
                     top: 0;
                     align-items: flex-end;
                     height: auto;
-                    background-image: linear-gradient(
-                        120deg,
-                        var(--bg),
-                        var(--surface-2)
-                    );
+                    background-image: linear-gradient(120deg, var(--gradient-bg));
                     border-radius: 0 0 8px 8px;
                     border-bottom: 2px solid var(--border);
-                    box-shadow: 0 5px 4px 6px #00000025;
+                    box-shadow: var(--shadow);
                     z-index: 20;
                     box-sizing: border-box;
                 }

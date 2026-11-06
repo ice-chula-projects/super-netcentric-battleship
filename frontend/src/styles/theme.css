@@ -14,6 +14,8 @@
     --scrim: rgba(20, 33, 61, 0.35);
     --header-h: 56px;
     --sidebar-w: 320px;
+    --positive: #22a06b;
+    --gradient-bg: var(--surface-2), var(--bg);
 }
 :root[data-theme='dark'] {
     color-scheme: dark;
@@ -29,4 +31,5 @@
     --shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     --shadow-side: 6px 0 24px rgba(0, 0, 0, 0.55);
     --scrim: rgba(0, 0, 0, 0.55);
+    --gradient-bg: var(--bg), var(--surface-2);
 }

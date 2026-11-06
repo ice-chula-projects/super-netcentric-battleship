@@ -7,6 +7,7 @@ import LoginManager from './Game/LoginManager';
 import './components/UserSidebar';
 import './components/UserAvatar';
 import './components/AuthenticationPopover';
+import './components/ThemeSwitcher';
 import './components/AuthenticationPopover';
 
 // TODO: config
@@ -212,15 +213,9 @@ webSocket.addEventListener('open', () => {
 });
 
 webSocket.addEventListener('close', () => {
-    console.log('Disconnected from game server.');
-
-    if (!dashboardInitialized) {
-        document.body.style.visibility = 'visible';
-
-        const message = document.createElement('p');
-        message.className = 'games-error';
-        message.textContent = 'Unable to connect to the game server.';
-    }
+    (console.log('disconnected'), alert('Server probably crashed, pls tell me about it'));
+    dashboard.hidden = true;
+    dashboardInitialized = false;
 });
 
 webSocket.addEventListener('error', (event) => {
@@ -297,3 +292,4 @@ webSocket.addEventListener('message', (event: MessageEvent) => {
         }
     }
 });
+

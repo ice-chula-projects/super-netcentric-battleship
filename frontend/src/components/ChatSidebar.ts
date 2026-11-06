@@ -42,7 +42,6 @@ export default class ChatSidebar extends HTMLElement {
 
                 h2 {
                     margin: 0;
-                    color: #465f80;
                     font-size: 1.8rem;
                 }
 
@@ -157,7 +156,7 @@ export default class ChatSidebar extends HTMLElement {
 
                 @media (max-width: 639px) {
                     aside {
-                        width: 100vw;
+                        width: 100vw !important;
                     }
 
                     .chat-header {

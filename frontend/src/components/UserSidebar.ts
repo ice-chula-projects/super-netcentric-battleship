@@ -35,7 +35,7 @@ export default class UserSidebar extends HTMLElement {
 
                     background: var(--surface);
                     border-right: 2px solid var(--border);
-                    box-shadow: 5px 0 12px #00000020;
+                    box-shadow: var(--shadow);
 
                     overflow-y: auto;
                     transition: transform 250ms ease;
@@ -77,7 +77,6 @@ export default class UserSidebar extends HTMLElement {
 
                 h3 {
                     margin: 0;
-                    color: #465f80;
                     font-size: 1.2rem;
                 }
 
@@ -128,7 +127,7 @@ export default class UserSidebar extends HTMLElement {
                 .user-item:hover {
                     transform: translateX(3px);
                     border-color: var(--focus);
-                    box-shadow: 0 3px 8px #00000012;
+                    box-shadow: var(--shadow);
                 }
 
                 .user-avatar {
@@ -166,8 +165,8 @@ export default class UserSidebar extends HTMLElement {
                     height: 8px;
                     flex-shrink: 0;
                     border-radius: 50%;
-                    background: #22a06b;
-                    box-shadow: 0 0 5px #22a06b66;
+                    background: var(--positive);
+                    box-shadow: var(--shadow);
                 }
             </style>
 
