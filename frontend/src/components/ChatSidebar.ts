@@ -183,7 +183,7 @@ export default class ChatSidebar extends HTMLElement {
 
             <aside id="chat-sidebar">
                 <div class="chat-header">
-                    <h2 class="section-title space-mono-bold">
+                    <h2 class="section-title">
                         <span class="icon" aria-hidden="true">
                             <svg
                                 width="24"

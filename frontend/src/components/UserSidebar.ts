@@ -33,8 +33,8 @@ export default class UserSidebar extends HTMLElement {
                     width: var(--sidebar-width);
                     box-sizing: border-box;
 
-                    background: var(--color-satellite-base);
-                    border-right: 2px solid var(--color-satellite-glow);
+                    background: var(--surface);
+                    border-right: 2px solid var(--border);
                     box-shadow: 5px 0 12px #00000020;
 
                     overflow-y: auto;
@@ -116,8 +116,8 @@ export default class UserSidebar extends HTMLElement {
                     padding: 0.875rem;
                     border-radius: 12px;
 
-                    background: var(--color-satellite-foreground);
-                    border: 1px solid var(--color-satellite-foreground-border);
+                    background: var(--surface);
+                    border: 1px solid var(--border);
 
                     transition:
                         transform 150ms ease,
@@ -127,7 +127,7 @@ export default class UserSidebar extends HTMLElement {
 
                 .user-item:hover {
                     transform: translateX(3px);
-                    border-color: var(--color-satellite-glow);
+                    border-color: var(--focus);
                     box-shadow: 0 3px 8px #00000012;
                 }
 
@@ -143,8 +143,6 @@ export default class UserSidebar extends HTMLElement {
                     min-width: 0;
                     flex: 1;
                     padding-bottom: 0.5rem;
-                    /* Dark, clear border line under text */
-                    border-bottom: 2px solid #334155;
                 }
 
                 .user-name {
@@ -206,7 +204,7 @@ export default class UserSidebar extends HTMLElement {
                                 </svg>
                             </button>
                         </div>
-
+                        <hr>
                         <ul id="active-users" aria-label="Active users"></ul>
                     </section>
 
@@ -226,7 +224,7 @@ export default class UserSidebar extends HTMLElement {
                             </span>
                             Users
                         </h2>
-
+                        <hr>
                         <div id="users-list" class="users-list"></div>
                     </section>
                 </div>
