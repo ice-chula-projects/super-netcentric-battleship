@@ -104,6 +104,14 @@ export default class LobbyScreen extends HTMLElement {
                     cursor: not-allowed;
                 }
 
+                .refresh svg {
+                    transition: transform 0.3s ease;
+                }
+
+                .refresh:active svg {
+                    transform: rotate(180deg);
+                }
+                
                 .lobby-entry {
                     display: flex;
                     justify-content: space-between;
@@ -277,7 +285,7 @@ export default class LobbyScreen extends HTMLElement {
                     <section class="panel" style="margin-top: 1.5rem">
                         <div class="section-header-inline">
                             <h2 class="space-grotesk-medium">Public Lobbies</h2>
-                            <button id="refresh-lobbies-btn" class="icon" title="Refresh Lobbies" aria-label="Refresh Lobbies">
+                            <button id="refresh-lobbies-btn" class="icon refresh" title="Refresh Lobbies" aria-label="Refresh Lobbies">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M23 4v6h-6"></path>
                                     <path d="M1 20v-6h6"></path>
