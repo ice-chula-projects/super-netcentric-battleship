@@ -195,7 +195,6 @@ export default class Game{
             }
         }
         this.notifyBoardTileUpdateToBothPlayers(Player.Player2, player2ShipTiles);
-
     }
 
     //used when game is ended (i.e from player leaving)
