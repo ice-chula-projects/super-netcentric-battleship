@@ -157,10 +157,10 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-2, 0, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
         ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 0),
         ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(-2, 0, 0)]
+        ShipDefinitionFactory.createShipFiringPatternTile(-2, 0, 3)]
     ),
 
         [ShipType.OrangeRicky]: ShipDefinitionFactory.createShipDefinition(
@@ -175,10 +175,10 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(2, 0, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 3),
         ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 0),
         ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(-2, 0, 2)]
+        ShipDefinitionFactory.createShipFiringPatternTile(-2, 0, 3)]
     ),
 
         [ShipType.CleavelandZ]: ShipDefinitionFactory.createShipDefinition(
@@ -195,8 +195,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
         ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 1),
-        ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 1)]
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 2)]
     ),
 
         [ShipType.RhodeIslandZ]: ShipDefinitionFactory.createShipDefinition(
@@ -211,8 +211,8 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(1, 1, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
-        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 1),
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 2),
         ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
         ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 0)]
     ),
@@ -230,9 +230,9 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(0, -1, 1)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
-        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 0)]
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 1)]
     ),
 
         [ShipType.Teewee]: ShipDefinitionFactory.createShipDefinition(
@@ -247,10 +247,10 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(0, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 0, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 1),
-        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 0),
-        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 0)]
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 2),
+        ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 1),
+        ShipDefinitionFactory.createShipFiringPatternTile(-1, 0, 1)]
     ),
 
         [ShipType.SmolHero]: ShipDefinitionFactory.createShipDefinition(
@@ -258,7 +258,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         "Small Standard",
         "3-Block Line",
         
-        3,
+        2,
 
         [ShipDefinitionFactory.createShipHullTile(0, 0, 3),
         ShipDefinitionFactory.createShipHullTile(1, 0, 1),
@@ -300,7 +300,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(2, 2, 1),
         ShipDefinitionFactory.createShipHullTile(-2, -2, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 4),
          ShipDefinitionFactory.createShipFiringPatternTile(0, 1, 1),
          ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 1),
          ShipDefinitionFactory.createShipFiringPatternTile(0, -1, 1),
@@ -344,11 +344,11 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(1, -1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(2, 2, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-2, -2, 0)]
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 2),
+         ShipDefinitionFactory.createShipFiringPatternTile(2, 2, 3),
+         ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 2),
+         ShipDefinitionFactory.createShipFiringPatternTile(-2, -2, 3)]
     ),
 
         [ShipType.Pong]: ShipDefinitionFactory.createShipDefinition(
@@ -364,11 +364,11 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(1, 1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-2, 2, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(2, -2, 0)]
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(-2, 2, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(2, -2, 1)]
     ),
 
         [ShipType.Azmi]: ShipDefinitionFactory.createShipDefinition(
@@ -384,11 +384,11 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         ShipDefinitionFactory.createShipHullTile(1, -1, 1),
         ShipDefinitionFactory.createShipHullTile(-1, 1, 1)],
 
-        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 6),
-         ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 0),
-         ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 0)]
+        [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 0),
+         ShipDefinitionFactory.createShipFiringPatternTile(1, 1, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(-1, 1, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(1, -1, 1),
+         ShipDefinitionFactory.createShipFiringPatternTile(-1, -1, 1)]
     ),
 
         [ShipType.Dot]: ShipDefinitionFactory.createShipDefinition(
@@ -398,7 +398,7 @@ const ShipDefinitions: Record<ShipType, ShipDefinition> = {
         
         20,
 
-        [ShipDefinitionFactory.createShipHullTile(0, 0, 6)],
+        [ShipDefinitionFactory.createShipHullTile(0, 0, 10)],
 
         [ShipDefinitionFactory.createShipFiringPatternTile(0, 0, 10),
         ShipDefinitionFactory.createShipFiringPatternTile(1, 0, 10),
